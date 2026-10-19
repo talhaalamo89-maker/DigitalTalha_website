@@ -1,0 +1,47 @@
+{
+  "name": "Website Creation",
+  "route": "/website-creation/",
+  "title": "Website Creation for Small Businesses",
+  "description": "Custom business websites and landing pages by Talha Alam. Mobile layouts, clear services, enquiry forms, WhatsApp contact and a practical handover.",
+  "eyebrow": "Website creation · Business websites & landing pages",
+  "headline": "Make your business clear.",
+  "headline_accent": "Make the next step easy.",
+  "intro": "I create websites for small and local businesses that need a clear way to explain their services, show their work, and receive enquiries. You work directly with me, from the first brief to the final handover.",
+  "workflow_note": "Built with AI-assisted development and personal review. The design, content and features are agreed around your business.",
+  "card_description": "Business websites and landing pages that explain your offer clearly and make it easy for people to contact you.",
+  "card_points": ["Custom design for your business", "Layouts for phone, tablet and desktop", "Service pages and clear navigation", "Enquiry forms and WhatsApp contact", "Hosting setup and a practical handover"],
+  "deliverables": [
+    ["A design that fits your business", "A consistent layout, colours and type, shaped around your brand and the people you want to reach."],
+    ["Clear pages and navigation", "The agreed pages and sections, with a clear route from learning about your services to getting in touch."],
+    ["Mobile-friendly layouts", "Layouts prepared for phone, tablet and desktop, with readable text and easy-to-use buttons."],
+    ["Enquiry options", "Contact forms, email links and WhatsApp links where they help customers take the next step. Form delivery is tested on the connected hosting."],
+    ["Basic on-page SEO", "Descriptive page titles, headings, meta descriptions, image alt text and a sitemap. Search rankings are not guaranteed."],
+    ["Loading and usability checks", "Optimised images, considered use of motion, and checks of navigation, forms and common screen sizes before launch."],
+    ["Launch support", "Help connecting the finished site to your domain and compatible hosting, including HTTPS and the agreed launch checks."],
+    ["Ownership and handover", "The final agreed source files and assets, plus an explanation of hosting and future updates. Third-party services keep their own licence terms."]
+  ],
+  "website_types": [
+    ["Business websites", "Explain who you are, what you offer and how customers can contact you. Useful for clinics, gyms, local services and other small businesses."],
+    ["Campaign landing pages", "A focused page for an offer or advertising campaign, with a clear message and one main enquiry action."],
+    ["Portfolio & personal sites", "Bring your work, experience and services into a single professional home that is easy to explore."]
+  ],
+  "process": [
+    ["Understand", "We discuss your business, customers, website goal and what needs to be included."],
+    ["Agree the scope", "We settle the pages, features, content responsibilities, budget, timeline and revision rounds before work begins."],
+    ["Plan the experience", "I organise the pages and customer journey, then prepare a visual direction that fits your brand."],
+    ["Build & review", "I build the agreed website with AI assistance, personally review it, and share a preview for your feedback."],
+    ["Check & refine", "We review the content and test layouts, links, contact options and form delivery on the target hosting."],
+    ["Launch & hand over", "The finished website goes onto your domain, and you receive the agreed files and guidance for future updates."]
+  ],
+  "faqs": [
+    ["What kinds of websites can you create?", "My focus is business websites, service websites, personal portfolios and campaign landing pages. If you need payments, bookings, a store, logins or custom business software, we will assess and quote those requirements separately."],
+    ["How much will my website cost?", "The price depends on the pages, features, content and integrations. Share your requirements and I’ll provide a scope and quote. Domain, hosting, paid tools and ongoing maintenance are separate unless the quote explicitly includes them."],
+    ["How long does it take?", "The timeline depends on the scope and how quickly content and feedback are available. We agree a realistic schedule before starting; I don’t promise the same deadline for every website."],
+    ["Do you use AI to build the website?", "Yes. I use AI-assisted tools for parts of the design and development process, then review and refine the output. Your business requirements guide the work, and the final pages, links and forms need testing before launch."],
+    ["Can you redesign my current website?", "Yes. We first review your current pages, useful content, URLs and integrations, then plan the rebuild and migration. The existing site stays live until the replacement is ready for the agreed switch."],
+    ["What do I need to provide?", "Your logo, business details, service information, contact details and any photos or content you have permission to use. We agree who will prepare missing copy and assets before work begins."],
+    ["Will I own the website?", "You receive the final agreed website source and assets after the agreed payment terms are met. Your domain and hosting should stay in your own accounts. Any licensed fonts, images or third-party tools remain subject to their own terms."],
+    ["Can I edit the website later?", "We choose an editing approach during planning. A coded website usually needs code changes; an editor or CMS can be included if it is part of the agreed scope. Ongoing updates and support can be discussed separately."],
+    ["Will the website guarantee enquiries or Google rankings?", "No. A website can make your offer clearer and make contacting you easier, but enquiries depend on traffic, demand, your offer and follow-up. Basic SEO setup does not guarantee search rankings."]
+  ]
+}

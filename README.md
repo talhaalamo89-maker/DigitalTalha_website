@@ -14,7 +14,7 @@ python3 scripts/preview.py
 python3 scripts/serve.py
 ```
 
-Then open http://127.0.0.1:4173. The preview server never serves PHP source or sends mail. This authoring environment could not run the local HTTP/browser preview, so desktop/mobile visual verification remains pending.
+Then open http://127.0.0.1:4173. The preview server never serves PHP source or sends mail. Desktop and mobile pages have been checked in Chrome; Apache redirects and genuine 404 responses have also been verified locally.
 
 ## What is included
 
@@ -34,6 +34,8 @@ Requires Python 3.10+ and Node.js for interaction checks. No package installatio
 
 - `scripts/motion_pages.py`: active visual page layouts and concise marketing copy.
 - `scripts/build.py`: shared header, footer, forms, SEO, article, policies and route generation.
+- `content/seo.json`: unique search titles, descriptions, page labels and service definitions.
+- `scripts/seo.py`: canonical tags, social previews, image priorities and linked structured data.
 - `assets/motion.css` and `assets/motion.js`: illustrations, motion, selectors and controls.
 - `assets/site.css` and `assets/site.js`: shared styles, navigation, search and form submission.
 - `content/website-service.json`: full Website Creation scope and FAQs.
@@ -45,6 +47,21 @@ npm run check
 ```
 
 The build generates `dist/` for hosting and refreshes `DigitalTalha-preview.html`. The preview stores each image only once to keep the file small. It does not use a third-party animation library.
+
+## SEO and staging
+
+Production builds use `https://digitaltalha.com/` as the canonical origin. All 11 indexable pages have unique metadata; 404 pages, redirect aliases and the standalone preview are excluded from indexing. The sitemap contains canonical pages only. Structured data connects the website, Talha Alam, individual services, breadcrumbs and the practice article without invented ratings, addresses or publication dates.
+
+The character artwork is served as a 297 KB WebP instead of the original 1.52 MB PNG. Above-the-fold artwork is prioritized, while secondary images remain lazy loaded. The original PNG remains available as source artwork. Poppins is loaded directly from the document head with `display=swap`, avoiding a CSS import request chain.
+
+For a public test host, generate a noindex build:
+
+```sh
+SITE_NOINDEX=1 npm run build
+python3 scripts/check-seo.py --staging
+```
+
+This adds noindex metadata and an Apache noindex response header, leaves crawling available so the directives can be read, and emits an empty sitemap. Run `npm run build` without the environment flag before production deployment. The standalone preview always stays noindex. `npm run check` validates production output. See `SEO.md` for scope, validation and launch checks.
 
 ## Production routes
 

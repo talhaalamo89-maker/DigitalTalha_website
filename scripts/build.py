@@ -1,7 +1,8 @@
 """Build all pages from retained original text. Python standard library only."""
 from pathlib import Path
 from html import escape
-import json, re, shutil
+import json, re, shutil, os
+from seo import head as seo_head, breadcrumb as seo_breadcrumb
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'dist'
@@ -11,6 +12,8 @@ DOMAIN='https://digitaltalha.com'
 ARTICLE='how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization'
 WA='https://wa.me/919641930688'
 EMAIL='talhaalamo89@gmail.com'
+SEO=json.loads((ROOT/'content/seo.json').read_text())
+STAGING=os.environ.get('SITE_NOINDEX', '').lower() in ['1', 'true', 'yes']
 
 def text(path,n):
     return dict(SOURCE[DOMAIN+path]['lines']).get(n,'').strip()
@@ -47,10 +50,8 @@ def footer():
 
 PAGES={}
 def page(path,title,body,description=None,noindex=False):
-    description=description or 'Google Ads, Meta Ads and website creation for small and local businesses in India. Work directly with Talha Alam, from planning to handover.'
-    seo=f'<meta name="description" content="{esc(description)}"><link rel="canonical" href="{DOMAIN+path}"><meta name="robots" content="'+('noindex, nofollow' if noindex else 'index, follow')+'">'
-    schema={'@context':'https://schema.org','@type':'Person','name':'Talha Alam','url':DOMAIN,'jobTitle':'Digital marketer','image':DOMAIN+'/assets/talha-portrait.webp','sameAs':['https://www.instagram.com/_digitaltalha_/','https://www.linkedin.com/in/talha-alam-798st0/']}
-    markup=f'''<!doctype html><html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f8f7f3"><title>{esc(title)} | DigitalTalha</title>{seo}<meta property="og:type" content="{'article' if path=='/'+ARTICLE+'/' else 'website'}"><meta property="og:title" content="{esc(title)} | DigitalTalha"><meta property="og:description" content="{esc(description)}"><meta property="og:url" content="{DOMAIN+path}"><meta property="og:image" content="{DOMAIN}/assets/talha-portrait.webp"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/assets/favicon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/motion.css"><script type="application/ld+json">{json.dumps(schema)}</script><script defer src="/assets/site.js"></script><script defer src="/assets/motion.js"></script></head><body>{header(path)}<div class="motion-control-wrap"><div class="wrap motion-controls"><span>Explore at your pace</span><button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">Pause motion</button></div></div><main id="content">{body}</main>{footer()}</body></html>'''
+    # Metadata is maintained separately so rebuilding cannot reintroduce duplicates.
+    markup=f'''<!doctype html><html lang="en-IN"><head>{seo_head(path, SEO, noindex, STAGING)}</head><body>{header(path)}<div class="motion-control-wrap"><div class="wrap motion-controls"><span>Explore at your pace</span><button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">Pause motion</button></div></div><main id="content">{body}</main>{footer()}</body></html>'''
     PAGES[path]=markup
     destination=OUT/('index.html' if path=='/' else path.strip('/')+'/index.html')
     destination.parent.mkdir(parents=True,exist_ok=True); destination.write_text(markup)
@@ -113,7 +114,14 @@ def home():
     project='<section class="section soft"><div class="wrap">'+section_heading(line('/',179),line('/',180),'A closer look at the research, setup, and thinking behind the work.')+project_card()+'<div class="button-row">'+link('View All Articles','/blog/')+'</div></div></section>'
     return hero+services+proc+values+skill+about+project+contact_block()
 
-def breadcrumb(label): return f'<div class="breadcrumb"><a href="/">Home</a> <span aria-hidden="true">/</span> {esc(label)}</div>'
+def breadcrumb(label):
+    route = next((path for path, config in SEO.items() if config['label'] == label), None)
+    route = route or {'About': '/about/', 'Website Creation': '/website-creation/',
+                      'Terms and Conditions': '/terms-conditions/',
+                      'Projects / Meta lead campaign': '/'+ARTICLE+'/'}.get(label)
+    if route is None:
+        raise ValueError(f'Unknown breadcrumb: {label}')
+    return seo_breadcrumb(route, SEO)
 
 def services():
     return f'''<section class="page-hero"><div class="wrap">{breadcrumb('Services')}{eyebrow('What I do')}<h1>Ads that reach people.<br><span class="accent">Websites that explain your offer.</span></h1><p>Google Ads, Meta Ads and website creation for small and local businesses. Explore the service that fits your next step.</p></div></section><section class="section wrap">{service_cards()}</section><section class="section dark"><div class="wrap">{section_heading('How I work',line('/',80),line('/',82))}{process('/',[85,91,97,103,109])}</div></section>{contact_block()}'''
@@ -246,7 +254,7 @@ def toc(path,start,end,article=False):
 def article():
     path='/'+ARTICLE+'/'
     hero='<section class="page-hero"><div class="wrap article-hero">'+breadcrumb('Projects / Meta lead campaign')+eyebrow('Practice project · Meta Ads')+'<h1>Meta Lead Campaign —<br><span class="accent">From Start to Finish</span></h1><div class="article-meta"><span>By Talha Alam</span><span>A practical beginner-friendly project</span><span>Campaign setup → Optimization</span></div></div></section>'
-    article_intro='<p class="article-intro">A Practical Beginner-Friendly Project</p><div class="article-note">'+esc(line(path,36))+'</div>'
+    article_intro='<p class="article-intro">A Practical Beginner-Friendly Project</p><p>By <a href="/about/">Talha Alam</a> · Explore <a href="/meta-ads/">Meta Ads management</a> or <a href="/website-creation/">landing page creation</a> for your business.</p><div class="article-note">'+esc(line(path,36))+'</div>'
     return hero+'<section class="section wrap article-layout">'+toc(path,42,869,True)+'<article class="prose article-body">'+article_intro+article_content(path,38,869)+'<div class="button-row">'+link('Back to all projects','/blog/')+'</div></article></section>'
 
 def legal(path,title,end):
@@ -254,6 +262,7 @@ def legal(path,title,end):
     return hero+'<section class="section wrap legal-layout">'+toc(path,37,end)+'<article class="prose">'+article_content(path,37,end)+'</article></section>'
 
 def build():
+    PAGES.clear()
     OUT.mkdir(exist_ok=True)
     shutil.copytree(ROOT/'assets',OUT/'assets',dirs_exist_ok=True)
     shutil.copy(ROOT/'assets/favicon.ico',OUT/'favicon.ico')
@@ -262,7 +271,7 @@ def build():
     page('/about/','About Talha Alam',about())
     page('/services/','Google Ads, Meta Ads & Website Creation Services',services())
     page(WEBSITE['route'],WEBSITE['title'],website_creation(),description=WEBSITE['description'])
-    page('/google-ads/','Google Advertising Services in Siliguri',service('/google-ads/','Google Ads'))
+    page('/google-ads/','Google Ads Management for Small Businesses',service('/google-ads/','Google Ads'))
     page('/meta-ads/','Meta Ads Services',service('/meta-ads/','Meta Ads'))
     page('/blog/','Projects and Practical Works',projects())
     page('/contact/','Let’s talk about your marketing goals',contact())
@@ -275,35 +284,63 @@ def build():
     body='<div class="wrap not-found"><p class="big404" aria-hidden="true">404</p><h1>This page took a wrong turn.</h1><p>The page you’re looking for isn’t here. Let’s get you back to the work, the services, or a conversation.</p><div class="button-row">'+button('Back to home','/','btn-primary')+button('Get in touch','/contact/','btn-outline')+'</div></div>'
     page('/404/','Page not found',body,noindex=True)
     (OUT/'404.html').write_text(PAGES['/404/'])
-    (OUT/'robots.txt').write_text('User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://digitaltalha.com/sitemap.xml\n')
-    (OUT/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join('<url><loc>'+DOMAIN+p+'</loc></url>' for p in PAGES if p!='/404/')+'</urlset>')
-    (OUT/'.htaccess').write_text('''Options -Indexes
+    (OUT/'robots.txt').write_text('User-agent: *\nAllow: /\nDisallow: /api/\n' + ('' if STAGING else 'Sitemap: https://digitaltalha.com/sitemap.xml\n'))
+    indexable=[] if STAGING else [p for p in PAGES if not SEO[p].get('noindex')]
+    (OUT/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join('  <url><loc>'+DOMAIN+p+'</loc></url>\n' for p in indexable)+'</urlset>\n')
+    (OUT/'.htaccess').write_text(r'''Options -Indexes
 DirectoryIndex index.html
 ErrorDocument 404 /404.html
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteRule ^about-us/?$ /about/ [R=301,L]
-RewriteRule ^contact-us/?$ /contact/ [R=301,L]
-RewriteRule ^service/?$ /services/ [R=301,L]
-RewriteRule ^projects/?$ /blog/ [R=301,L]
+# Keep WordPress-era routes working, including direct index.html requests.
+RewriteRule ^about-us(?:/index\.html)?/?$ /about/ [R=301,L]
+RewriteRule ^contact-us(?:/index\.html)?/?$ /contact/ [R=301,L]
+RewriteRule ^service(?:/index\.html)?/?$ /services/ [R=301,L]
+RewriteRule ^projects(?:/index\.html)?/?$ /blog/ [R=301,L]
+# Redirect explicit index.html URLs, never internal DirectoryIndex lookups.
+RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html(?:[?\s]) [NC]
+RewriteRule ^(.*)index\.html$ /$1 [R=301,L]
+# The production canonical is HTTPS without www. Local/staging hosts are exempt.
+RewriteCond %{HTTP_HOST} ^www\.digitaltalha\.com$ [NC]
+RewriteRule ^ https://digitaltalha.com%{REQUEST_URI} [R=301,L]
+RewriteCond %{HTTP_HOST} ^digitaltalha\.com$ [NC]
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !^https$ [NC]
+RewriteRule ^ https://digitaltalha.com%{REQUEST_URI} [R=301,L]
+# Existing directories have a single trailing-slash URL; files and 404s are exempt.
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.+[^/])$ /$1/ [R=301,L]
 </IfModule>
 <IfModule mod_headers.c>
 Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set X-Frame-Options "SAMEORIGIN"
 Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+<Files "DigitalTalha-preview.html">
+Header always set X-Robots-Tag "noindex, follow"
+</Files>
+</IfModule>
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json application/xml text/xml image/svg+xml
 </IfModule>
 <IfModule mod_expires.c>
 ExpiresActive On
 ExpiresByType image/webp "access plus 1 month"
 ExpiresByType image/png "access plus 1 month"
+ExpiresByType image/svg+xml "access plus 1 month"
+ExpiresByType image/x-icon "access plus 1 month"
+ExpiresByType image/vnd.microsoft.icon "access plus 1 month"
 ExpiresByType text/css "access plus 1 day"
 ExpiresByType application/javascript "access plus 1 day"
 </IfModule>
 ''')
+    if STAGING:
+        with (OUT/'.htaccess').open('a') as settings:
+            settings.write('\n<IfModule mod_headers.c>\nHeader always set X-Robots-Tag "noindex, follow"\n</IfModule>\n')
     print(f'Built {len(PAGES)} complete pages, 4 legacy routes, assets, sitemap and Hostinger settings → {OUT}')
 
 from motion_pages import install
 install(globals())
 
 if __name__=='__main__':build()
+

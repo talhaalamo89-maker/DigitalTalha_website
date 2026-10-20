@@ -6,6 +6,7 @@
   "scripts": {
     "build": "python3 scripts/build.py && python3 scripts/preview.py",
     "dev": "python3 scripts/serve.py",
-    "check": "python3 scripts/check.py && node scripts/check-interactions.mjs && node scripts/check-motion.mjs"
+    "check": "python3 scripts/check.py && python3 scripts/check-seo.py && node scripts/check-interactions.mjs && node scripts/check-motion.mjs"
   }
 }
+

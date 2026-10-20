@@ -23,6 +23,8 @@ for path in DIST.rglob('index.html'):
     raw=path.read_text()
     if 'http-equiv="refresh"' in raw:continue
     route='/' if path.parent==DIST else '/'+str(path.parent.relative_to(DIST))+'/'
+    raw=re.sub(r'<meta name="robots"[^>]*>', '<meta name="robots" content="noindex, follow">', raw)
+    raw=re.sub(r'<link rel="preload"[^>]*>', '', raw)
     raw=raw.replace('<link rel="stylesheet" href="/assets/site.css">','<style>'+CSS+'</style>')
     raw=raw.replace('<link rel="stylesheet" href="/assets/motion.css">','')
     raw=re.sub(r'<script defer src="/assets/(?:site|motion).js"></script>','',raw)
@@ -33,7 +35,8 @@ for path in DIST.rglob('index.html'):
     PAGES[route]=raw
 
 safe_json=lambda value:json.dumps(value,ensure_ascii=False).replace('</script','<\\/script')
-shell="""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DigitalTalha — Full website preview</title><link rel="icon" type="image/png" sizes="32x32" href="FAVICON_DATA"><style>html,body{margin:0;width:100%;height:100%;background:#f8f7f3}iframe{border:0;width:100%;height:100%;display:block}</style></head><body><iframe id="site" title="DigitalTalha website preview"></iframe><script>const pages=PAGES_JSON;const assets=ASSETS_JSON;const frame=document.getElementById('site');function render(){const route=decodeURIComponent(location.hash.slice(1)||'/');let html=pages[route]||pages['/404/'];for(const [key,value]of Object.entries(assets))html=html.split(key).join(value);frame.srcdoc=html;document.title=(route==='/'?'Home':route.split('/').filter(Boolean).join(' / '))+' | DigitalTalha preview';}window.addEventListener('message',event=>{if(event.source!==frame.contentWindow||!event.data?.digitalTalhaPreview)return;const route=event.data.path;if(!route.startsWith('/'))return;if(location.hash.slice(1)===route)render();else location.hash=route;});window.addEventListener('hashchange',render);render();</script></body></html>"""
+shell="""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DigitalTalha — Full website preview</title><meta name="robots" content="noindex, follow"><link rel="icon" type="image/png" sizes="32x32" href="FAVICON_DATA"><style>html,body{margin:0;width:100%;height:100%;background:#f8f7f3}iframe{border:0;width:100%;height:100%;display:block}</style></head><body><iframe id="site" title="DigitalTalha website preview"></iframe><script>const pages=PAGES_JSON;const assets=ASSETS_JSON;const frame=document.getElementById('site');function render(){const route=decodeURIComponent(location.hash.slice(1)||'/');let html=pages[route]||pages['/404/'];for(const [key,value]of Object.entries(assets))html=html.split(key).join(value);frame.srcdoc=html;document.title=(route==='/'?'Home':route.split('/').filter(Boolean).join(' / '))+' | DigitalTalha preview';}window.addEventListener('message',event=>{if(event.source!==frame.contentWindow||!event.data?.digitalTalhaPreview)return;const route=event.data.path;if(!route.startsWith('/'))return;if(location.hash.slice(1)===route)render();else location.hash=route;});window.addEventListener('hashchange',render);render();</script></body></html>"""
 shell=shell.replace('PAGES_JSON',safe_json(PAGES)).replace('ASSETS_JSON',safe_json(ASSETS)).replace('FAVICON_DATA',FAVICON)
 (ROOT/'DigitalTalha-preview.html').write_text(shell)
 print(f'Created self-contained preview: {len(PAGES)} pages, {len(ASSETS)} shared assets, {len(shell):,} characters.')
+

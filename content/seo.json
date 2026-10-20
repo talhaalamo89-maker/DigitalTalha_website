@@ -1,0 +1,71 @@
+{
+  "/": {
+    "title": "Freelance Digital Marketer in India",
+    "description": "Work with Talha Alam on Google Ads, Meta Ads and business websites. Practical digital marketing for small businesses in India, with direct communication.",
+    "label": "Home"
+  },
+  "/about/": {
+    "title": "Talha Alam | Freelance Digital Marketer",
+    "description": "Meet Talha Alam, the independent digital marketer behind DigitalTalha. Explore his approach to Google Ads, Meta Ads and websites for small businesses.",
+    "label": "About Talha Alam",
+    "type": "AboutPage"
+  },
+  "/services/": {
+    "title": "Digital Marketing & Website Services",
+    "description": "Explore Google Ads management, Facebook and Instagram advertising, and website creation. Work directly with Talha Alam to choose a service for your business.",
+    "label": "Services",
+    "type": "CollectionPage"
+  },
+  "/google-ads/": {
+    "title": "Google Ads Management for Small Businesses",
+    "description": "Google Ads management for small businesses in India. Get help with keyword research, search campaigns, ad copy, conversion tracking and ongoing improvement.",
+    "label": "Google Ads",
+    "service": "Google Ads campaign management"
+  },
+  "/meta-ads/": {
+    "title": "Meta Ads Management | Facebook & Instagram Ads",
+    "description": "Facebook and Instagram ad management for small businesses in India. Get help with audience research, creative testing, lead generation and conversion tracking.",
+    "label": "Meta Ads",
+    "service": "Facebook and Instagram advertising management"
+  },
+  "/website-creation/": {
+    "title": "Website Design & Development for Small Businesses",
+    "description": "Business websites, landing pages and portfolios for small businesses in India. Get mobile-friendly layouts, clear service pages, contact forms and source handover.",
+    "label": "Website Creation",
+    "service": "Business website design and development"
+  },
+  "/blog/": {
+    "title": "Digital Marketing Projects & Practical Guides",
+    "description": "Explore Talha Alam's practical digital marketing work, starting with a documented Meta lead-generation practice campaign, from research and tracking to setup.",
+    "label": "Projects",
+    "type": "CollectionPage"
+  },
+  "/contact/": {
+    "title": "Contact Talha Alam | Ads & Website Enquiries",
+    "description": "Discuss your Google Ads, Meta Ads or website project with Talha Alam. Send an enquiry, email directly or start a WhatsApp conversation about your business.",
+    "label": "Contact",
+    "type": "ContactPage"
+  },
+  "/privacy-policy/": {
+    "title": "Privacy Policy",
+    "description": "Read DigitalTalha's privacy policy to understand how enquiry details, personal information and website data are handled, and how to contact Talha Alam.",
+    "label": "Privacy Policy"
+  },
+  "/terms-conditions/": {
+    "title": "Terms & Conditions",
+    "description": "Read the terms and conditions for using DigitalTalha's website and services, including project responsibilities, payments, intellectual property and limitations.",
+    "label": "Terms & Conditions"
+  },
+  "/how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization/": {
+    "title": "Meta Lead Generation Campaign: Setup to Optimization",
+    "description": "Follow a documented Meta lead-generation practice project for a hypothetical fitness studio: research, landing page, tracking, audiences, ads and optimization.",
+    "label": "Meta lead campaign",
+    "article": true
+  },
+  "/404/": {
+    "title": "Page Not Found",
+    "description": "This DigitalTalha page could not be found. Explore digital marketing services, browse practical projects or contact Talha Alam about your business.",
+    "label": "Page not found",
+    "noindex": true
+  }
+}

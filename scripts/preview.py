@@ -4,8 +4,8 @@ import base64,json,mimetypes,re
 
 ROOT=Path(__file__).resolve().parents[1]
 DIST=ROOT/'dist'
-CSS='\n'.join((ROOT/'assets'/f).read_text() for f in ['site.css','motion.css'])
-JS='\n'.join((ROOT/'assets'/f).read_text() for f in ['site.js','motion.js'])
+CSS=(ROOT/'assets/site.css').read_text()
+JS=(ROOT/'assets/site.js').read_text()
 FAVICON='data:image/png;base64,'+base64.b64encode((ROOT/'assets/favicon-32.png').read_bytes()).decode()
 PAGES={};ASSETS={};TOKENS={}
 
@@ -39,4 +39,5 @@ shell="""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="
 shell=shell.replace('PAGES_JSON',safe_json(PAGES)).replace('ASSETS_JSON',safe_json(ASSETS)).replace('FAVICON_DATA',FAVICON)
 (ROOT/'DigitalTalha-preview.html').write_text(shell)
 print(f'Created self-contained preview: {len(PAGES)} pages, {len(ASSETS)} shared assets, {len(shell):,} characters.')
+
 

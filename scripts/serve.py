@@ -23,5 +23,8 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b'{"ok":false,"message":"This preview cannot send enquiries. Please use WhatsApp or email below."}')
 
-print('DigitalTalha preview: http://127.0.0.1:4173', flush=True)
-ThreadingHTTPServer(('127.0.0.1',4173), Handler).serve_forever()
+host = '0.0.0.0' if os.environ.get('SITES_MANAGED_LINUX_CONTAINER') == '1' else '127.0.0.1'
+port = int(os.environ.get('PORT', '4173'))
+print(f'DigitalTalha preview: http://{host}:{port}', flush=True)
+ThreadingHTTPServer((host,port), Handler).serve_forever()
+

@@ -1,24 +1,20 @@
-# Verification
+# Verification — 29 October 2026
 
-Completed:
+## Passed
 
-- Built 12 complete content pages, four compatibility routes, custom 404 file, sitemap, local assets and Hostinger configuration.
-- Checked internal links, fragments, asset files, unique IDs, single main headings and form wiring.
-- Checked the complete retained 22-section article. Marketing pages were intentionally condensed under the latest request; original source snapshots and policy text remain available.
-- Checked Website Creation form selection, project-budget wording, backend service acceptance and favicon inclusion.
-- Checked JavaScript syntax and standalone preview script syntax.
-- Interaction checks pass for enquiry success/failure, no false lead events, button recovery, mobile menu Escape handling and project search.
-- New interaction checks pass for service scenes, all goal recommendations and links, process-step switching, saved pause preference, system reduced motion, offscreen scene animation state and background-tab pausing.
-- SEO checks pass for 12 main pages: unique titles/descriptions, canonical URLs, linked structured data, breadcrumbs, image attributes, sitemap membership and noindex previews.
-- A staging noindex build was verified, then the production build was restored.
-- Chrome rendered all 11 indexable pages at desktop (1440 px) and mobile (390 px) widths without horizontal overflow, broken loaded images or JavaScript errors. Desktop homepage and mobile Google Ads screenshots were visually reviewed.
-- Nine real Apache HTTP checks passed for legacy and canonical redirects, query preservation, HTTPS proxy handling and unknown-page HTTP 404 responses.
+- Production build: 13 complete pages, four legacy aliases and the root 404 document, for 18 HTML files in total.
+- Local links, asset targets, fragment targets, unique IDs, one H1 per page and ordered heading levels.
+- Complete retained campaign article text. Legal content remains sourced from the original retained snapshots.
+- Metadata, canonical URLs, linked JSON-LD, breadcrumb agreement, image alt/dimensions, sitemap membership and preview noindex on all 13 primary pages. Production sitemap contains 12 indexable URLs.
+- Four static service pages contain their full scope, FAQs, preparation details, related-service links and matching artwork. Images are 1536 × 1024 WebP files, each below 40 KB.
+- Service pages and other pages contain no repeated enquiry form. The single Contact form offers all four services and the backend accepts SEO.
+- The About page contains the recovered journey and training details rather than only a short introduction.
+- Original logo retained, with a dark CSS background behind the white mark.
+- Existing enquiry success/failure, submission recovery, no false lead events, navigation Escape handling and project-search tests pass.
+- Standalone preview and site JavaScript syntax checks pass.
 
-Pending:
+## Not verified
 
-- PHP runtime verification: PHP CLI is unavailable here.
-- Live Hostinger/CDN behavior, Google Search Console ownership/indexing, live rich-result validation and live Core Web Vitals. See `SEO.md` for launch steps.
-- Real email delivery, sender authentication and reply behavior after hosting is connected.
-- Existing analytics IDs, Meta Pixel and consent setup before replacing any live campaign destinations.
+Browser appearance, responsive overflow, actual browser interaction, live performance, PHP execution and inbox delivery remain unverified. The managed browser preview returned a connection failure, and observing its error page was blocked by browser policy. No alternate browser-control path was used.
 
-This repository contains the complete source and generated hosting files. The live WordPress site has not been changed, and no hosting deployment has been performed.
+The preview was stopped after checking. Production deployment remains separate from this validated repository update. The downloadable archive contains the updated source and generated hosting files; it does not automatically synchronise a separate local checkout.

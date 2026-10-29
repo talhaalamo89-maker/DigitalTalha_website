@@ -31,7 +31,7 @@ def check(items): return '<ul class="check-list">'+''.join(f'<li>{esc(x)}</li>' 
 def platform(name):
     if name=='Website Creation':return '<span class="platform-icon web" aria-hidden="true">&lt;/&gt;</span>'
     return '<span class="platform-icon '+('google' if name=='Google Ads' else 'meta')+'" aria-hidden="true">'+('G' if name=='Google Ads' else '∞')+'</span>'
-def brand(): return '<a class="brand" href="/" aria-label="DigitalTalha home"><img src="/assets/logo-mark.png" width="40" height="38" alt=""><span>DigitalTalha<span class="brand-dot">.</span></span></a>'
+def brand(): return '<a class="brand" href="/" aria-label="DigitalTalha home"><span class="brand-mark"><img src="/assets/logo-mark.png" width="490" height="355" alt=""></span><span>DigitalTalha<span class="brand-dot">.</span></span></a>'
 
 STAR='<svg viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="m50 0 7 30L79 7l-9 31 30-7-24 20 24 17-31-5 9 30-23-22-6 29-8-30-22 23 9-31L0 69l24-19L0 32l31 6-9-30 22 22z"/></svg>'
 ICON='<svg class="mini-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 25V15m11 10V7m11 18V11M2 28h28"/><path d="m4 10 10-7 9 3 6-4"/></svg>'
@@ -41,17 +41,17 @@ def portrait():
 
 def header(current):
     nav=[('Home','/'),('About','/about/'),('Services','/services/'),('Projects','/blog/'),('Contact','/contact/')]
-    active='/services/' if current in ['/google-ads/','/meta-ads/','/website-creation/'] else '/blog/' if current=='/'+ARTICLE+'/' else current
+    active='/services/' if current in ['/google-ads/','/meta-ads/','/website-creation/','/seo/'] else '/blog/' if current=='/'+ARTICLE+'/' else current
     links=''.join(f'<a href="{u}"'+(' aria-current="page"' if active==u else '')+f'>{s}</a>' for s,u in nav)
     return f'''<a class="skip" href="#content">Skip to content</a><header class="site-header"><div class="wrap header-inner">{brand()}<nav class="primary-nav" id="primary-nav" aria-label="Main navigation">{links}</nav><div class="header-cta">{button("Let’s talk",'/contact/')}</div><button class="menu-toggle" data-menu aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span></button></div></header>'''
 
 def footer():
-    return f'''<footer class="footer"><div class="wrap"><div class="footer-top"><h2>Have a business you want<br>to grow? <span class="accent">Let’s talk.</span></h2><a href="/contact/" class="circle-link" aria-label="Talk about your business">↗</a></div><div class="footer-grid"><div>{brand()}<p>Performance marketing that drives more leads, sales, and measurable growth.</p><div class="socials"><a href="https://www.instagram.com/_digitaltalha_/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="https://www.linkedin.com/in/talha-alam-798st0/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.facebook.com/profile.php?id=61572897474852" target="_blank" rel="noopener noreferrer">Facebook ↗</a></div></div><div><h3>Explore</h3><ul><li><a href="/">Home</a></li><li><a href="/about/">About</a></li><li><a href="/blog/">Projects &amp; blog</a></li><li><a href="/contact/">Contact</a></li></ul></div><div><h3>Services</h3><ul><li><a href="/services/">All services</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/meta-ads/">Meta Ads</a></li><li><a href="/website-creation/">Website Creation</a></li><li><a href="/contact/">Free consultation</a></li></ul></div><div><h3>Let’s talk growth</h3><a class="footer-email" href="mailto:{EMAIL}">{EMAIL}</a><ul><li><a href="{WA}">Chat on WhatsApp ↗</a></li><li><a href="/privacy-policy/">Privacy Policy</a></li><li><a href="/terms-conditions/">Terms &amp; Conditions</a></li></ul></div></div><div class="footer-bottom"><span>© 2026 DigitalTalha. All rights reserved.</span><span>Independent. Intentional. Always learning.</span><button data-back-top aria-label="Back to top">Back to top ↑</button></div><div class="footer-word" aria-hidden="true">DIGITALTALHA</div></div></footer>'''
+    return f'''<footer class="footer"><div class="wrap"><div class="footer-grid"><div>{brand()}<p>Performance marketing that drives more leads, sales, and measurable growth.</p><div class="socials"><a href="https://www.instagram.com/_digitaltalha_/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="https://www.linkedin.com/in/talha-alam-798st0/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.facebook.com/profile.php?id=61572897474852" target="_blank" rel="noopener noreferrer">Facebook ↗</a></div></div><div><h2>Explore</h2><ul><li><a href="/">Home</a></li><li><a href="/about/">About</a></li><li><a href="/blog/">Projects &amp; blog</a></li><li><a href="/contact/">Contact</a></li></ul></div><div><h2>Services</h2><ul><li><a href="/services/">All services</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/meta-ads/">Meta Ads</a></li><li><a href="/website-creation/">Website Creation</a></li><li><a href="/seo/">SEO</a></li><li><a href="/contact/">Free consultation</a></li></ul></div><div><h2>Let’s talk growth</h2><a class="footer-email" href="mailto:{EMAIL}">{EMAIL}</a><ul><li><a href="{WA}">Chat on WhatsApp ↗</a></li><li><a href="/privacy-policy/">Privacy Policy</a></li><li><a href="/terms-conditions/">Terms &amp; Conditions</a></li></ul></div></div><div class="footer-bottom"><span>© 2026 DigitalTalha. All rights reserved.</span><span>Independent. Intentional. Always learning.</span><button data-back-top aria-label="Back to top">Back to top ↑</button></div><div class="footer-word" aria-hidden="true">DIGITALTALHA</div></div></footer>'''
 
 PAGES={}
 def page(path,title,body,description=None,noindex=False):
     # Metadata is maintained separately so rebuilding cannot reintroduce duplicates.
-    markup=f'''<!doctype html><html lang="en-IN"><head>{seo_head(path, SEO, noindex, STAGING)}</head><body>{header(path)}<div class="motion-control-wrap"><div class="wrap motion-controls"><span>Explore at your pace</span><button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">Pause motion</button></div></div><main id="content">{body}</main>{footer()}</body></html>'''
+    markup=f'''<!doctype html><html lang="en-IN"><head>{seo_head(path, SEO, noindex, STAGING)}</head><body>{header(path)}<main id="content">{body}</main>{footer()}</body></html>'''
     PAGES[path]=markup
     destination=OUT/('index.html' if path=='/' else path.strip('/')+'/index.html')
     destination.parent.mkdir(parents=True,exist_ok=True); destination.write_text(markup)
@@ -79,7 +79,7 @@ def project_card():
     return f'''<article class="project-feature" data-project><a class="project-art" href="/{ARTICLE}/" aria-label="Read Meta Lead Campaign — From Start to Finish"><div class="project-window"><div class="window-bar"><i></i><i></i><i></i></div><img src="/assets/meta-campaign.webp" width="1200" height="677" alt="UrbanFit Meta lead campaign setup in Ads Manager, showing a campaign in draft" loading="lazy"></div></a><div class="project-info"><span class="tag">PRACTICE PROJECT · META ADS</span><h3><a href="/{ARTICLE}/">Meta Lead Campaign — From Start to Finish</a></h3><p>A practical beginner-friendly project. A hypothetical brand, a complete lead-generation campaign, and the thinking behind every step.</p>{link('Explore the project','/'+ARTICLE+'/')}</div></article>'''
 
 def form(service='general',compact=False):
-    service_options=['Google Ads','Meta Ads','Website Creation','Not sure yet']
+    service_options=['Google Ads','Meta Ads','Website Creation','SEO','Not sure yet']
     opts='<option value=""'+(' selected' if service=='general' else '')+' disabled>Choose one</option>'+''.join(f'<option'+(' selected' if service==v else '')+f'>{v}</option>' for v in service_options)
     name_label='Name' if compact else 'Full Name'
     extra='' if compact else '<div class="field full"><label for="website">Business Website <span>(optional)</span></label><input id="website" name="website" type="url" maxlength="250" placeholder="https://yourwebsite.com" autocomplete="url"></div>'
@@ -214,7 +214,7 @@ def slugify(s): return re.sub(r'[^a-z0-9]+','-',s.lower()).strip('-')
 
 def article_content(path,start,end):
     """Convert readable source content without changing its wording."""
-    output=[];in_list=None;seen_ids={}
+    output=[];in_list=None;seen_ids={};heading_levels=[]
     for n,raw in SOURCE[DOMAIN+path]['lines']:
         if not start<=n<=end: continue
         t=raw.strip()
@@ -230,7 +230,10 @@ def article_content(path,start,end):
             output.append('<li>'+esc(val)+'</li>');continue
         match=re.match(r'^(#{1,6})\s+(.*)',t)
         if match:
-            level=2 if len(match[1])==1 else 3 if len(match[1])==2 else 4
+            source_level=len(match[1])
+            while heading_levels and heading_levels[-1]>=source_level:heading_levels.pop()
+            level=min(2+len(heading_levels),6)
+            heading_levels.append(source_level)
             if path in ['/privacy-policy/','/terms-conditions/']:level=2
             base_id=slugify(match[2]);seen_ids[base_id]=seen_ids.get(base_id,0)+1
             heading_id=base_id if seen_ids[base_id]==1 else base_id+'-'+str(seen_ids[base_id])
@@ -264,7 +267,9 @@ def legal(path,title,end):
 def build():
     PAGES.clear()
     OUT.mkdir(exist_ok=True)
-    shutil.copytree(ROOT/'assets',OUT/'assets',dirs_exist_ok=True)
+    shutil.copytree(ROOT/'assets',OUT/'assets',dirs_exist_ok=True,ignore=shutil.ignore_patterns('motion.css','motion.js'))
+    for name in ['motion.css','motion.js']:
+        (OUT/'assets'/name).unlink(missing_ok=True)
     shutil.copy(ROOT/'assets/favicon.ico',OUT/'favicon.ico')
     if (ROOT/'server').exists():shutil.copytree(ROOT/'server',OUT/'api',dirs_exist_ok=True)
     page('/','Practical digital marketing help for small businesses',home())
@@ -273,6 +278,7 @@ def build():
     page(WEBSITE['route'],WEBSITE['title'],website_creation(),description=WEBSITE['description'])
     page('/google-ads/','Google Ads Management for Small Businesses',service('/google-ads/','Google Ads'))
     page('/meta-ads/','Meta Ads Services',service('/meta-ads/','Meta Ads'))
+    page('/seo/','SEO Services for Small Businesses',seo_service())
     page('/blog/','Projects and Practical Works',projects())
     page('/contact/','Let’s talk about your marketing goals',contact())
     page('/privacy-policy/','Privacy Policy',legal('/privacy-policy/','Privacy Policy',63))
@@ -339,8 +345,9 @@ ExpiresByType application/javascript "access plus 1 day"
             settings.write('\n<IfModule mod_headers.c>\nHeader always set X-Robots-Tag "noindex, follow"\n</IfModule>\n')
     print(f'Built {len(PAGES)} complete pages, 4 legacy routes, assets, sitemap and Hostinger settings → {OUT}')
 
-from motion_pages import install
+from classic_pages import install
 install(globals())
 
 if __name__=='__main__':build()
+
 

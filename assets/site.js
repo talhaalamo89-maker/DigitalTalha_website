@@ -16,6 +16,7 @@
     const submit=form.querySelector('[type="submit"]');
     form.addEventListener('submit', async event => {
       event.preventDefault(); if(!form.reportValidity()) return;
+      const selectedService=form.querySelector('[name="service"]')?.value || form.dataset.service || 'general';
       submit.disabled=true; submit.textContent='Sending…'; status.textContent=''; status.classList.remove('error');
       try {
         const response=await fetch('/api/enquiry.php', {method:'POST',body:new FormData(form),headers:{Accept:'application/json'}});
@@ -25,7 +26,7 @@
         if(!response.ok || !data.ok) throw new Error(data.message||'Your enquiry could not be sent. Please try WhatsApp or email.');
         status.textContent='Enquiry sent successfully. Thanks for reaching out. I’ll review your details and get back to you.';
         form.reset();
-        window.dataLayer=window.dataLayer||[]; window.dataLayer.push({event:'generate_lead',form_id:form.id,service:form.dataset.service||'general'});
+        window.dataLayer=window.dataLayer||[]; window.dataLayer.push({event:'generate_lead',form_id:form.id,service:selectedService});
       } catch(error) { status.classList.add('error'); status.textContent=error.message || 'Could not send. Please use WhatsApp or email.'; }
       finally { submit.disabled=false; submit.textContent=submit.dataset.label; }
     });
@@ -36,3 +37,4 @@
     document.querySelectorAll('[data-reveal]').forEach(el => reveal.observe(el));
   }
 })();
+

@@ -1,103 +1,64 @@
-# DigitalTalha website
+# DigitalTalha — classic website
 
-A portable redesign of digitaltalha.com, built around shorter copy, original character illustrations, visual service journeys and useful interactions. Colours: orange #EB5729, warm white and black. Poppins has a system-font fallback.
+Updated 29 October 2026. A minimal, content-led website for Talha Alam, with the existing orange, warm-white and black palette, Poppins typography and normal scrolling.
 
-## Review the website
+## Review
 
-Open `DigitalTalha-preview.html` in a browser. This self-contained file contains all pages and images, including the favicon. Enquiries are intentionally disabled in the preview; direct WhatsApp and email links remain available. Reopen the updated file to see the latest version.
+Open `DigitalTalha-preview.html` in a browser. It includes all 13 content pages and shared images in one file. Internal navigation works; enquiries are disabled in this preview. The production website files are in `dist/`.
 
-For an HTTP preview, run from this folder:
+The current workspace is a recovered copy of the existing project. Its base source was recovered from `talhaalamo89-maker/DigitalTalha_website` and the retained project archive, then updated to the latest brief. It does not automatically update a separate Mac folder. The updated source and generated hosting files are maintained in the GitHub repository. Production deployment remains a separate step. A separate local clone must be pulled to receive repository changes.
 
-```sh
-python3 scripts/build.py
-python3 scripts/preview.py
-python3 scripts/serve.py
-```
+## What changed
 
-Then open http://127.0.0.1:4173. The preview server never serves PHP source or sends mail. Desktop and mobile pages have been checked in Chrome; Apache redirects and genuine 404 responses have also been verified locally.
+- The original logo sits on a dark badge so its white details remain visible in the light header and dark footer.
+- Four services: Google Ads, Meta Ads, Website Creation and SEO. Each has a dedicated static page, an original service illustration, useful scope, fit, deliverables, preparation notes and FAQs.
+- Service images are WebP, approximately 26–37 KB each. The original generated images are retained separately from the website deliverable; the web versions are in `assets/`.
+- About content follows Talha’s supplied public About page: Class 12 curiosity, marketing reading, the UT Digital Media course, BBA studies, hands-on practice and direct working style. The outdated two-service framing was revised without inventing qualifications, results or testimonials.
+- Enquiry forms appear only on `/contact/`. Header, footer and service contact links lead there. SEO is included in the form and accepted by the PHP handler.
+- Existing page addresses remain unchanged. New SEO page: `/seo/`. All pages are emitted as static HTML directories. Page content and service links are available in the initial HTML.
+- Unique metadata, canonical URLs, service-specific social images, linked structured data, image alternatives, breadcrumbs, sitemap and legacy redirects are included.
 
-## What is included
+## Source
 
-- Home, About, Services, Google Ads, Meta Ads, Website Creation, Projects, Contact, Privacy Policy, Terms and the full campaign article, plus a custom 404 page.
-- Distinct search analyst, social creative and website builder illustrations, each with its own subtle motion.
-- Selectable service journeys, a goal-based service picker and clickable process steps.
-- Scope and FAQs that open when needed, rather than long default page sections.
-- A sticky Pause motion control, saved motion preference, system reduced-motion support, and animation pausing when scenes leave the viewport or the page is in the background.
-- Locally bundled brand assets and artwork. Only the optional Google Font needs an external visual resource.
-- PHP enquiry handling, form validation, spam controls, error feedback and a successful-enquiry data-layer event.
+| File | Purpose |
+| --- | --- |
+| `content/services.json` | Four service descriptions, scope, FAQs and artwork mapping |
+| `scripts/classic_pages.py` | Current page layouts and About content |
+| `scripts/build.py` | Header, footer, forms, article, legal content and static routes |
+| `content/seo.json` and `scripts/seo.py` | Search metadata and structured data |
+| `assets/site.css` | Current responsive layout and brand styling |
+| `assets/site.js` | Menu, search, FAQ and enquiry behavior |
+| `server/enquiry.php` | Production enquiry validation and mail handling |
 
-Original source snapshots remain in `content/original-pages.json`. Marketing copy is intentionally condensed under the latest brief; the original public routes, complete 22-section article and policy text are retained. No client results, testimonials, revenue figures or turnaround guarantees were invented. Character artwork is an illustration of the services; DigitalTalha remains a solo freelance business.
+Earlier motion sources remain as reference. They are excluded from delivery, and the active layout does not use animation libraries.
 
-## Edit and rebuild
+## Build and check
 
-Requires Python 3.10+ and Node.js for interaction checks. No package installation is needed.
-
-- `scripts/motion_pages.py`: active visual page layouts and concise marketing copy.
-- `scripts/build.py`: shared header, footer, forms, SEO, article, policies and route generation.
-- `content/seo.json`: unique search titles, descriptions, page labels and service definitions.
-- `scripts/seo.py`: canonical tags, social previews, image priorities and linked structured data.
-- `assets/motion.css` and `assets/motion.js`: illustrations, motion, selectors and controls.
-- `assets/site.css` and `assets/site.js`: shared styles, navigation, search and form submission.
-- `content/website-service.json`: full Website Creation scope and FAQs.
-- `server/enquiry.php`: server-side enquiry validation and mail transport.
+Requires Python 3.10+ and Node.js; no package installation is needed.
 
 ```sh
 npm run build
 npm run check
+npm run dev
 ```
 
-The build generates `dist/` for hosting and refreshes `DigitalTalha-preview.html`. The preview stores each image only once to keep the file small. It does not use a third-party animation library.
+The local preview normally uses `http://127.0.0.1:4173`. Managed preview environments bind to the container interface and support `PORT`. This is preview configuration only.
 
-## SEO and staging
+Checks pass for 18 HTML files and 13 primary pages, including links, fragments, images, headings, form wiring, retained article text, metadata, schema, sitemap, service content and interaction behavior. The standalone preview also passes JavaScript syntax validation.
 
-Production builds use `https://digitaltalha.com/` as the canonical origin. All 11 indexable pages have unique metadata; 404 pages, redirect aliases and the standalone preview are excluded from indexing. The sitemap contains canonical pages only. Structured data connects the website, Talha Alam, individual services, breadcrumbs and the practice article without invented ratings, addresses or publication dates.
+Browser visual review is still pending. The managed preview could not be reached through the browser route in this session. Responsive rules are implemented, but browser appearance, overflow and real browser interaction have not been verified for this version. These checks are not evidence of live rankings or Core Web Vitals.
 
-The character artwork is served as a 297 KB WebP instead of the original 1.52 MB PNG. Above-the-fold artwork is prioritized, while secondary images remain lazy loaded. The original PNG remains available as source artwork. Poppins is loaded directly from the document head with `display=swap`, avoiding a CSS import request chain.
+## Production
 
-For a public test host, generate a noindex build:
+Deploy the contents of `dist/`, including `.htaccess`, to the intended PHP-capable Hostinger document root only after backing up the existing WordPress files and database. Confirm HTTPS, redirects, a true 404, production indexing directives and email delivery before switching traffic.
+
+The canonical origin remains `https://digitaltalha.com/`. Public staging can use:
 
 ```sh
 SITE_NOINDEX=1 npm run build
 python3 scripts/check-seo.py --staging
 ```
 
-This adds noindex metadata and an Apache noindex response header, leaves crawling available so the directives can be read, and emits an empty sitemap. Run `npm run build` without the environment flag before production deployment. The standalone preview always stays noindex. `npm run check` validates production output. See `SEO.md` for scope, validation and launch checks.
+Rebuild without `SITE_NOINDEX` before production deployment.
 
-## Production routes
-
-| Page | URL |
-| --- | --- |
-| Home | `/` |
-| About | `/about/` |
-| All services | `/services/` |
-| Google Ads | `/google-ads/` |
-| Meta Ads | `/meta-ads/` |
-| Website Creation | `/website-creation/` |
-| Projects / blog | `/blog/` |
-| Contact | `/contact/` |
-| Privacy | `/privacy-policy/` |
-| Terms | `/terms-conditions/` |
-| Full article | `/how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization/` |
-
-Legacy `/service/`, `/about-us/`, `/contact-us/` and `/projects/` addresses have Apache 301 redirects and static fallback pages. Other unknown paths use `404.html`. Existing subdomains are outside this migration.
-
-## Hostinger deployment
-
-1. Download both the existing WordPress files and database as a complete backup.
-2. Test the replacement separately while the existing site stays live.
-3. Use a Custom PHP/HTML site with PHP 8.1+.
-4. Upload the **contents** of `dist/` into the domain’s `public_html`, including `.htaccess`. Keep source snapshots and documentation outside the document root.
-5. During the planned switch, remove old WordPress routing/index files that would override the new site, keeping the backup for rollback.
-6. Preserve DNS and email records, confirm HTTPS and www/non-www behavior, and check redirects and 404 responses.
-7. Test desktop/mobile rendering, interactions, pause/reduced motion and real email delivery before launch.
-8. Reconcile existing analytics and consent settings; submit `/sitemap.xml` after launch. Public staging copies need noindex. Production robots/sitemap allow indexing.
-
-The source and generated hosting files are maintained in https://github.com/talhaalamo89-maker/DigitalTalha_website. Hostinger deployment remains a separate step; the live WordPress site has not been replaced.
-
-## Enquiry delivery
-
-`server/enquiry.php` is copied to `dist/api/enquiry.php`. It validates fields, service selection, consent and request origin; rejects the spam honeypot; and rate limits by IP using temporary timestamp files outside the document root. Message content is emailed, not saved in public files.
-
-Recipient: `talhaalamo89@gmail.com`. Sender: `website@digitaltalha.com`. Provision a valid sender and confirm Hostinger mail transport and SPF/DKIM before launch. PHP accepting a message does not prove inbox delivery; send a real test after hosting is connected. If authenticated SMTP is required, keep credentials in server settings, outside the repository and browser code.
-
-Website Creation enquiries use a project budget, while advertising forms use monthly ad budget. A `generate_lead` data-layer event is emitted only after the server accepts the enquiry. Existing GA4/GTM/Meta IDs were not supplied, so no provider IDs or tracking setup were fabricated. PHP runtime and inbox delivery remain unverified in this environment.
+The retained mail recipient is `talhaalamo89@gmail.com`, with sender `website@digitaltalha.com`. Actual inbox delivery and sender authentication require testing on the host. A lead event is sent to the data layer only after a successful backend response, and records the selected service. No analytics IDs were invented.

@@ -34,7 +34,7 @@ $service = field('service', 100);
 $budget = field('budget', 150);
 $message = field('message', 15000);
 if ($name === '' || $business === '' || strlen($message) < 10 || !filter_var($email, FILTER_VALIDATE_EMAIL)) respond(422, false, 'Please enter your name, business, valid email, and a short message.');
-if (!in_array($service, ['Google Ads','Meta Ads','Website Creation','Not sure yet'], true)) respond(422, false, 'Please choose a service.');
+if (!in_array($service, ['Google Ads','Meta Ads','Website Creation','SEO','Not sure yet'], true)) respond(422, false, 'Please choose a service.');
 if (($_POST['consent'] ?? '') !== 'yes') respond(422, false, 'Please agree to the Privacy Policy so I can contact you.');
 if ($phone !== '' && !preg_match('/^[+0-9() .-]{7,25}$/', $phone)) respond(422, false, 'Please check your phone number.');
 if ($website !== '' && (!filter_var($website, FILTER_VALIDATE_URL) || !in_array(strtolower((string)parse_url($website,PHP_URL_SCHEME)),['http','https'],true))) respond(422, false, 'Please enter a valid website address.');
@@ -50,7 +50,7 @@ if ($last > time() - 60) { flock($rateHandle, LOCK_UN); fclose($rateHandle); res
 
 $recipient = 'talhaalamo89@gmail.com';
 $subject = 'DigitalTalha website enquiry: ' . $service;
-$budgetLabel = $service === 'Website Creation' ? 'Project budget' : 'Monthly ad budget';
+$budgetLabel = in_array($service, ['Website Creation','SEO'], true) ? 'Project budget' : 'Monthly ad budget';
 $body = "New website enquiry\n\nName: $name\nBusiness: $business\nEmail: $email\nPhone: $phone\nWebsite: $website\nService: $service\n$budgetLabel: $budget\n\nMessage:\n$message\n\nConsent to contact: Yes\n";
 $headers = ['From' => 'DigitalTalha Website <website@digitaltalha.com>', 'Reply-To' => $email, 'Content-Type' => 'text/plain; charset=UTF-8', 'MIME-Version' => '1.0'];
 if (!function_exists('mail')) { flock($rateHandle, LOCK_UN); fclose($rateHandle); respond(503, false, 'Please contact me directly by WhatsApp or email.'); }
@@ -59,3 +59,4 @@ if ($sent) { rewind($rateHandle); ftruncate($rateHandle, 0); fwrite($rateHandle,
 flock($rateHandle, LOCK_UN); fclose($rateHandle);
 if (!$sent) respond(503, false, 'Your enquiry could not be sent. Please use WhatsApp or email.');
 respond(200, true, 'Your enquiry was accepted for delivery.');
+

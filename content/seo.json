@@ -1,18 +1,18 @@
 {
   "/": {
     "title": "Freelance Digital Marketer in India",
-    "description": "Work with Talha Alam on Google Ads, Meta Ads and business websites. Practical digital marketing for small businesses in India, with direct communication.",
+    "description": "Work with Talha Alam on Google Ads, Meta Ads, SEO and business websites. Practical digital marketing for small businesses in India, with direct communication.",
     "label": "Home"
   },
   "/about/": {
     "title": "Talha Alam | Freelance Digital Marketer",
-    "description": "Meet Talha Alam, the independent digital marketer behind DigitalTalha. Explore his approach to Google Ads, Meta Ads and websites for small businesses.",
+    "description": "Meet Talha Alam, the marketer behind DigitalTalha. Explore his journey, training and approach to Google Ads, Meta Ads, SEO and small business websites.",
     "label": "About Talha Alam",
     "type": "AboutPage"
   },
   "/services/": {
-    "title": "Digital Marketing & Website Services",
-    "description": "Explore Google Ads management, Facebook and Instagram advertising, and website creation. Work directly with Talha Alam to choose a service for your business.",
+    "title": "Google Ads, Meta Ads, SEO & Website Services",
+    "description": "Explore Google Ads, Facebook and Instagram advertising, SEO and website creation. Work directly with Talha Alam to choose the right service for your business.",
     "label": "Services",
     "type": "CollectionPage"
   },
@@ -20,19 +20,25 @@
     "title": "Google Ads Management for Small Businesses",
     "description": "Google Ads management for small businesses in India. Get help with keyword research, search campaigns, ad copy, conversion tracking and ongoing improvement.",
     "label": "Google Ads",
-    "service": "Google Ads campaign management"
+    "service": "Google Ads campaign management",
+    "image": "google-ads-service.webp",
+    "image_alt": "Illustration of a sponsored search result, orange target and pointer for Google Ads"
   },
   "/meta-ads/": {
     "title": "Meta Ads Management | Facebook & Instagram Ads",
     "description": "Facebook and Instagram ad management for small businesses in India. Get help with audience research, creative testing, lead generation and conversion tracking.",
     "label": "Meta Ads",
-    "service": "Facebook and Instagram advertising management"
+    "service": "Facebook and Instagram advertising management",
+    "image": "meta-ads-service.webp",
+    "image_alt": "Illustration of a sponsored social post on a phone with audience, heart and message symbols"
   },
   "/website-creation/": {
     "title": "Website Design & Development for Small Businesses",
     "description": "Business websites, landing pages and portfolios for small businesses in India. Get mobile-friendly layouts, clear service pages, contact forms and source handover.",
     "label": "Website Creation",
-    "service": "Business website design and development"
+    "service": "Business website design and development",
+    "image": "website-creation-service.webp",
+    "image_alt": "Illustration of a business website adapting to a desktop screen and mobile phone"
   },
   "/blog/": {
     "title": "Digital Marketing Projects & Practical Guides",
@@ -42,7 +48,7 @@
   },
   "/contact/": {
     "title": "Contact Talha Alam | Ads & Website Enquiries",
-    "description": "Discuss your Google Ads, Meta Ads or website project with Talha Alam. Send an enquiry, email directly or start a WhatsApp conversation about your business.",
+    "description": "Discuss Google Ads, Meta Ads, SEO or your website project with Talha Alam. Send an enquiry, email directly or start a WhatsApp conversation about your business.",
     "label": "Contact",
     "type": "ContactPage"
   },
@@ -67,5 +73,13 @@
     "description": "This DigitalTalha page could not be found. Explore digital marketing services, browse practical projects or contact Talha Alam about your business.",
     "label": "Page not found",
     "noindex": true
+  },
+  "/seo/": {
+    "title": "SEO Services for Small Businesses in India",
+    "description": "Improve your website with keyword research, on-page SEO, technical checks and useful service content. Work directly with Talha Alam on clear search priorities.",
+    "label": "SEO",
+    "service": "Search engine optimisation services",
+    "image": "seo-service.webp",
+    "image_alt": "Illustration of an orange magnifying glass checking organic search results and a linked webpage"
   }
 }

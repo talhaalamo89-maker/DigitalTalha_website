@@ -1,0 +1,110 @@
+{
+  "search": {
+    "name": "Google Ads", "route": "/google-ads/", "tag": "Meet existing demand", "image": "google-ads-service.webp",
+    "alt": "Illustration of a sponsored search result, orange target and pointer for Google Ads",
+    "description": "Reach people actively looking for your service with focused Google search campaigns.",
+    "chips": ["Search intent", "Clear ads", "Conversion tracking"],
+    "headline": "Google Ads management.", "accent": "Reach people searching.",
+    "intro": "Google Ads management for small businesses in India. Connect relevant searches with a useful offer, a clear landing page and a measurable enquiry.",
+    "overview": "A search campaign starts with the reason behind the search. Someone comparing options needs a different message from someone ready to contact a business. I research those needs, organise the campaign around your services, and connect each ad to a relevant next step.",
+    "fit": "A useful fit for service businesses with an offer people already search for, a test budget and someone ready to follow up on enquiries. We review your service area, competition and website before deciding what to advertise.",
+    "includes": [
+      ["Keyword & competitor research", "Identify useful searches, understand intent and review competing offers. Group related keywords around the services you actually provide."],
+      ["Campaign & ad-group setup", "Organise campaigns, locations, schedules and targeting around agreed business goals. Separate services where the message or budget needs to differ."],
+      ["Ad copy & landing-page review", "Write clear search ads and check that the destination answers the search. Review the offer, mobile layout and route to a call or enquiry."],
+      ["Conversion tracking", "Plan and check meaningful actions such as completed enquiries and calls using the available website, GA4 and Google Tag Manager setup."],
+      ["Search-term & budget reviews", "Review actual searches, add relevant negative keywords and examine spend against the actions being measured. Changes follow the evidence available."],
+      ["Reporting & next steps", "Explain spend, tracked enquiries, cost per enquiry and the changes made. Discuss lead quality with you so reporting goes beyond click counts."]
+    ],
+    "receive": ["An agreed campaign plan and service priorities", "Campaign structure, keyword groups and ad copy", "A tracking checklist and reporting approach"],
+    "prepare": "Bring your website, target locations, priority services and an idea of your monthly ad budget. Access to your advertising and analytics accounts may be needed. If a landing page needs work, we agree that scope separately.",
+    "note": "Google advertising spend and the management fee are separate. Your offer, competition, landing page and follow-up all affect results; a fixed number of leads or sales is not promised.",
+    "faqs": [
+      ["How much should I spend on Google Ads?", "The right test budget depends on your services, location, competition and what an enquiry is worth to your business. We review those factors before agreeing a starting plan; there is no universal minimum that works for everyone."],
+      ["Will I own my Google Ads account?", "Your business should retain ownership of its advertising account. Access, responsibilities and any new account setup are agreed before work begins."],
+      ["Do I need a landing page?", "The destination needs to match the search and explain your offer clearly. An existing service page may be suitable; if it is confusing or hard to use on mobile, I will recommend improvements or a dedicated landing page."],
+      ["How do we judge the campaign?", "We review tracked enquiries and cost alongside your feedback on lead quality. Clicks and impressions help explain activity, but they do not prove that a campaign is bringing useful business."]
+    ]
+  },
+  "social": {
+    "name": "Meta Ads", "route": "/meta-ads/", "tag": "Start the right conversation", "image": "meta-ads-service.webp",
+    "alt": "Illustration of a sponsored social post on a phone with audience, heart and message symbols",
+    "description": "Bring your offer to Facebook and Instagram with clear creative and structured testing.",
+    "chips": ["Audience research", "Creative testing", "Lead quality"],
+    "headline": "Meta Ads management.", "accent": "Facebook & Instagram.",
+    "intro": "Facebook and Instagram advertising for small businesses in India. Build campaigns around the people you want to reach, the problem you solve and a reason to take the next step.",
+    "overview": "People scrolling through Facebook or Instagram may not be looking for your service yet. The creative needs to make the problem and the offer easy to understand. I connect audience research, useful messaging and a clear enquiry route, then use structured tests to learn what deserves further attention.",
+    "fit": "A useful fit when your business has a clear offer, access to relevant images or video, a test budget and a reliable way to respond to leads. We agree the audience, service area and intended action before building the campaign.",
+    "includes": [
+      ["Audience & offer research", "Understand customer needs, questions and objections. Review the offer and competing messages before choosing the campaign angle."],
+      ["Campaign structure", "Plan the objective, ad sets, targeting and enquiry route around your business goal. Decide whether an instant form or website destination fits the situation."],
+      ["Creative direction & ad copy", "Develop messages, hooks and copy for agreed creative assets. The number of concepts, edits and any new photo or video production are defined in the scope."],
+      ["Tracking & event checks", "Review the available Meta Pixel, GA4 and website event setup. Where relevant, assess Conversions API requirements and event deduplication before implementation."],
+      ["Creative & audience tests", "Test useful variables such as messages, visuals and audience choices. Review the available evidence before shifting spend or replacing creative."],
+      ["Lead-quality review", "Connect campaign reporting with your feedback on enquiries. Review cost per lead, creative response and follow-up so cheap leads do not become the only goal."]
+    ],
+    "receive": ["An audience, offer and campaign plan", "Agreed ad copy and creative-testing direction", "A tracking review and clear reporting priorities"],
+    "prepare": "Bring your offer, target area, Facebook Page, Instagram account, available creative assets and monthly advertising budget. We will also discuss who responds to enquiries and what makes a lead useful to your business.",
+    "note": "Meta advertising spend and the management fee are separate. New production, website changes and advanced integrations are included only when agreed. Lead volume, quality and sales cannot be guaranteed.",
+    "faqs": [
+      ["Can you advertise on both Facebook and Instagram?", "Yes. Placement choices depend on the audience, objective and creative available. We review the campaign evidence rather than assuming that one placement will work best for every business."],
+      ["Do I need videos to get started?", "Video can be useful, but it is not the only option. We can discuss suitable image assets, clear copy and an offer that makes sense to your audience. Any new production is scoped before work starts."],
+      ["Will the cheapest lead be the best result?", "Not necessarily. A low cost per lead matters only when the people enquiring are relevant and can be followed up. Your feedback on enquiry quality is part of the review."],
+      ["Is remarketing included?", "We assess whether suitable audiences, permissions and tracking are available. If remarketing is appropriate, its setup and creative requirements are agreed in the campaign scope."]
+    ]
+  },
+  "website": {
+    "name": "Website Creation", "route": "/website-creation/", "tag": "Give your business a home", "image": "website-creation-service.webp",
+    "alt": "Illustration of a business website adapting to a desktop screen and mobile phone",
+    "description": "Explain your services clearly with a mobile-friendly website and straightforward contact options.",
+    "chips": ["Mobile layouts", "Clear services", "Easy contact"],
+    "headline": "Website design.", "accent": "Built for your business.",
+    "intro": "Business websites, landing pages and portfolios for small businesses in India. Clear services, useful content and an easy route from a first visit to an enquiry.",
+    "overview": "A useful website answers the questions a potential customer brings: what you offer, who it is for, what is included and how to get started. I plan the structure around those decisions, then build a clean layout that works on phones as well as larger screens.",
+    "fit": "A useful fit if you need your first business website, a focused campaign landing page, a personal portfolio or a clearer replacement for an existing site. Pages and features are agreed around your offer rather than added just to fill a menu.",
+    "includes": [
+      ["Page & content planning", "Agree your pages, service information and the action visitors should take. Identify missing business details, photos and copy before building."],
+      ["Responsive design", "Create readable layouts, clear navigation and contact options for mobile and desktop. Keep the presentation consistent with your brand."],
+      ["Dedicated service pages", "Give important services their own descriptive, static URLs. Organise headings, scope, FAQs and internal links so visitors can understand each offer."],
+      ["SEO foundations", "Set page-specific titles, descriptions, canonical URLs, image alternatives and a sitemap. Review crawlability and structure as part of the build."],
+      ["Forms & contact paths", "Add the agreed enquiry form, email and WhatsApp links. Test validation and feedback; production email delivery also needs checking on your host."],
+      ["Review & handover", "Review the agreed pages and functionality, provide source files and discuss hosting, access and future updates before handover."]
+    ],
+    "receive": ["The agreed pages and responsive design", "Website source files and configured contact paths", "A launch checklist and practical handover notes"],
+    "prepare": "Bring your business details, logo, services, contact information and any photos or copy you can use. Share your current website if you have one, the main action you want visitors to take, and your budget and preferred timeline.",
+    "note": "AI-assisted development. Personally reviewed. Domain, hosting, paid integrations, ecommerce, booking systems and ongoing maintenance are agreed separately unless explicitly included in the quote.",
+    "faqs": [
+      ["Can you redesign my existing website?", "Yes. We first review its content, useful pages and existing URLs. The plan should preserve important information and account for redirects if any address needs to change."],
+      ["Will the website be SEO friendly?", "The build includes technical and on-page foundations such as readable HTML, descriptive pages, metadata and internal links. Rankings still depend on useful content, competition and ongoing work; a build alone cannot guarantee them."],
+      ["Will I receive the source files?", "Source handover is agreed before the project starts. We also clarify hosting access, third-party licenses and what future edits or maintenance would involve."],
+      ["What decides the price and timeline?", "The number of pages, content readiness, design requirements and integrations affect the scope. I review those details before providing a quote or committing to a delivery schedule."]
+    ]
+  },
+  "seo": {
+    "name": "SEO", "route": "/seo/", "tag": "Make your website easier to find", "image": "seo-service.webp",
+    "alt": "Illustration of an orange magnifying glass checking organic search results and a linked webpage",
+    "description": "Improve your website’s content, structure and search foundations around what customers need.",
+    "chips": ["Keyword research", "On-page SEO", "Technical checks"],
+    "headline": "SEO services.", "accent": "A clearer path from search.",
+    "intro": "Search engine optimisation for small business websites in India. Make your pages easier to understand, easier to explore and more useful to the people searching for your services.",
+    "overview": "SEO starts with the questions your customers are trying to answer. I review the website, research relevant searches and connect the right topics to the right pages. The aim is a useful, accessible website with a clear search focus, rather than repeating keywords without helping the visitor.",
+    "fit": "A useful fit for a business with a website, clear services and a willingness to improve its content over time. It can also support a new website build. The starting plan depends on your market, service area, competition and the condition of the existing site.",
+    "includes": [
+      ["Website & search review", "Review the current pages, important services and available Search Console data. Identify missing information, overlap and technical issues that need attention."],
+      ["Keyword research & page mapping", "Explore how customers describe the service and what they need from a result. Map related searches to useful pages instead of creating many near-identical pages."],
+      ["On-page optimisation", "Improve titles, descriptions, headings, introductions and service details. Write naturally, make the offer clear and answer relevant customer questions."],
+      ["Technical SEO checks", "Check indexability, canonical URLs, sitemap coverage, redirects and broken links. Review image loading and obvious mobile or performance issues that affect use."],
+      ["Internal links & content planning", "Connect related services and useful guides with descriptive links. Recommend content that adds real information and supports the questions customers bring."],
+      ["Local relevance & progress review", "Where location matters, review genuine service-area information and relevant local search needs. With the required access, review impressions, clicks and enquiries to decide the next priorities."]
+    ],
+    "receive": ["A prioritised website and search review", "An agreed keyword-to-page plan", "Scoped page updates and a progress-review approach"],
+    "prepare": "Bring your website address, main services, real service locations and business goals. Existing Google Search Console and GA4 access help establish a starting point. We agree whether the work is an initial review, implementation project or ongoing support.",
+    "note": "No first-place ranking, traffic number or fixed result date is promised. Scope and fees are agreed after reviewing the website. SEO and paid advertising serve different needs and can be planned together when appropriate.",
+    "faqs": [
+      ["How is SEO different from Google Ads?", "Google Ads pays for advertising placements and requires an advertising budget. SEO improves the website and its organic search foundations. The right mix depends on your goals, competition and how quickly you need to test demand."],
+      ["How long does SEO take?", "Changes need time to be discovered and assessed, and outcomes vary with the site and market. We agree review points and measure the available evidence instead of promising a fixed ranking date."],
+      ["Can you help a local service business?", "Yes. The plan can focus on the real places you serve and the services customers need there. Location information should be accurate and useful; copying one page across many city names is not the approach."],
+      ["Do I need to rebuild my website for SEO?", "Often the starting work is improving existing content, headings, links and technical issues. A rebuild is considered only when the current website creates limits that smaller changes cannot reasonably resolve."]
+    ]
+  }
+}

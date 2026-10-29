@@ -114,15 +114,15 @@ def head(path, metadata, noindex=False, staging=False):
     url = DOMAIN + path
     robots = 'noindex, follow' if noindex or config.get('noindex') or staging else 'index, follow, max-image-preview:large'
     article = config.get('article')
-    image = 'meta-campaign.webp' if article else 'service-characters.webp'
-    width, height = (1200, 677) if article else (1881, 836)
-    image_alt = 'UrbanFit Meta lead-generation practice campaign in Ads Manager' if article else 'Illustrations of Google Ads, Meta Ads and website creation services'
+    image = config.get('image') or ('meta-campaign.webp' if article else 'service-characters.webp')
+    width, height = (1536, 1024) if config.get('image') else ((1200, 677) if article else (1881, 836))
+    image_alt = config.get('image_alt') or ('UrbanFit Meta lead-generation practice campaign in Ads Manager' if article else 'Illustrations of Google Ads, Meta Ads and website creation services')
     e = lambda value: escape(str(value), quote=True)
     preload = ''
-    if path == '/about/':
+    if path in ['/', '/about/']:
         preload = '<link rel="preload" as="image" href="/assets/talha-portrait.webp" fetchpriority="high">'
-    elif path not in [ARTICLE, '/privacy-policy/', '/terms-conditions/', '/404/']:
-        preload = '<link rel="preload" as="image" href="/assets/service-characters.webp" fetchpriority="high">'
+    elif config.get('image'):
+        preload = f'<link rel="preload" as="image" href="/assets/{e(image)}" fetchpriority="high">'
     return f'''<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f8f7f3"><title>{e(title)}</title>
 <meta name="description" content="{e(description)}"><meta name="robots" content="{robots}">
@@ -137,7 +137,8 @@ def head(path, metadata, noindex=False, staging=False):
 <link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/favicon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>{preload}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap">
-<link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/motion.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="/assets/site.css">
 <script type="application/ld+json">{structured_data(path, metadata)}</script>
-<script defer src="/assets/site.js"></script><script defer src="/assets/motion.js"></script>'''
+<script defer src="/assets/site.js"></script>'''
+

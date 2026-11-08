@@ -15,6 +15,20 @@ EMAIL='talhaalamo89@gmail.com'
 SEO=json.loads((ROOT/'content/seo.json').read_text())
 STAGING=os.environ.get('SITE_NOINDEX', '').lower() in ['1', 'true', 'yes']
 
+def tracking():
+    if STAGING:
+        return '', ''
+    # Retain the container verified on WordPress; local previews must not send events.
+    head = """<!-- migration-tracking:start -->
+<script>(function(w,d,s,l,i){if(!/^(www\\.)?digitaltalha\\.com$/.test(w.location.hostname))return;
+w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NMMW3MLB');</script>
+<!-- migration-tracking:end -->"""
+    body = '<!-- migration-tracking:start --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NMMW3MLB" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript><!-- migration-tracking:end -->'
+    return head, body
+
 def text(path,n):
     return dict(SOURCE[DOMAIN+path]['lines']).get(n,'').strip()
 
@@ -51,7 +65,8 @@ def footer():
 PAGES={}
 def page(path,title,body,description=None,noindex=False):
     # Metadata is maintained separately so rebuilding cannot reintroduce duplicates.
-    markup=f'''<!doctype html><html lang="en-IN"><head>{seo_head(path, SEO, noindex, STAGING)}</head><body>{header(path)}<main id="content">{body}</main>{footer()}</body></html>'''
+    tracking_head, tracking_body = tracking()
+    markup=f'''<!doctype html><html lang="en-IN"><head>{seo_head(path, SEO, noindex, STAGING)}{tracking_head}</head><body>{tracking_body}{header(path)}<main id="content">{body}</main>{footer()}</body></html>'''
     PAGES[path]=markup
     destination=OUT/('index.html' if path=='/' else path.strip('/')+'/index.html')
     destination.parent.mkdir(parents=True,exist_ok=True); destination.write_text(markup)
@@ -284,8 +299,8 @@ def build():
     page('/privacy-policy/','Privacy Policy',legal('/privacy-policy/','Privacy Policy',63))
     page('/terms-conditions/','Terms and Conditions',legal('/terms-conditions/','Terms and Conditions',74))
     page('/'+ARTICLE+'/','Meta Lead Campaign — From Start to Finish',article(),description='A complete practical Meta lead-generation project: goal, landing page, tracking, campaign setup, audiences, creative, remarketing, and optimization.')
-    for alias,target in {'/about-us/':'/about/','/contact-us/':'/contact/','/service/':'/services/','/projects/':'/blog/'}.items():
-        folder=OUT/alias.strip('/');folder.mkdir(exist_ok=True)
+    for alias,target in {'/about-us/':'/about/','/contact-us/':'/contact/','/service/':'/services/','/projects/':'/blog/','/resources/':'/blog/','/category/meta-ads/':'/blog/','/category/uncategorized/':'/blog/'}.items():
+        folder=OUT/alias.strip('/');folder.mkdir(parents=True,exist_ok=True)
         (folder/'index.html').write_text(f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url={target}"><meta name="robots" content="noindex"><link rel="canonical" href="{DOMAIN+target}"><title>Continue to DigitalTalha</title></head><body><p>This page has moved. <a href="{target}">Continue to DigitalTalha</a>.</p></body></html>')
     body='<div class="wrap not-found"><p class="big404" aria-hidden="true">404</p><h1>This page took a wrong turn.</h1><p>The page you’re looking for isn’t here. Let’s get you back to the work, the services, or a conversation.</p><div class="button-row">'+button('Back to home','/','btn-primary')+button('Get in touch','/contact/','btn-outline')+'</div></div>'
     page('/404/','Page not found',body,noindex=True)
@@ -294,15 +309,22 @@ def build():
     indexable=[] if STAGING else [p for p in PAGES if not SEO[p].get('noindex')]
     (OUT/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join('  <url><loc>'+DOMAIN+p+'</loc></url>\n' for p in indexable)+'</urlset>\n')
     (OUT/'.htaccess').write_text(r'''Options -Indexes
-DirectoryIndex index.html
+DirectoryIndex index.html index.php
 ErrorDocument 404 /404.html
 <IfModule mod_rewrite.c>
 RewriteEngine On
+# A versioned release is only reachable through the root dispatcher's internal rewrite.
+RewriteCond %{THE_REQUEST} \s/+(?:\.|%2e)digitaltalha-release-[^/?\s]+(?:/|[?\s]) [NC]
+RewriteRule ^ - [F,L]
 # Keep WordPress-era routes working, including direct index.html requests.
 RewriteRule ^about-us(?:/index\.html)?/?$ /about/ [R=301,L]
 RewriteRule ^contact-us(?:/index\.html)?/?$ /contact/ [R=301,L]
 RewriteRule ^service(?:/index\.html)?/?$ /services/ [R=301,L]
 RewriteRule ^projects(?:/index\.html)?/?$ /blog/ [R=301,L]
+RewriteRule ^resources(?:/index\.html)?/?$ /blog/ [R=301,L]
+RewriteRule ^category/(?:meta-ads|uncategorized)(?:/index\.html)?/?$ /blog/ [R=301,L]
+# Preserve sitemap addresses previously advertised by WordPress and Rank Math.
+RewriteRule ^(?:sitemap_index|wp-sitemap|post-sitemap|page-sitemap|category-sitemap)\.xml$ /sitemap.xml [R=301,L]
 # Redirect explicit index.html URLs, never internal DirectoryIndex lookups.
 RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html(?:[?\s]) [NC]
 RewriteRule ^(.*)index\.html$ /$1 [R=301,L]
@@ -343,7 +365,7 @@ ExpiresByType application/javascript "access plus 1 day"
     if STAGING:
         with (OUT/'.htaccess').open('a') as settings:
             settings.write('\n<IfModule mod_headers.c>\nHeader always set X-Robots-Tag "noindex, follow"\n</IfModule>\n')
-    print(f'Built {len(PAGES)} complete pages, 4 legacy routes, assets, sitemap and Hostinger settings → {OUT}')
+    print(f'Built {len(PAGES)} complete pages, 7 legacy routes, assets, sitemap and Hostinger settings → {OUT}')
 
 from classic_pages import install
 install(globals())

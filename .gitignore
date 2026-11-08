@@ -4,3 +4,6 @@ __pycache__/
 .env
 node_modules/
 work/
+deployment/packages/
+backups/
+access/

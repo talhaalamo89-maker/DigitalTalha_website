@@ -1,0 +1,9 @@
+{
+  "domain": "digitaltalha.com",
+  "username": "u848367742",
+  "type": "php",
+  "deployment_strategy": "versioned-release-with-root-dispatcher",
+  "root_overwrite_forbidden": true,
+  "release_directory": ".digitaltalha-release-20261108",
+  "deployment_guide": "deployment/README.md"
+}

@@ -1,13 +1,20 @@
 Options -Indexes
-DirectoryIndex index.html
+DirectoryIndex index.html index.php
 ErrorDocument 404 /404.html
 <IfModule mod_rewrite.c>
 RewriteEngine On
+# A versioned release is only reachable through the root dispatcher's internal rewrite.
+RewriteCond %{THE_REQUEST} \s/+(?:\.|%2e)digitaltalha-release-[^/?\s]+(?:/|[?\s]) [NC]
+RewriteRule ^ - [F,L]
 # Keep WordPress-era routes working, including direct index.html requests.
 RewriteRule ^about-us(?:/index\.html)?/?$ /about/ [R=301,L]
 RewriteRule ^contact-us(?:/index\.html)?/?$ /contact/ [R=301,L]
 RewriteRule ^service(?:/index\.html)?/?$ /services/ [R=301,L]
 RewriteRule ^projects(?:/index\.html)?/?$ /blog/ [R=301,L]
+RewriteRule ^resources(?:/index\.html)?/?$ /blog/ [R=301,L]
+RewriteRule ^category/(?:meta-ads|uncategorized)(?:/index\.html)?/?$ /blog/ [R=301,L]
+# Preserve sitemap addresses previously advertised by WordPress and Rank Math.
+RewriteRule ^(?:sitemap_index|wp-sitemap|post-sitemap|page-sitemap|category-sitemap)\.xml$ /sitemap.xml [R=301,L]
 # Redirect explicit index.html URLs, never internal DirectoryIndex lookups.
 RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html(?:[?\s]) [NC]
 RewriteRule ^(.*)index\.html$ /$1 [R=301,L]

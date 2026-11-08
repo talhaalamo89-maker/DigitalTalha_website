@@ -24,7 +24,7 @@
         if(!type.includes('application/json')) throw new Error('Enquiry delivery is unavailable here. Please use WhatsApp or email below.');
         const data=await response.json();
         if(!response.ok || !data.ok) throw new Error(data.message||'Your enquiry could not be sent. Please try WhatsApp or email.');
-        status.textContent='Enquiry sent successfully. Thanks for reaching out. I’ll review your details and get back to you.';
+        status.textContent='Your enquiry was accepted for delivery. I’ll review your details and get back to you.';
         form.reset();
         window.dataLayer=window.dataLayer||[]; window.dataLayer.push({event:'generate_lead',form_id:form.id,service:selectedService});
       } catch(error) { status.classList.add('error'); status.textContent=error.message || 'Could not send. Please use WhatsApp or email.'; }

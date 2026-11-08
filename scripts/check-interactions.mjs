@@ -11,9 +11,10 @@ class Element {
   focus(){this.focused=true;}
 }
 function setup(fetch){
-  const menu=new Element(),nav=new Element(),form=new Element(),status=new Element(),submit=new Element(),search=new Element(),result=new Element(),card=new Element();
+  const menu=new Element(),nav=new Element(),form=new Element(),status=new Element(),submit=new Element(),search=new Element(),result=new Element(),card=new Element(),service=new Element();
+  service.value='SEO';
   card.textContent='Meta Lead Campaign — From Start to Finish';
-  form.id='enquiry';form.dataset.service='Meta Ads';form.querySelector=s=>s==='[role="status"]'?status:submit;form.reportValidity=()=>true;form.reset=()=>{form.resetCalled=true};submit.dataset.label='Send My Enquiry';
+  form.id='enquiry';form.dataset.service='Meta Ads';form.querySelector=s=>s==='[role="status"]'?status:s==='[name="service"]'?service:submit;form.reportValidity=()=>true;form.reset=()=>{service.value='';form.resetCalled=true};submit.dataset.label='Send My Enquiry';
   const nodes={'[data-menu]':menu,'#primary-nav':nav,'[data-project-search]':search,'[data-search-result]':result};
   const document={querySelector:s=>nodes[s]||null,querySelectorAll:s=>s==='[data-enquiry]'?[form]:s==='[data-project]'?[card]:[],addEventListener:(event,fn)=>{document[event]=fn}};
   const window={matchMedia:()=>({matches:false,addEventListener:()=>{}})};
@@ -30,6 +31,7 @@ p.search.value='meta';p.search.events.input();assert.equal(p.card.hidden,false);
 p=setup(async()=>({ok:true,headers:{get:()=> 'application/json'},json:async()=>({ok:true})}));
 await p.form.events.submit({preventDefault(){}});
 assert.equal(p.form.resetCalled,true);assert.equal(p.window.dataLayer[0].event,'generate_lead');assert.equal(p.submit.disabled,false);
+assert.deepEqual(JSON.parse(JSON.stringify(p.window.dataLayer[0])),{event:'generate_lead',form_id:'enquiry',service:'SEO'});
 p=setup(async()=>({ok:true,headers:{get:()=> 'text/html'}}));
 await p.form.events.submit({preventDefault(){}});assert.equal(p.window.dataLayer,undefined);assert.match(p.status.textContent,/unavailable/);
 console.log('PASS: enquiry success/failure paths, no false lead events, submission recovery, navigation Escape handling, and project search.');

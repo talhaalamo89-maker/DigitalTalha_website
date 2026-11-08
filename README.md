@@ -1,12 +1,12 @@
 # DigitalTalha — classic website
 
-Updated 29 October 2026. A minimal, content-led website for Talha Alam, with the existing orange, warm-white and black palette, Poppins typography and normal scrolling.
+Updated 8 November 2026. Live at [digitaltalha.com](https://digitaltalha.com/). A minimal, content-led website for Talha Alam, with the existing orange, warm-white and black palette, Poppins typography and normal scrolling.
 
 ## Review
 
 Open `DigitalTalha-preview.html` in a browser. It includes all 13 content pages and shared images in one file. Internal navigation works; enquiries are disabled in this preview. The production website files are in `dist/`.
 
-The current workspace is a recovered copy of the existing project. Its base source was recovered from `talhaalamo89-maker/DigitalTalha_website` and the retained project archive, then updated to the latest brief. It does not automatically update a separate Mac folder. The updated source and generated hosting files are maintained in the GitHub repository. Production deployment remains a separate step. A separate local clone must be pulled to receive repository changes.
+This repository includes the migration fixes deployed after explicit approval on 8 November 2026, based on commit `92b59181ba898963b5a607823a2003c12d408925`. Source, built files and the production root dispatcher are versioned together. Pushing to GitHub does not deploy to Hostinger; no auto-deploy is configured.
 
 ## What changed
 
@@ -44,13 +44,15 @@ npm run dev
 
 The local preview normally uses `http://127.0.0.1:4173`. Managed preview environments bind to the container interface and support `PORT`. This is preview configuration only.
 
-Checks pass for 18 HTML files and 13 primary pages, including links, fragments, images, headings, form wiring, retained article text, metadata, schema, sitemap, service content and interaction behavior. The standalone preview also passes JavaScript syntax validation.
+Checks pass for 21 HTML files and 13 primary pages, including links, fragments, images, headings, form wiring, retained article text, metadata, schema, sitemap, service content and interaction behavior. The production sitemap contains 12 indexable URLs. The standalone preview also passes JavaScript syntax validation.
 
-Browser visual review is still pending. The managed preview could not be reached through the browser route in this session. Responsive rules are implemented, but browser appearance, overflow and real browser interaction have not been verified for this version. These checks are not evidence of live rankings or Core Web Vitals.
+Representative desktop/mobile browser review passed on staging; the live homepage, mobile navigation and Contact layout were also checked. Hosted staging passed 42 checks, local versioned routing passed 49 checks, and production passed 68 checks plus five preserved application/media URLs. See `VERIFICATION.md` and the migration audit records. These checks do not establish live rankings, Core Web Vitals, inbox delivery or Analytics receipt.
 
 ## Production
 
-Deploy the contents of `dist/`, including `.htaccess`, to the intended PHP-capable Hostinger document root only after backing up the existing WordPress files and database. Confirm HTTPS, redirects, a true 404, production indexing directives and email delivery before switching traffic.
+**Do not upload an overwriting archive or copy `dist/` over this account's main document root.** Existing subdomain websites are nested inside it. Production uses `public_html/.digitaltalha-release-20261108/` and one root `.htaccess` dispatcher. The packaged release also adapts its nested 404 error-document path. WordPress files and its database remain in place for rollback.
+
+Follow [deployment/README.md](deployment/README.md) for packaging, a new versioned release, an atomic routing switch and verification. `deployment/root.htaccess` preserves the actual deployed dispatcher; `.hostinger/site.json` records the target. The complete private action record and backups remain in the local migration handoff, outside this repository. The temporary migration SSH key has been revoked. Future server changes require your own verified access.
 
 The canonical origin remains `https://digitaltalha.com/`. Public staging can use:
 
@@ -61,4 +63,4 @@ python3 scripts/check-seo.py --staging
 
 Rebuild without `SITE_NOINDEX` before production deployment.
 
-The retained mail recipient is `talhaalamo89@gmail.com`, with sender `website@digitaltalha.com`. Actual inbox delivery and sender authentication require testing on the host. A lead event is sent to the data layer only after a successful backend response, and records the selected service. No analytics IDs were invented.
+The retained mail recipient is `talhaalamo89@gmail.com`, with sender `website@digitaltalha.com`. PHP execution and rejected invalid submissions passed on the live host. No valid enquiry was sent, per the user's instruction; inbox delivery remains unverified. A lead event is pushed to the data layer only after a successful backend response and records the selected service without enquiry personal fields. Existing GTM `GTM-NMMW3MLB` is retained, but its published container has no active GA4 measurement/lead tag; reporting and conversions remain unverified.

@@ -22,6 +22,7 @@ def embed_asset(match):
 for path in DIST.rglob('index.html'):
     raw=path.read_text()
     if 'http-equiv="refresh"' in raw:continue
+    raw=re.sub(r'<!-- migration-tracking:start -->.*?<!-- migration-tracking:end -->', '', raw, flags=re.S)
     route='/' if path.parent==DIST else '/'+str(path.parent.relative_to(DIST))+'/'
     raw=re.sub(r'<meta name="robots"[^>]*>', '<meta name="robots" content="noindex, follow">', raw)
     raw=re.sub(r'<link rel="preload"[^>]*>', '', raw)

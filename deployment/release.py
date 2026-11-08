@@ -89,9 +89,13 @@ def package(root, mode, commit, run, output):
                 data = data.replace(b'ErrorDocument 404 /404.html', ('ErrorDocument 404 /' + release + '/404.html').encode())
             files[name] = data
     # File names, rather than query strings, also defeat caches that ignore queries.
+    referenced = set()
+    for name,data in files.items():
+        if name.endswith('.html'):
+            referenced.update(match[1].lstrip('/') for match in re.findall(r'(src|href)="(/assets/[^"?#]+)"', data.decode()))
     asset_names = {}
     for name,data in list(files.items()):
-        if name.startswith('assets/'):
+        if name in referenced:
             path = Path(name)
             versioned = str(path.with_name(path.stem + '.' + digest(data)[:16] + path.suffix))
             asset_names[name] = versioned
@@ -108,7 +112,7 @@ def package(root, mode, commit, run, output):
     require(('GTM-NMMW3MLB' in home) == (mode == 'production'), 'Wrong build tracking mode')
     manifest = {'schema':1, 'commit':commit, 'release':release, 'mode':mode,
                 'pages':json.loads((root / 'content/seo.json').read_text()),
-                'files':{name:{'sha256':digest(data), 'size':len(data), **({'png_pixels':png_pixels(data)} if name.endswith('.png') else {})} for name,data in files.items()}}
+                'files':{name:{'sha256':digest(data), 'size':len(data), **({'png_pixels':png_pixels(data)} if name.endswith('.png') and name in asset_names.values() else {})} for name,data in files.items()}}
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output, 'x', zipfile.ZIP_DEFLATED) as archive:
@@ -172,6 +176,7 @@ def verify_site(target, manifest):
     mode = target['mode']
     opener = build_opener(NoRedirect)
     checks = []
+    referenced = set()
 
     def request(path, data=None, extra=None, cache=True):
         separator = '&' if '?' in path else '?'
@@ -191,13 +196,13 @@ def verify_site(target, manifest):
         file = 'index.html' if route == '/' else route.strip('/') + '/index.html'
         require(status == 200 and digest(body) == manifest['files'][file]['sha256'], 'Page content check failed: ' + route)
         text = body.decode()
+        referenced.update(match[1].lstrip('/') for match in re.findall(r'(src|href)="(/assets/[^"?#]+)"', text))
         require('<link rel="canonical" href="https://digitaltalha.com' + route + '"' in text, 'Canonical check failed')
         require(('content="noindex' in text) == bool(mode == 'staging' or metadata.get('noindex')), 'Indexing metadata check failed')
         require(('noindex' in headers.get('x-robots-tag','').lower()) == (mode == 'staging'), 'Indexing header check failed')
         require(('GTM-NMMW3MLB' in text) == (mode == 'production'), 'Tracking mode check failed')
     for name, info in manifest['files'].items():
-        versioned = any(VERSIONED_ASSET.fullmatch(item) for item in manifest['files'] if item.startswith('assets/'))
-        if (name.startswith('assets/') and (not versioned or VERSIONED_ASSET.fullmatch(name))) or name in ('robots.txt','sitemap.xml'):
+        if name in referenced or name in ('robots.txt','sitemap.xml'):
             status, headers, body = request('/' + name)
             same = digest(body) == info['sha256']
             if not same and info.get('png_pixels') and name.endswith('.png'):

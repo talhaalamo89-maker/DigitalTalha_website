@@ -50,7 +50,7 @@ Representative desktop/mobile browser review passed on staging; the live homepag
 
 ## Production
 
-**Do not upload an overwriting archive or copy `dist/` over this account's main document root.** Existing subdomain websites are nested inside it. Production uses `public_html/.digitaltalha-release-20261108/` and one root `.htaccess` dispatcher. The packaged release also adapts its nested 404 error-document path. WordPress files and its database remain in place for rollback.
+**Do not upload an overwriting archive or copy `dist/` over this account's main document root.** Existing subdomain websites are nested inside it. Production uses a complete versioned release under `public_html/` and one root `.htaccess` dispatcher. The initial `.digitaltalha-release-20261108/` snapshot remains for rollback; each automatic update selects a new directory. Packaging adapts the nested 404 error-document path. WordPress files and its database remain in place for rollback.
 
 Normal updates use [the automatic workflow](deployment/AUTOMATION.md). [deployment/README.md](deployment/README.md) retains the manual packaging and recovery procedure. `deployment/root.htaccess` preserves the approved initial dispatcher template; the restricted service selects a new release for each update. `.hostinger/site.json` records the target. The complete private action record and backups remain in the local migration handoff, outside this repository. The temporary migration SSH key was revoked; a separate permanent key now permits only the reviewed deployment commands. General server changes require separately authorized access.
 

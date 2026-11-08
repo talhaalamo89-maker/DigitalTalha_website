@@ -12,7 +12,7 @@ import sys
 import tempfile
 import time
 
-from release import MAX_ARCHIVE, digest, inspect_bundle, require, verify_site
+from release import MAX_ARCHIVE, VERSIONED_ASSET, digest, inspect_bundle, require, verify_site
 
 
 def save(path, data):
@@ -77,6 +77,16 @@ def activate(home, target, bundle, expected_digest, verify=verify_site):
             file.parent.mkdir(parents=True, exist_ok=True)
             file.write_bytes(data)
             os.chmod(str(file), 0o644)
+        # Keep recent immutable URLs working for visitors who loaded the previous HTML.
+        old_assets = root / before['manifest']['release'] / 'assets'
+        if old_assets.is_dir():
+            for asset in old_assets.rglob('*'):
+                if asset.is_file() and not asset.is_symlink() and VERSIONED_ASSET.fullmatch(asset.name) and asset.stat().st_mtime > time.time() - 35 * 86400:
+                    name = asset.relative_to(old_assets)
+                    destination_asset = prepared / 'assets' / name
+                    if not destination_asset.exists():
+                        destination_asset.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(str(asset), str(destination_asset))
         for directory, folders, names in os.walk(str(prepared)):
             os.chmod(directory, 0o755)
         routing = target['root_template'].replace('.digitaltalha-release-20261108', manifest['release'])

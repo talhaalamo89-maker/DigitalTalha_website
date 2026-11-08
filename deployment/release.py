@@ -13,6 +13,7 @@ import zipfile
 MAX_ARCHIVE = 20 * 1024 * 1024
 MAX_CONTENT = 50 * 1024 * 1024
 RELEASE = re.compile(r'\.digitaltalha-release-[a-f0-9]{12}-[0-9]{1,14}-[0-9]{1,4}')
+VERSIONED_ASSET = re.compile(r'.*\.[a-f0-9]{16}\.[A-Za-z0-9]+$')
 SHORTLINKS = {'454':'/about/', '456':'/contact/', '458':'/terms-conditions/', '460':'/privacy-policy/', '484':'/services/', '504':'/blog/', '605':'/google-ads/', '607':'/meta-ads/', '782':'/how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization/'}
 
 
@@ -39,11 +40,18 @@ def package(root, mode, commit, run, output):
             if name == '.htaccess':
                 data = data.replace(b'ErrorDocument 404 /404.html', ('ErrorDocument 404 /' + release + '/404.html').encode())
             files[name] = data
-    # A changed asset gets a new URL, so existing visitors do not retain stale CSS/JS.
+    # File names, rather than query strings, also defeat caches that ignore queries.
+    asset_names = {}
+    for name,data in list(files.items()):
+        if name.startswith('assets/'):
+            path = Path(name)
+            versioned = str(path.with_name(path.stem + '.' + digest(data)[:16] + path.suffix))
+            asset_names[name] = versioned
+            files[versioned] = data
     def version_asset(match):
         name = match[2].lstrip('/')
-        require(name in files, 'Missing local asset: ' + name)
-        return match[1] + '="' + match[2] + '?v=' + digest(files[name])[:16] + '"'
+        require(name in asset_names, 'Missing local asset: ' + name)
+        return match[1] + '="/' + asset_names[name] + '"'
     for name,data in list(files.items()):
         if name.endswith('.html'):
             files[name] = re.sub(r'(src|href)="(/assets/[^"?#]+)"', version_asset, data.decode()).encode()
@@ -138,7 +146,8 @@ def verify_site(target, manifest):
         require(('noindex' in headers.get('x-robots-tag','').lower()) == (mode == 'staging'), 'Indexing header check failed')
         require(('GTM-NMMW3MLB' in text) == (mode == 'production'), 'Tracking mode check failed')
     for name, info in manifest['files'].items():
-        if name.startswith('assets/') or name in ('robots.txt','sitemap.xml'):
+        versioned = any(VERSIONED_ASSET.fullmatch(item) for item in manifest['files'] if item.startswith('assets/'))
+        if (name.startswith('assets/') and (not versioned or VERSIONED_ASSET.fullmatch(name))) or name in ('robots.txt','sitemap.xml'):
             status, headers, body = request('/' + name)
             require(status == 200 and digest(body) == info['sha256'], 'Asset check failed: ' + name)
     aliases = {'/resources/':'/blog/', '/category/meta-ads/':'/blog/', '/about-us/':'/about/', '/contact-us/':'/contact/', '/service/':'/services/', '/projects/':'/blog/', '/sitemap_index.xml':'/sitemap.xml', '/wp-sitemap.xml':'/sitemap.xml'}

@@ -1,0 +1,23 @@
+# Automatic website updates
+
+Setup status: **prepared, not enabled yet**. Activation requires the restricted server key, a successful hosted publish and an actual rollback test. The live site remains on its verified migration release until then.
+
+The workflow `.github/workflows/website.yml` checks pull requests and pushes to `main`. Building/testing runs on a separate runner without deployment credentials. Publishing uses the `digitaltalha-production` environment, restricted to `main`, with encrypted environment secrets and a read-only GitHub token. GitHub-maintained actions are pinned to verified commit hashes. One publish can run at a time; older commits are refused when a newer `main` exists.
+
+The publisher first sends the noindex, tracking-free build to the separate Hostinger test website. The privately installed server checks exact page/asset bytes, indexing, redirects, shortlinks, unknown-page status and PHP rejections. Only a successful staging run proceeds to production. No valid enquiry is sent. Successful email delivery and Analytics reporting require separate verification.
+
+Every package gets a distinct release folder. Local assets receive content-version query parameters so browsers request updated CSS, scripts and images. A complete release is installed before the single routing file is replaced. Original WordPress files/database, nested applications and uploads stay in place. Nothing changes DNS or mail records.
+
+The server saves the previous routing and a recovery journal privately. Failed required live checks restore that routing and verify the previous version. Catchable interruptions also restore it; an uncatchable interruption is recovered on the next deployment/status connection. This does not guarantee uninterrupted availability or detect every visual/content mistake. Release copies remain available and a low-free-space guard refuses uploads before they endanger the active site.
+
+The permanent deployment key is restricted to `status`, `deploy` and `rollback` commands for these two fixed websites. Shell, forwarding and arbitrary filesystem commands are denied. Incoming archives are size-bounded, checked against a manifest and rejected for traversal, symlinks, extra executables or unexpected server directives. The approved PHP handler and release-level Apache rules are pinned on the server. Changes to those files pause deployment for manual review; the key cannot silently introduce new server code. Updating the private deployment service also requires separately authorized setup access.
+
+## Normal use after activation
+
+Edit source, review the changes, commit and push to `main`. In GitHub → Actions → Website checks and deployment, a green run means the staged and production checks completed; a red run means the update needs investigation. A push failing its build leaves the live site unchanged. A publish failing its live checks attempts restoration and reports the failure. Pull requests are checked without publishing.
+
+To restore the previous custom version: GitHub → Actions → Website checks and deployment → Run workflow → branch `main` → action `rollback`. This uses the same restricted environment and checks restoration. It restores one saved custom release, not the original WordPress database.
+
+To pause automatic publishing, set repository variable `DIGITALTALHA_AUTODEPLOY` to `disabled` under Settings → Secrets and variables → Actions → Variables. Checks continue. A manual workflow run can still publish or roll back. To revoke server access entirely, remove the dedicated key from Hostinger and remove its GitHub environment secret. Keep private backups outside Git.
+
+The private setup/action evidence and full manual guide remain in the local migration handoff. They contain account paths and are not published in this repository.

@@ -1,0 +1,75 @@
+name: Website checks and deployment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Publish the latest website or restore its previous version
+        type: choice
+        options: [publish, rollback]
+        default: publish
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build and test production
+        run: |
+          python3 --version
+          node --version
+          npm run build
+          npm run check
+          php -l server/enquiry.php
+          python3 -m unittest discover -s deployment -p 'test_*.py' -v
+          python3 deployment/release.py --mode production --commit "$GITHUB_SHA" --run "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --output bundles/production.zip
+      - name: Build and check isolated test copy
+        run: |
+          SITE_NOINDEX=1 npm run build
+          python3 scripts/check-seo.py --staging
+          python3 deployment/release.py --mode staging --commit "$GITHUB_SHA" --run "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --output bundles/staging.zip
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: website-bundles
+          path: bundles/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && (vars.DIGITALTALHA_AUTODEPLOY == 'enabled' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    environment: digitaltalha-production
+    concurrency:
+      group: digitaltalha-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: website-bundles
+          path: bundles
+          digest-mismatch: error
+      - name: Test on staging, then publish and verify; restore previous release on failure
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DIGITALTALHA_DEPLOY_KEY: ${{ secrets.DIGITALTALHA_DEPLOY_KEY }}
+          DIGITALTALHA_KNOWN_HOSTS: ${{ secrets.DIGITALTALHA_KNOWN_HOSTS }}
+          DIGITALTALHA_SSH_HOST: ${{ secrets.DIGITALTALHA_SSH_HOST }}
+          DIGITALTALHA_SSH_PORT: ${{ secrets.DIGITALTALHA_SSH_PORT }}
+          DIGITALTALHA_SSH_USER: ${{ secrets.DIGITALTALHA_SSH_USER }}
+          DEPLOY_ACTION: ${{ inputs.action || 'publish' }}
+        run: python3 deployment/publish.py --action "$DEPLOY_ACTION"

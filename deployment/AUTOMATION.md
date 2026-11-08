@@ -1,6 +1,6 @@
 # Automatic website updates
 
-Setup status: **prepared, not enabled yet**. Activation requires the restricted server key, a successful hosted publish and an actual rollback test. The live site remains on its verified migration release until then.
+Setup status: **enabled on 8 November 2026**. The restricted key and main-only environment are installed. A [controlled GitHub publish](https://github.com/talhaalamo89-maker/DigitalTalha_website/actions/runs/42462624142) passed 50 staging and 58 production checks; an [actual rollback](https://github.com/talhaalamo89-maker/DigitalTalha_website/actions/runs/42462794410) also passed before activation. [Current run status](https://github.com/talhaalamo89-maker/DigitalTalha_website/actions/workflows/website.yml) is the authority for later updates.
 
 The workflow `.github/workflows/website.yml` checks pull requests and pushes to `main`. Building/testing runs on a separate runner without deployment credentials. Publishing uses the `digitaltalha-production` environment, restricted to `main`, with encrypted environment secrets and a read-only GitHub token. GitHub-maintained actions are pinned to verified commit hashes. One publish can run at a time; older commits are refused when a newer `main` exists.
 

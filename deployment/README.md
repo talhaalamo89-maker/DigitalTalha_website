@@ -1,6 +1,6 @@
 # Hostinger deployment and recovery
 
-The custom site went live at https://digitaltalha.com/ on 8 November 2026 after explicit approval. This repository records its source and generated files. **A GitHub push does not deploy the site.** No auto-deploy is configured.
+The custom site went live at https://digitaltalha.com/ on 8 November 2026 after explicit approval. **Automatic publishing from `main` is now enabled.** It uses the separate test site first and verifies production afterward. A controlled GitHub publish and actual rollback both passed before activation. See [AUTOMATION.md](AUTOMATION.md) for normal use, pausing updates and restoration. The manual procedure below is a fallback; pause automatic publishing before a separate manual deployment.
 
 ## Preserve the existing layout
 
@@ -8,11 +8,11 @@ The live document root contains original WordPress files and nested websites. Do
 
 Production consists of:
 
-- `public_html/.digitaltalha-release-20261108/`: the complete 42-file release.
-- `public_html/.htaccess`: the root dispatcher recorded exactly in `deployment/root.htaccess`. It preserves child hosts/folders, old media and nine WordPress shortlinks, then routes the main site into the release.
+- `public_html/.digitaltalha-release-20261108/`: the initial 42-file release, retained for rollback. New automated releases use a commit/run/attempt identifier and add immutable asset filenames.
+- `public_html/.htaccess`: generated from the approved initial template recorded in `deployment/root.htaccess`, selecting the active versioned release. It preserves child hosts/folders, old media and nine WordPress shortlinks.
 - A release-level `.htaccess` built from `dist/.htaccess`, with its 404 error-document path adapted to the nested directory. Direct access to the hidden release URL is denied.
 
-Original WordPress files/database were retained for rollback; WordPress admin no longer edits the main site. Private file/database backups, keys, account audit records and the complete migration history remain in the local handoff outside this Git repository. The temporary migration key was revoked. Use your own verified SSH/SFTP access for future work.
+Original WordPress files/database were retained for rollback; WordPress admin no longer edits the main site. Private file/database backups, keys, account audit records and the complete migration history remain in the local handoff outside this Git repository. The temporary migration key was revoked. A separate restricted key remains for automatic deployment; it cannot run general shell/SFTP commands. Use separately authorized verified access for manual server work.
 
 ## Build and package
 

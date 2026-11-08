@@ -5,5 +5,14 @@
   "deployment_strategy": "versioned-release-with-root-dispatcher",
   "root_overwrite_forbidden": true,
   "release_directory": ".digitaltalha-release-20261108",
-  "deployment_guide": "deployment/README.md"
+  "deployment_guide": "deployment/README.md",
+  "release_directory_is_initial_snapshot": true,
+  "automatic_deployment": {
+    "provider": "github-actions",
+    "workflow": ".github/workflows/website.yml",
+    "branch": "main",
+    "environment": "digitaltalha-production",
+    "enabled": true,
+    "sensitive_server_changes_require_review": true
+  }
 }

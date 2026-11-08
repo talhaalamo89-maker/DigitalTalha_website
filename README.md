@@ -6,7 +6,7 @@ Updated 8 November 2026. Live at [digitaltalha.com](https://digitaltalha.com/). 
 
 Open `DigitalTalha-preview.html` in a browser. It includes all 13 content pages and shared images in one file. Internal navigation works; enquiries are disabled in this preview. The production website files are in `dist/`.
 
-This repository includes the migration fixes deployed after explicit approval on 8 November 2026, based on commit `92b59181ba898963b5a607823a2003c12d408925`. Source, built files and the production root dispatcher are versioned together. Pushing to GitHub does not deploy to Hostinger; no auto-deploy is configured.
+This repository includes the migration fixes deployed after explicit approval on 8 November 2026, based on commit `92b59181ba898963b5a607823a2003c12d408925`. **Updates pushed to `main` now build, test on the separate test website, and publish to Hostinger automatically after passing checks.** See [automatic updates](deployment/AUTOMATION.md) and [GitHub Actions](https://github.com/talhaalamo89-maker/DigitalTalha_website/actions/workflows/website.yml). Pull requests run checks without publishing. Sensitive backend and deployment-control changes stop for review.
 
 ## What changed
 
@@ -52,7 +52,7 @@ Representative desktop/mobile browser review passed on staging; the live homepag
 
 **Do not upload an overwriting archive or copy `dist/` over this account's main document root.** Existing subdomain websites are nested inside it. Production uses `public_html/.digitaltalha-release-20261108/` and one root `.htaccess` dispatcher. The packaged release also adapts its nested 404 error-document path. WordPress files and its database remain in place for rollback.
 
-Follow [deployment/README.md](deployment/README.md) for packaging, a new versioned release, an atomic routing switch and verification. `deployment/root.htaccess` preserves the actual deployed dispatcher; `.hostinger/site.json` records the target. The complete private action record and backups remain in the local migration handoff, outside this repository. The temporary migration SSH key has been revoked. Future server changes require your own verified access.
+Normal updates use [the automatic workflow](deployment/AUTOMATION.md). [deployment/README.md](deployment/README.md) retains the manual packaging and recovery procedure. `deployment/root.htaccess` preserves the approved initial dispatcher template; the restricted service selects a new release for each update. `.hostinger/site.json` records the target. The complete private action record and backups remain in the local migration handoff, outside this repository. The temporary migration SSH key was revoked; a separate permanent key now permits only the reviewed deployment commands. General server changes require separately authorized access.
 
 The canonical origin remains `https://digitaltalha.com/`. Public staging can use:
 

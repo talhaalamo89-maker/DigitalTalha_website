@@ -7,13 +7,24 @@ import sys
 import tempfile
 import unittest
 import zipfile
+import struct
+import zlib
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from release import digest, inspect_bundle
+from release import digest, inspect_bundle, png_pixels
 from server import activate, load_state, rollback, save
 
 
 class DeploymentTests(unittest.TestCase):
+    def test_png_reencoding_preserves_pixels_but_changed_artwork_fails(self):
+        def chunk(kind,data):
+            return struct.pack('>I',len(data))+kind+data+struct.pack('>I',zlib.crc32(kind+data)&0xffffffff)
+        def image(level,pixels,metadata=False):
+            return b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',2,1,8,6,0,0,0))+(chunk(b'pHYs',struct.pack('>IIB',100,100,1)) if metadata else b'')+chunk(b'IDAT',zlib.compress(b'\x00'+pixels,level))+chunk(b'IEND',b'')
+        pixels=b'\xff\x00\x00\xff\x00\xff\x00\xff'
+        self.assertEqual(png_pixels(image(1,pixels)),png_pixels(image(9,pixels,True)))
+        self.assertNotEqual(png_pixels(image(1,pixels)),png_pixels(image(9,b'\x00'*8)))
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

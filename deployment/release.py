@@ -8,7 +8,9 @@ import hashlib
 import json
 import re
 import stat
+import struct
 import zipfile
+import zlib
 
 MAX_ARCHIVE = 20 * 1024 * 1024
 MAX_CONTENT = 50 * 1024 * 1024
@@ -19,6 +21,52 @@ SHORTLINKS = {'454':'/about/', '456':'/contact/', '458':'/terms-conditions/', '4
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def png_pixels(data):
+    """Compare PNG pixels despite lossless re-encoding by Hostinger's image layer."""
+    require(data[:8] == b'\x89PNG\r\n\x1a\n', 'Invalid PNG signature')
+    chunks, offset = {}, 8
+    while offset < len(data):
+        require(offset + 12 <= len(data), 'Truncated PNG chunk')
+        size = struct.unpack('>I', data[offset:offset+4])[0]
+        kind = data[offset+4:offset+8]
+        body = data[offset+8:offset+8+size]
+        require(offset + size + 12 <= len(data), 'Truncated PNG data')
+        crc = struct.unpack('>I', data[offset+8+size:offset+12+size])[0]
+        require(zlib.crc32(kind + body) & 0xffffffff == crc, 'PNG checksum failed')
+        chunks.setdefault(kind, []).append(body)
+        offset += size + 12
+    require(b'IHDR' in chunks and b'IDAT' in chunks and b'IEND' in chunks, 'Incomplete PNG')
+    header = chunks[b'IHDR'][0]
+    width,height,depth,color,compression,filtering,interlace = struct.unpack('>IIBBBBB', header)
+    channels = {0:1,2:3,4:2,6:4}.get(color)
+    if depth != 8 or not channels or interlace:
+        return None
+    expected = height * (width * channels + 1)
+    require(0 < expected <= MAX_CONTENT and compression == filtering == 0, 'Unsupported PNG dimensions/encoding')
+    inflater = zlib.decompressobj()
+    raw = inflater.decompress(b''.join(chunks[b'IDAT']), expected + 1)
+    require(inflater.eof and len(raw) == expected, 'Invalid PNG scanlines')
+    rows, previous, position = bytearray(), bytearray(width * channels), 0
+    for y in range(height):
+        method = raw[position]
+        position += 1
+        require(method in range(5), 'Invalid PNG filter')
+        row = bytearray(raw[position:position + len(previous)])
+        position += len(previous)
+        for x in range(len(row)):
+            left = row[x-channels] if x >= channels else 0
+            up = previous[x]
+            corner = previous[x-channels] if x >= channels else 0
+            prediction = left + up - corner
+            distances = (abs(prediction-left),abs(prediction-up),abs(prediction-corner))
+            paeth = (left,up,corner)[distances.index(min(distances))]
+            row[x] = (row[x] + (0,left,up,(left+up)//2,paeth)[method]) & 255
+        rows.extend(row)
+        previous = row
+    profiles = b''.join(kind + b''.join(chunks.get(kind,[])) for kind in [b'PLTE',b'tRNS',b'cHRM',b'gAMA',b'iCCP',b'sRGB'])
+    return digest(header + profiles + bytes(rows))
 
 
 def require(condition, message):
@@ -60,7 +108,7 @@ def package(root, mode, commit, run, output):
     require(('GTM-NMMW3MLB' in home) == (mode == 'production'), 'Wrong build tracking mode')
     manifest = {'schema':1, 'commit':commit, 'release':release, 'mode':mode,
                 'pages':json.loads((root / 'content/seo.json').read_text()),
-                'files':{name:{'sha256':digest(data), 'size':len(data)} for name,data in files.items()}}
+                'files':{name:{'sha256':digest(data), 'size':len(data), **({'png_pixels':png_pixels(data)} if name.endswith('.png') else {})} for name,data in files.items()}}
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output, 'x', zipfile.ZIP_DEFLATED) as archive:
@@ -99,6 +147,8 @@ def inspect_bundle(path, target):
             require(Path(name).suffix.lower() != '.php' or name == 'api/enquiry.php', 'Unexpected executable file')
             data = archive.read('site/' + name)
             require(len(data) == info['size'] and digest(data) == info['sha256'], 'File integrity mismatch: ' + name)
+            if info.get('png_pixels'):
+                require(name.endswith('.png') and png_pixels(data) == info['png_pixels'], 'PNG pixel manifest mismatch')
             contents[name] = data
         # A CI key cannot introduce arbitrary server code or Apache directives.
         require(digest(contents['api/enquiry.php']) == target['php_sha256'], 'PHP changed: manual review is required')
@@ -149,7 +199,14 @@ def verify_site(target, manifest):
         versioned = any(VERSIONED_ASSET.fullmatch(item) for item in manifest['files'] if item.startswith('assets/'))
         if (name.startswith('assets/') and (not versioned or VERSIONED_ASSET.fullmatch(name))) or name in ('robots.txt','sitemap.xml'):
             status, headers, body = request('/' + name)
-            require(status == 200 and digest(body) == info['sha256'], 'Asset check failed: ' + name)
+            same = digest(body) == info['sha256']
+            if not same and info.get('png_pixels') and name.endswith('.png'):
+                same = png_pixels(body) == info['png_pixels']
+            if mode == 'staging' and name == 'robots.txt' and body.decode().replace('\r\n','\n') == 'User-agent: Googlebot\nDisallow: /\n\nUser-agent: *\nAllow: /\n':
+                # Hostinger overrides this file on its temporary hostingersite.com domain.
+                same = True
+                checks[-1]['provider_temporary_domain_robots'] = True
+            require(status == 200 and same, 'Asset check failed: ' + name)
     aliases = {'/resources/':'/blog/', '/category/meta-ads/':'/blog/', '/about-us/':'/about/', '/contact-us/':'/contact/', '/service/':'/services/', '/projects/':'/blog/', '/sitemap_index.xml':'/sitemap.xml', '/wp-sitemap.xml':'/sitemap.xml'}
     for path, destination in aliases.items():
         status, headers, body = request(path + '?utm_source=deployment', cache=False)

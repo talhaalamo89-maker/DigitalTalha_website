@@ -53,6 +53,19 @@ def load_state(home, target):
     return state
 
 
+def verify_ready(target, manifest, verify, log=None):
+    # LiteSpeed/edge routing can retain the old configuration briefly after a rename.
+    for attempt in range(18):
+        try:
+            return verify(target, manifest)
+        except Exception as error:
+            if log:
+                save(log, {'attempt':attempt+1, 'error':str(error), 'at':datetime.now(timezone.utc).isoformat()})
+            if attempt == 17:
+                raise
+            time.sleep(5)
+
+
 def activate(home, target, bundle, expected_digest, verify=verify_site):
     require(digest(bundle) == expected_digest, 'Transfer integrity check failed')
     root = Path(target['root'])
@@ -98,18 +111,7 @@ def activate(home, target, bundle, expected_digest, verify=verify_site):
         save(state_path, state)
         try:
             switch(root / '.htaccess', routing)
-            failure = None
-            for attempt in range(3):
-                try:
-                    checks = verify(target, manifest)
-                    failure = None
-                    break
-                except Exception as error:
-                    failure = error
-                    if attempt < 2:
-                        time.sleep(2)
-            if failure:
-                raise failure
+            checks = verify_ready(target, manifest, verify, home / (target['mode'] + '-last-health.json'))
             require(all((root / name).stat().st_ino == inode for name,inode in protected.items()), 'Preserved directory changed')
             state['previous'] = before
             state['active'] = active
@@ -125,7 +127,7 @@ def activate(home, target, bundle, expected_digest, verify=verify_site):
             state['last_result'] = 'deployment failed; previous routing restored'
             save(state_path, state)
             # Independently verify restoration; preserve its failure for the operator.
-            verify(target, before['manifest'])
+            verify_ready(target, before['manifest'], verify, home / (target['mode'] + '-last-health.json'))
             raise
 
 
@@ -139,7 +141,7 @@ def rollback(home, target, verify=verify_site):
     state['active'], state['previous'], state['pending'] = previous, None, None
     state['last_result'] = 'rolled back'
     save(path, state)
-    checks = verify(target, previous['manifest'])
+    checks = verify_ready(target, previous['manifest'], verify, home / (target['mode'] + '-last-health.json'))
     return {'result':'rolled back and verified', 'release':previous['manifest']['release'], 'checks':len(checks)}
 
 

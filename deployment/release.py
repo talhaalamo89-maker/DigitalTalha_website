@@ -79,6 +79,7 @@ def package(root, mode, commit, run, output):
     release = '.digitaltalha-release-' + commit[:12] + '-' + run
     require(RELEASE.fullmatch(release), 'Invalid run identifier')
     root = Path(root)
+    require(digest((root / 'deployment/root.htaccess').read_bytes()) == '26709b6f168e4c936e11202a9a880d82d07b54841d5c5d6d9c4bbdb7c739652c', 'Root routing changed: reviewed server setup is required')
     files = {}
     for file in sorted((root / 'dist').rglob('*')):
         require(not file.is_symlink(), 'Symlinks are not deployable')

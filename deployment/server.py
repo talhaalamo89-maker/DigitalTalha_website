@@ -170,7 +170,7 @@ def main():
             result = rollback(home, target)
         else:
             state = load_state(home, target)
-            result = {'result':state.get('last_result'), 'release':state['active']['manifest']['release'], 'commit':state['active']['manifest'].get('commit')}
+            result = {'result':state.get('last_result'), 'release':state['active']['manifest']['release'], 'commit':state['active']['manifest'].get('commit'), 'service_sha256':digest((home / 'release.py').read_bytes() + b'\0' + (home / 'server.py').read_bytes())}
         with (home / 'history.jsonl').open('a') as log:
             log.write(json.dumps({'at':datetime.now(timezone.utc).isoformat(), 'target':mode, 'result':result}) + '\n')
         print(json.dumps(result))

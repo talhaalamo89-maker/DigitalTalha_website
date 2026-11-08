@@ -45,6 +45,10 @@ def main():
             print(json.dumps({'target':target, **report}))
             return report
 
+        installed = command('status','production')
+        source = Path(__file__).resolve().parent
+        expected = digest((source / 'release.py').read_bytes() + b'\0' + (source / 'server.py').read_bytes())
+        require(installed.get('service_sha256') == expected, 'Deployment controls changed: reviewed server installation is required')
         if args.action == 'rollback':
             command('rollback','production')
         else:

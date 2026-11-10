@@ -42,9 +42,20 @@
   },
   "/blog/": {
     "title": "Digital Marketing Projects & Practical Guides",
-    "description": "Explore Talha Alam's practical digital marketing work, starting with a documented Meta lead-generation practice campaign, from research and tracking to setup.",
+    "description": "Explore Talha Alam’s live hospital website project and documented Meta Ads practice campaign, including the planning, decisions and work behind each.",
     "label": "Projects",
     "type": "CollectionPage"
+  },
+  "/projects/glisan-akbari-hospital/": {
+    "title": "Glisan Akbari Hospital Website Project",
+    "description": "Explore the Glisan Akbari hospital website: Talha Alam’s planning, SEO direction and quality review, AI-assisted development, and ongoing SEO work.",
+    "label": "Glisan Akbari hospital website",
+    "project": true,
+    "image": "projects/hospital-department-desktop.webp",
+    "image_width": 1274,
+    "image_height": 717,
+    "image_alt": "Glisan Akbari hospital website urology page on desktop",
+    "project_url": "https://glisanhospitalpurnia.in/"
   },
   "/contact/": {
     "title": "Contact Talha Alam | Ads & Website Enquiries",

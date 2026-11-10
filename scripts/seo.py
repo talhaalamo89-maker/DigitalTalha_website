@@ -12,7 +12,7 @@ def trail(path, metadata):
         return crumbs
     if metadata[path].get('service'):
         crumbs.append(('Services', '/services/'))
-    if metadata[path].get('article'):
+    if metadata[path].get('article') or metadata[path].get('project'):
         crumbs.append(('Projects', '/blog/'))
     return crumbs + [(metadata[path]['label'], path)]
 
@@ -96,11 +96,23 @@ def structured_data(path, metadata):
             'articleSection': 'Digital marketing practice projects'
         })
         webpage['mainEntity'] = {'@id': url + '#article'}
+    if config.get('project'):
+        graph.append({
+            '@type': 'CreativeWork', '@id': url + '#project', 'url': url,
+            'name': config['title'], 'description': config['description'],
+            'creator': {'@id': person_id}, 'mainEntityOfPage': {'@id': page_id},
+            'image': DOMAIN + '/assets/' + config['image'], 'inLanguage': 'en-IN',
+            'genre': 'Website project',
+            'isBasedOn': {'@type': 'WebSite', 'url': config['project_url']}
+        })
+        webpage['mainEntity'] = {'@id': url + '#project'}
     if path == '/blog/':
+        projects = [(p, c) for p, c in metadata.items() if c.get('project')]
+        projects += [(p, c) for p, c in metadata.items() if c.get('article')]
         webpage['mainEntity'] = {
             '@type': 'ItemList', 'itemListElement': [
-                {'@type': 'ListItem', 'position': 1, 'url': DOMAIN + ARTICLE,
-                 'name': 'Meta Lead Campaign — From Start to Finish'}
+                {'@type': 'ListItem', 'position': i+1, 'url': DOMAIN + route,
+                 'name': values['title']} for i, (route, values) in enumerate(projects)
             ]
         }
     return json.dumps({'@context': 'https://schema.org', '@graph': graph},
@@ -116,12 +128,13 @@ def head(path, metadata, noindex=False, staging=False):
     article = config.get('article')
     image = config.get('image') or ('meta-campaign.webp' if article else 'service-characters.webp')
     width, height = (1536, 1024) if config.get('image') else ((1200, 677) if article else (1881, 836))
+    width, height = config.get('image_width', width), config.get('image_height', height)
     image_alt = config.get('image_alt') or ('UrbanFit Meta lead-generation practice campaign in Ads Manager' if article else 'Illustrations of Google Ads, Meta Ads and website creation services')
     e = lambda value: escape(str(value), quote=True)
     preload = ''
     if path in ['/', '/about/']:
         preload = '<link rel="preload" as="image" href="/assets/talha-portrait.webp" fetchpriority="high">'
-    elif config.get('image'):
+    elif config.get('image') and not config.get('project'):
         preload = f'<link rel="preload" as="image" href="/assets/{e(image)}" fetchpriority="high">'
     return f'''<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f8f7f3"><title>{e(title)}</title>

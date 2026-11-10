@@ -55,7 +55,7 @@ def portrait():
 
 def header(current):
     nav=[('Home','/'),('About','/about/'),('Services','/services/'),('Projects','/blog/'),('Contact','/contact/')]
-    active='/services/' if current in ['/google-ads/','/meta-ads/','/website-creation/','/seo/'] else '/blog/' if current=='/'+ARTICLE+'/' else current
+    active='/services/' if current in ['/google-ads/','/meta-ads/','/website-creation/','/seo/'] else '/blog/' if current=='/'+ARTICLE+'/' or SEO.get(current,{}).get('project') else current
     links=''.join(f'<a href="{u}"'+(' aria-current="page"' if active==u else '')+f'>{s}</a>' for s,u in nav)
     return f'''<a class="skip" href="#content">Skip to content</a><header class="site-header"><div class="wrap header-inner">{brand()}<nav class="primary-nav" id="primary-nav" aria-label="Main navigation">{links}</nav><div class="header-cta">{button("Let’s talk",'/contact/')}</div><button class="menu-toggle" data-menu aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span></button></div></header>'''
 
@@ -295,6 +295,7 @@ def build():
     page('/meta-ads/','Meta Ads Services',service('/meta-ads/','Meta Ads'))
     page('/seo/','SEO Services for Small Businesses',seo_service())
     page('/blog/','Projects and Practical Works',projects())
+    page(HOSPITAL_PROJECT['route'],'Glisan Akbari Hospital Website Project',hospital_project())
     page('/contact/','Let’s talk about your marketing goals',contact())
     page('/privacy-policy/','Privacy Policy',legal('/privacy-policy/','Privacy Policy',63))
     page('/terms-conditions/','Terms and Conditions',legal('/terms-conditions/','Terms and Conditions',74))

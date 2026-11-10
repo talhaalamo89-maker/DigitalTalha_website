@@ -1,0 +1,27 @@
+{
+  "name": "Glisan Akbari Super Speciality Hospital",
+  "short_name": "Glisan Akbari",
+  "route": "/projects/glisan-akbari-hospital/",
+  "url": "https://glisanhospitalpurnia.in/",
+  "department_url": "https://glisanhospitalpurnia.in/services/urologist-in-purnia",
+  "service_url": "https://glisanhospitalpurnia.in/services/kidney-stone-treatment-in-purnia",
+  "location": "Purnea, Bihar",
+  "role": "Website planning, SEO direction & quality review",
+  "summary": "A hospital website planned around departments, care topics, doctor information and a clear next step for visitors.",
+  "role_description": "I planned the website and applied my digital marketing and SEO fundamentals. ChatGPT and Codex helped build it; I reviewed the output, identified issues and directed corrections.",
+  "context": "Created as part of my work with the hospital.",
+  "goal": "Help visitors understand the hospital’s services, find relevant doctor information and see how to take the next step. The structure connects departments with individual care topics and contact options.",
+  "decisions": [
+    ["Organise care around the visitor", "Department pages connect to specific concerns, such as kidney stones. This gives visitors a route from a broad need to more relevant information."],
+    ["Make the next step visible", "Doctor details, consultation links and call options sit alongside service information, so visitors can see where to go next."],
+    ["Plan for different screens", "The department layout adapts from desktop to mobile. These are actual screenshots of the live site, with the mobile contact options visible."]
+  ],
+  "seo_status": "SEO work ongoing",
+  "seo_description": "SEO is an ongoing part of this project. The reviewed pages already include descriptive titles, meta descriptions, headings and links between departments and services. Content and SEO refinement continue.",
+  "seo_note": "This case study documents the website and my contribution. Traffic, ranking and enquiry results have not been measured for this case study.",
+  "captured_on": "2026-11-10",
+  "captured_label": "10 November 2026",
+  "desktop": {"file": "projects/hospital-department-desktop.webp", "width": 1274, "height": 717, "alt": "Live Glisan Akbari hospital urology page on desktop, with service information and consultation options"},
+  "mobile": {"file": "projects/hospital-department-mobile.webp", "width": 384, "height": 831, "alt": "Live hospital urology page on mobile, with a responsive layout and call and appointment buttons"},
+  "detail": {"file": "projects/hospital-service-desktop.webp", "width": 1274, "height": 717, "alt": "Live kidney stone service page with a topic-specific heading, doctor information and consultation links"}
+}

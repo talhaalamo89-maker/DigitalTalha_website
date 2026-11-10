@@ -9,7 +9,7 @@
   document.querySelectorAll('.faq details').forEach(detail => detail.addEventListener('toggle', () => { if(detail.open) document.querySelectorAll('.faq details').forEach(other => { if(other!==detail) other.open=false; }); }));
   const search = document.querySelector('[data-project-search]');
   const result = document.querySelector('[data-search-result]');
-  search?.addEventListener('input', () => { const query=search.value.trim().toLowerCase(); let count=0; document.querySelectorAll('[data-project]').forEach(card => { const match=card.textContent.toLowerCase().includes(query); card.hidden=!match; count+=Number(match); }); result.textContent = count ? `${count} project${count===1?'':'s'} found` : 'No projects match your search. Try “Meta” or “campaign”.'; });
+  search?.addEventListener('input', () => { const query=search.value.trim().toLowerCase(); let count=0; document.querySelectorAll('[data-project]').forEach(card => { const match=card.textContent.toLowerCase().includes(query); card.hidden=!match; count+=Number(match); }); result.textContent = count ? `${count} project${count===1?'':'s'} found` : 'No projects match your search. Try “hospital” or “Meta”.'; });
   document.querySelectorAll('[data-copy-email]').forEach(button => button.addEventListener('click', async () => { try { await navigator.clipboard.writeText('talhaalamo89@gmail.com'); button.textContent='Copied!'; } catch { button.textContent='talhaalamo89@gmail.com'; } }));
   document.querySelectorAll('[data-enquiry]').forEach(form => {
     const status=form.querySelector('[role="status"]');

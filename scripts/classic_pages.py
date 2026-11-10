@@ -6,6 +6,8 @@ import re
 
 
 def install(site):
+    from portfolio import install as install_portfolio
+    install_portfolio(site)
     e = lambda value: escape(str(value), quote=True)
     eyebrow, button, link = (site[k] for k in ['eyebrow', 'button', 'link'])
     breadcrumb, options, original_form = (site[k] for k in ['breadcrumb', 'contact_options', 'form'])
@@ -55,7 +57,8 @@ def install(site):
         scope=section('What the work covers','What’s included.','<div class="scope-grid">'+''.join('<article><h3>'+e(a)+'</h3><p>'+e(b)+'</p></article>' for a,b in s['includes'])+'</div>','soft')
         receive='<section class="section wrap"><div class="scope-layout"><div>'+eyebrow('Clear expectations')+'<h2>What you receive.</h2><ul class="check-list">'+''.join('<li>'+e(t)+'</li>' for t in s['receive'])+'</ul></div><div><h3>Before we begin</h3><p>'+e(s['prepare'])+'</p><p class="scope-note">'+e(s['note'])+'</p></div></div></section>'
         related='<section class="section-sm wrap related-services"><h2>Explore another service.</h2><div>'+''.join(link(t['name'],t['route']) for t in services.values() if t['name']!=s['name'])+'</div></section>'
-        return hero+intro+scope+receive+journey()+faq(s['faqs'])+related
+        proof = site['hospital_feature']() if key == 'website' else ''
+        return hero+proof+intro+scope+receive+journey()+faq(s['faqs'])+related
 
     def about():
         hero='<section class="page-hero"><div class="wrap">'+breadcrumb('About')+'<div class="page-hero-grid"><div>'+eyebrow('Talha Alam · DigitalTalha')+'<h1>About Talha Alam.<br><span class="accent">Your digital marketer.</span></h1><p>I’m Talha, a freelance digital marketer and BBA student at Amity University. DigitalTalha is my personal brand, built around research, testing and honest communication.</p><p>Paid advertising is my main focus. Website creation and SEO connect that work with a clearer home for your services and a useful path from search to enquiry.</p><div class="button-row">'+button('Explore my work','/blog/','btn-primary')+'</div></div>'+portrait()+'</div></div></section>'
@@ -74,8 +77,8 @@ def install(site):
         return hero+'<section class="section contact-section" id="contact"><div class="wrap contact-layout"><div class="contact-intro"><h2>A simple first step.</h2><p>Tell me about your business and what you need. I’ll review it personally.</p>'+options()+'<p class="form-note">You can use the form, email me directly or start a WhatsApp conversation.</p></div>'+form+'</div></section>'
 
     def projects():
-        hero='<section class="page-hero"><div class="wrap">'+breadcrumb('Projects')+eyebrow('Projects & practical work')+'<h1>Marketing projects.<br><span class="accent">The thinking behind them.</span></h1><p>Explore the research and decisions behind a complete practice campaign, from the offer and landing page to tracking and campaign structure.</p></div></section>'
-        listing='<section class="section wrap"><div class="project-tools"><label class="search-box"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search projects or topics…" aria-label="Search projects" data-project-search></label><span class="label">Campaigns · Research · Experiments</span></div><p class="search-result" data-search-result role="status">1 project found</p>'+project_card(2)+'</section>'
+        hero='<section class="page-hero"><div class="wrap">'+breadcrumb('Projects')+eyebrow('Projects & practical work')+'<h1>Marketing projects.<br><span class="accent">The thinking behind them.</span></h1><p>A live hospital website and a documented practice campaign. Explore the planning, decisions and work behind each.</p></div></section>'
+        listing='<section class="section wrap"><div class="project-tools"><label class="search-box"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search projects or topics…" aria-label="Search projects" data-project-search></label><span class="label">Websites · Campaigns · Research</span></div><p class="search-result" data-search-result role="status">2 projects found</p><div class="project-list">'+site['hospital_card'](2)+project_card(2)+'</div></section>'
         return hero+listing
 
     site.update(home=home,services=services_page,service=lambda path,name:service_page('search' if name=='Google Ads' else 'social'),website_creation=lambda:service_page('website'),seo_service=lambda:service_page('seo'),about=about,contact=contact,projects=projects,service_cards=service_cards,project_card=project_card)

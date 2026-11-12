@@ -82,6 +82,12 @@ if "'Website Creation'" not in (ROOT/'server/enquiry.php').read_text():errors.ap
 preview=(ROOT/'DigitalTalha-preview.html').read_text()
 if not re.search(r'<link rel="icon"[^>]+href="data:image/png;base64,',preview):errors.append('Standalone preview must include its own embedded browser-tab icon.')
 
+# Public artefacts use the enquiry form instead of publishing direct contact links.
+direct_contact = re.compile(r'mailto:|https?://(?:wa\.me/|api\.whatsapp\.com/send)', re.I)
+for f in [*files, DIST / 'assets/site.js', ROOT / 'DigitalTalha-preview.html']:
+    if direct_contact.search(f.read_text()):
+        errors.append(f'{f.name}: direct contact details in public output')
+
 if errors:
     print('\n'.join(errors));sys.exit(1)
 print(f'PASS: {len(files)} HTML files; internal links, fragments, assets, unique IDs, page headings, form wiring and complete original article verified.')

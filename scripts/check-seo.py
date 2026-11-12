@@ -24,6 +24,7 @@ class Page(HTMLParser):
         self.title = ''
         self.in_title = False
         self.images = []
+        self.dates = []
         self.links = []
         self.crumb_labels = []
         self.in_crumb = False
@@ -42,6 +43,8 @@ class Page(HTMLParser):
             self.in_title = True
         if tag == 'img':
             self.images.append(attrs)
+        if tag == 'time':
+            self.dates.append(attrs.get('datetime'))
         if tag == 'a':
             self.links.append(attrs.get('href', ''))
         if tag == 'nav' and attrs.get('aria-label') == 'Breadcrumb':
@@ -104,14 +107,20 @@ for route, config in CONFIG.items():
     for node in all_nodes:
         if '@id' in node and len(node) == 1:
             assert node['@id'] in ids, (route, 'unresolved schema reference', node)
-        assert not any(key in node for key in ['aggregateRating', 'review', 'datePublished', 'dateModified']), (route, 'unverified facts')
+        assert not any(key in node for key in ['aggregateRating', 'review', 'dateModified']), (route, 'unverified facts')
     page_node = next(node for node in nodes if node.get('@id') == DOMAIN + route + '#webpage')
     assert page_node['url'] == DOMAIN + route, route
     assert page_node['description'] == config['description'], route
     if config.get('service'):
-        assert any(node.get('@type') == 'Service' and node['name'] == config['service'] for node in nodes), route
+        service = next(node for node in nodes if node.get('@type') == 'Service' and node['name'] == config['service'])
+        if config.get('area_served'):
+            city = config['area_served']
+            assert service['areaServed'] == {'@type': 'City', 'name': city}, route
+            assert city in page.title and city in page.meta['description'][0], route
+            assert city in source.split('<h1>', 1)[1].split('</h1>', 1)[0], route
     if config.get('article'):
-        assert any(node.get('@type') == 'BlogPosting' for node in nodes), route
+        article = next(node for node in nodes if node.get('@type') == 'BlogPosting')
+        assert page.dates == page.meta['article:published_time'] == [article['datePublished']] == [config['date_published']], route
     if route != '/' and not config.get('noindex'):
         crumb = next(node for node in nodes if node.get('@type') == 'BreadcrumbList')
         visible = ' '.join(page.crumb_labels)

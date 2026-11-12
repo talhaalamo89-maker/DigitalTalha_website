@@ -31,8 +31,8 @@
     "alt": "Illustration of a sponsored social post on a phone with audience, heart and message symbols",
     "description": "Bring your offer to Facebook and Instagram with clear creative and structured testing.",
     "chips": ["Audience research", "Creative testing", "Lead quality"],
-    "headline": "Meta Ads management.", "accent": "Facebook & Instagram.",
-    "intro": "Facebook and Instagram advertising for small businesses in India. Build campaigns around the people you want to reach, the problem you solve and a reason to take the next step.",
+    "headline": "Meta Ads management", "accent": "in Siliguri",
+    "intro": "I help Siliguri businesses plan and manage Facebook and Instagram ads. We define a useful enquiry, test creative and check which leads your team can actually follow up.",
     "overview": "People scrolling through Facebook or Instagram may not be looking for your service yet. The creative needs to make the problem and the offer easy to understand. I connect audience research, useful messaging and a clear enquiry route, then use structured tests to learn what deserves further attention.",
     "fit": "A useful fit when your business has a clear offer, access to relevant images or video, a test budget and a reliable way to respond to leads. We agree the audience, service area and intended action before building the campaign.",
     "includes": [
@@ -50,6 +50,7 @@
       ["Can you advertise on both Facebook and Instagram?", "Yes. Placement choices depend on the audience, objective and creative available. We review the campaign evidence rather than assuming that one placement will work best for every business."],
       ["Do I need videos to get started?", "Video can be useful, but it is not the only option. We can discuss suitable image assets, clear copy and an offer that makes sense to your audience. Any new production is scoped before work starts."],
       ["Will the cheapest lead be the best result?", "Not necessarily. A low cost per lead matters only when the people enquiring are relevant and can be followed up. Your feedback on enquiry quality is part of the review."],
+      ["Can my ads reach only the areas I serve?", "We agree where you can take customers before choosing campaign locations. For a Siliguri business, that might mean the city itself or a wider service area if your team can follow up there."],
       ["Is remarketing included?", "We assess whether suitable audiences, permissions and tracking are available. If remarketing is appropriate, its setup and creative requirements are agreed in the campaign scope."]
     ]
   },
@@ -58,8 +59,8 @@
     "alt": "Illustration of a business website adapting to a desktop screen and mobile phone",
     "description": "Explain your services clearly with a mobile-friendly website and straightforward contact options.",
     "chips": ["Mobile layouts", "Clear services", "Easy contact"],
-    "headline": "Website design.", "accent": "Built for your business.",
-    "intro": "Business websites, landing pages and portfolios for small businesses in India. Clear services, useful content and an easy route from a first visit to an enquiry.",
+    "headline": "Website design", "accent": "in Siliguri",
+    "intro": "I design and build websites for Siliguri businesses. Get clear service pages, a mobile-friendly layout and an easy way for customers to call, message or send an enquiry.",
     "overview": "A useful website answers the questions a potential customer brings: what you offer, who it is for, what is included and how to get started. I plan the structure around those decisions, then build a clean layout that works on phones as well as larger screens.",
     "fit": "A useful fit if you need your first business website, a focused campaign landing page, a personal portfolio or a clearer replacement for an existing site. Pages and features are agreed around your offer rather than added just to fill a menu.",
     "includes": [
@@ -74,6 +75,7 @@
     "prepare": "Bring your business details, logo, services, contact information and any photos or copy you can use. Share your current website if you have one, the main action you want visitors to take, and your budget and preferred timeline.",
     "note": "AI-assisted development. Personally reviewed. Domain, hosting, paid integrations, ecommerce, booking systems and ongoing maintenance are agreed separately unless explicitly included in the quote.",
     "faqs": [
+      ["Can we work together remotely?", "Yes. We can agree the page list and review the design online. Bring your services, the areas you cover and the contact options your customers use, such as phone or WhatsApp."],
       ["Can you redesign my existing website?", "Yes. We first review its content, useful pages and existing URLs. The plan should preserve important information and account for redirects if any address needs to change."],
       ["Will the website be SEO friendly?", "The build includes technical and on-page foundations such as readable HTML, descriptive pages, metadata and internal links. Rankings still depend on useful content, competition and ongoing work; a build alone cannot guarantee them."],
       ["Will I receive the source files?", "Source handover is agreed before the project starts. We also clarify hosting access, third-party licenses and what future edits or maintenance would involve."],
@@ -85,8 +87,8 @@
     "alt": "Illustration of an orange magnifying glass checking organic search results and a linked webpage",
     "description": "Improve your website’s content, structure and search foundations around what customers need.",
     "chips": ["Keyword research", "On-page SEO", "Technical checks"],
-    "headline": "SEO services.", "accent": "A clearer path from search.",
-    "intro": "Search engine optimisation for small business websites in India. Make your pages easier to understand, easier to explore and more useful to the people searching for your services.",
+    "headline": "SEO services", "accent": "in Siliguri",
+    "intro": "I help Siliguri businesses improve the pages customers find in Google Search. We start with local keyword research, a review of your service pages and checks in Google Search Console when access is available.",
     "overview": "SEO starts with the questions your customers are trying to answer. I review the website, research relevant searches and connect the right topics to the right pages. The aim is a useful, accessible website with a clear search focus, rather than repeating keywords without helping the visitor.",
     "fit": "A useful fit for a business with a website, clear services and a willingness to improve its content over time. It can also support a new website build. The starting plan depends on your market, service area, competition and the condition of the existing site.",
     "includes": [
@@ -103,7 +105,7 @@
     "faqs": [
       ["How is SEO different from Google Ads?", "Google Ads pays for advertising placements and requires an advertising budget. SEO improves the website and its organic search foundations. The right mix depends on your goals, competition and how quickly you need to test demand."],
       ["How long does SEO take?", "Changes need time to be discovered and assessed, and outcomes vary with the site and market. We agree review points and measure the available evidence instead of promising a fixed ranking date."],
-      ["Can you help a local service business?", "Yes. The plan can focus on the real places you serve and the services customers need there. Location information should be accurate and useful; copying one page across many city names is not the approach."],
+      ["What does local SEO include for a Siliguri business?", "We check how customers search for your services, which pages should answer those searches and how clearly the site explains where you work. If you have an eligible Google Business Profile, we can also review how it presents your services and contact details."],
       ["Do I need to rebuild my website for SEO?", "Often the starting work is improving existing content, headings, links and technical issues. A rebuild is considered only when the current website creates limits that smaller changes cannot reasonably resolve."]
     ]
   }

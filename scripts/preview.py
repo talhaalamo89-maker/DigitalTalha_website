@@ -32,7 +32,7 @@ for path in DIST.rglob('index.html'):
     raw=re.sub(r'(src=")(/assets/[^\"]+)(")',embed_asset,raw)
     raw=re.sub(r'<link rel="(?:icon|apple-touch-icon)"[^>]+>','',raw)
     bridge="""document.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;let href=a.getAttribute('href');if(!href)return;if(href.startsWith('/')){e.preventDefault();parent.postMessage({digitalTalhaPreview:true,path:href},'*');}else if(!href.startsWith('#')){a.target='_blank';a.rel='noopener noreferrer';}});"""
-    raw=raw.replace('</body>','<script>window.fetch=async()=>({ok:false,headers:{get:()=>"application/json"},json:async()=>({ok:false,message:"This preview cannot send enquiries. Please use WhatsApp or email."})});'+JS+bridge+'</script></body>')
+    raw=raw.replace('</body>','<script>window.fetch=async()=>({ok:false,headers:{get:()=>"application/json"},json:async()=>({ok:false,message:"Enquiries can be sent on the live website."})});'+JS+bridge+'</script></body>')
     PAGES[route]=raw
 
 safe_json=lambda value:json.dumps(value,ensure_ascii=False).replace('</script','<\\/script')

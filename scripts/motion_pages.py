@@ -6,8 +6,8 @@ import re
 def install(site):
     e=lambda value:escape(str(value),quote=True)
     eyebrow=site['eyebrow'];button=site['button'];link=site['link']
-    original_form=site['form'];contact_options=site['contact_options'];breadcrumb=site['breadcrumb']
-    project_card=site['project_card'];WEBSITE=site['WEBSITE'];WA=site['WA']
+    original_form=site['form'];breadcrumb=site['breadcrumb']
+    project_card=site['project_card'];WEBSITE=site['WEBSITE']
 
     def form(service='general',compact=False):
         markup=original_form(service,compact)
@@ -59,7 +59,7 @@ def install(site):
     def contact_block(service='general'):
         name=service if service!='general' else 'your next step'
         title='Let’s make it happen.' if service=='general' else 'Let’s talk about '+name+'.'
-        return f'''<section class="section contact-section compact-contact" id="contact"><div class="wrap contact-layout"><div class="contact-intro">{eyebrow('A simple first step')}<h2>{e(title)}</h2><p>Tell me about your business and what you need. I’ll review it personally.</p><div class="contact-illustration">{stage('social',True)}</div>{contact_options()}</div>{form(service,compact=service=='general')}</div></section>'''
+        return f'''<section class="section contact-section compact-contact" id="contact"><div class="wrap contact-layout"><div class="contact-intro">{eyebrow('A simple first step')}<h2>{e(title)}</h2><p>Tell me about your business and what you need. I’ll review it personally.</p><div class="contact-illustration">{stage('social',True)}</div></div>{form(service,compact=service=='general')}</div></section>'''
 
     def compact_faq(questions,title='A few useful answers.'):
         return '<section class="section wrap compact-faq"><div class="faq-layout"><div>'+eyebrow('Good questions')+'<h2>'+e(title)+'</h2><p class="lead-mini">Open the details you need.</p></div><div class="faq">'+''.join('<details><summary>'+e(q)+'</summary><p>'+e(a)+'</p></details>' for q,a in questions)+'</div></div></section>'
@@ -78,7 +78,7 @@ def install(site):
         k='search' if name=='Google Ads' else 'social';s=services[k]
         head='Google Ads management.<br><span class="accent">Reach people searching.</span>' if k=='search' else 'Meta Ads management.<br><span class="accent">Facebook &amp; Instagram.</span>'
         intro='Google search campaigns for small businesses in India, built around what your customers are looking for.' if k=='search' else 'Facebook and Instagram campaigns for small businesses in India, built around your audience, offer and creative.'
-        hero=f'<section class="page-hero"><div class="wrap">{breadcrumb(name)}<div class="service-hero visual-detail-hero"><div>{eyebrow(name)}<h1>{head}</h1><p>{intro}</p><div class="button-row">{button("Discuss my campaign", "#contact", "btn-primary")}{link("Ask on WhatsApp",WA)}</div><div class="service-chips">'+''.join('<span>'+e(c)+'</span>' for c in s['chips'])+f'</div></div>{story_switcher(k,k)}</div></div></section>'
+        hero=f'<section class="page-hero"><div class="wrap">{breadcrumb(name)}<div class="service-hero visual-detail-hero"><div>{eyebrow(name)}<h1>{head}</h1><p>{intro}</p><div class="button-row">{button("Discuss my campaign", "#contact", "btn-primary")}</div><div class="service-chips">'+''.join('<span>'+e(c)+'</span>' for c in s['chips'])+f'</div></div>{story_switcher(k,k)}</div></div></section>'
         points=[('Understand intent','Research the searches and needs behind demand.','⌕'),('Build the campaign','Connect keywords, ad copy and the offer.','↗'),('Track & improve','Measure meaningful actions and test changes.','◉')] if k=='search' else [('Understand people','Research the audience and what matters to them.','♡'),('Test the creative','Explore useful messages, visuals and angles.','✳'),('Follow the funnel','Review enquiries, lead quality and next steps.','↗')]
         essentials='<section class="section wrap"><div class="section-heading"><div>'+eyebrow('What I work on')+'<h2>The pieces that matter.</h2></div><p>A clear plan before spend.</p></div><div class="visual-deliverables">'+''.join('<div><span class="delivery-icon" aria-hidden="true">'+icon+'</span><h3>'+a+'</h3><p>'+b+'</p></div>' for a,b,icon in points)+'</div></section>'
         raw=site['SOURCE'][site['DOMAIN']+path]['lines'];faq_lines=[t for n,t in raw if 224<n<260 and t and not t.startswith('#')];questions=[]
@@ -89,7 +89,7 @@ def install(site):
         return hero+essentials+detail+journey()+compact_faq(questions)+contact_block(name)
 
     def website_creation():
-        s=services['website'];hero=f'<section class="page-hero"><div class="wrap">{breadcrumb("Website Creation")}<div class="service-hero visual-detail-hero"><div>{eyebrow("Website Creation")}<h1>Website design.<br><span class="accent">Built for your business.</span></h1><p>Business websites, landing pages and portfolios for small businesses in India. Clear services. Easy enquiries.</p><div class="button-row">{button("Discuss my website","#contact","btn-primary")}{link("Ask on WhatsApp",WA)}</div><p class="form-note">AI-assisted development. Personally reviewed.</p></div>{story_switcher("website","website")}</div></div></section>'
+        s=services['website'];hero=f'<section class="page-hero"><div class="wrap">{breadcrumb("Website Creation")}<div class="service-hero visual-detail-hero"><div>{eyebrow("Website Creation")}<h1>Website design.<br><span class="accent">Built for your business.</span></h1><p>Business websites, landing pages and portfolios for small businesses in India. Clear services. Easy enquiries.</p><div class="button-row">{button("Discuss my website","#contact","btn-primary")}</div><p class="form-note">AI-assisted development. Personally reviewed.</p></div>{story_switcher("website","website")}</div></div></section>'
         points=[('Made for mobile','Readable pages and easy-to-use contact options.','↗'),('Clear services','A useful structure around your offer and audience.','☷'),('Ready to hand over','Agreed source files, hosting help and next steps.','&lt;/&gt;')]
         deliverables='<section class="section wrap"><div class="section-heading"><div>'+eyebrow('Thoughtfully put together')+'<h2>Useful from the first visit.</h2></div><p>We agree the pages, features and scope before the build.</p></div><div class="visual-deliverables">'+''.join('<div><span class="delivery-icon" aria-hidden="true">'+i+'</span><h3>'+a+'</h3><p>'+b+'</p></div>' for a,b,i in points)+'</div></section>'
         scope='<section class="section-sm soft"><div class="wrap scope-row"><div>'+eyebrow('The right scope')+'<h2>Only the details you need.</h2><p>Your website is planned around your business and budget.</p></div><details class="scope-detail"><summary>Explore the full website scope <span aria-hidden="true">+</span></summary>'+''.join('<h3>'+e(a)+'</h3><p>'+e(b)+'</p>' for a,b in WEBSITE['deliverables'])+'</details></div></section>'

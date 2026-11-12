@@ -21,7 +21,7 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_response(503)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        self.wfile.write(b'{"ok":false,"message":"This preview cannot send enquiries. Please use WhatsApp or email below."}')
+        self.wfile.write(b'{"ok":false,"message":"Enquiries can be sent on the live website."}')
 
 host = '0.0.0.0' if os.environ.get('SITES_MANAGED_LINUX_CONTAINER') == '1' else '127.0.0.1'
 port = int(os.environ.get('PORT', '4173'))

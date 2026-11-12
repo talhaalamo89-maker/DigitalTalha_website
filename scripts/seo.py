@@ -74,7 +74,8 @@ def structured_data(path, metadata):
                 'name': service['service'], 'serviceType': service['service'],
                 'url': DOMAIN + service_path, 'description': service['description'],
                 'provider': {'@id': person_id},
-                'areaServed': {'@type': 'Country', 'name': 'India'}
+                'areaServed': ({'@type': 'City', 'name': service['area_served']}
+                               if service.get('area_served') else {'@type': 'Country', 'name': 'India'})
             })
         if config.get('service'):
             webpage['mainEntity'] = {'@id': url + '#service'}
@@ -93,7 +94,8 @@ def structured_data(path, metadata):
             'description': config['description'], 'author': {'@id': person_id},
             'publisher': {'@id': person_id}, 'mainEntityOfPage': {'@id': page_id},
             'image': DOMAIN + '/assets/meta-campaign.webp', 'inLanguage': 'en-IN',
-            'articleSection': 'Digital marketing practice projects'
+            'articleSection': 'Digital marketing practice projects',
+            'datePublished': config['date_published']
         })
         webpage['mainEntity'] = {'@id': url + '#article'}
     if config.get('project'):
@@ -127,7 +129,7 @@ def head(path, metadata, noindex=False, staging=False):
     robots = 'noindex, follow' if noindex or config.get('noindex') or staging else 'index, follow, max-image-preview:large'
     article = config.get('article')
     image = config.get('image') or ('meta-campaign.webp' if article else 'service-characters.webp')
-    width, height = (1536, 1024) if config.get('image') else ((1200, 677) if article else (1881, 836))
+    width, height = (960, 640) if config.get('image') else ((1200, 677) if article else (1881, 836))
     width, height = config.get('image_width', width), config.get('image_height', height)
     image_alt = config.get('image_alt') or ('UrbanFit Meta lead-generation practice campaign in Ads Manager' if article else 'Illustrations of Google Ads, Meta Ads and website creation services')
     e = lambda value: escape(str(value), quote=True)
@@ -136,12 +138,13 @@ def head(path, metadata, noindex=False, staging=False):
         preload = '<link rel="preload" as="image" href="/assets/talha-portrait.webp" fetchpriority="high">'
     elif config.get('image') and not config.get('project'):
         preload = f'<link rel="preload" as="image" href="/assets/{e(image)}" fetchpriority="high">'
+    published = f'<meta property="article:published_time" content="{e(config['date_published'])}">' if article else ''
     return f'''<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f8f7f3"><title>{e(title)}</title>
 <meta name="description" content="{e(description)}"><meta name="robots" content="{robots}">
 <link rel="canonical" href="{e(url)}"><meta name="author" content="Talha Alam">
 <meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:site_name" content="DigitalTalha">
-<meta property="og:locale" content="en_IN"><meta property="og:title" content="{e(title)}">
+<meta property="og:locale" content="en_IN"><meta property="og:title" content="{e(title)}">{published}
 <meta property="og:description" content="{e(description)}"><meta property="og:url" content="{e(url)}">
 <meta property="og:image" content="{DOMAIN}/assets/{image}"><meta property="og:image:type" content="image/webp">
 <meta property="og:image:width" content="{width}"><meta property="og:image:height" content="{height}"><meta property="og:image:alt" content="{e(image_alt)}">

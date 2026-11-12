@@ -44,7 +44,7 @@ def check(items): return '<ul class="check-list">'+''.join(f'<li>{esc(x)}</li>' 
 def platform(name):
     if name=='Website Creation':return '<span class="platform-icon web" aria-hidden="true">&lt;/&gt;</span>'
     return '<span class="platform-icon '+('google' if name=='Google Ads' else 'meta')+'" aria-hidden="true">'+('G' if name=='Google Ads' else '∞')+'</span>'
-def brand(): return '<a class="brand" href="/" aria-label="DigitalTalha home"><span class="brand-mark"><img src="/assets/logo-mark.png" width="144" height="104" alt=""></span><span>DigitalTalha<span class="brand-dot">.</span></span></a>'
+def brand(): return '<a class="brand" href="/" aria-label="DigitalTalha home"><span class="brand-mark"><img src="/assets/logo-mark.webp" width="144" height="104" alt=""></span><span>DigitalTalha<span class="brand-dot">.</span></span></a>'
 
 STAR='<svg viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="m50 0 7 30L79 7l-9 31 30-7-24 20 24 17-31-5 9 30-23-22-6 29-8-30-22 23 9-31L0 69l24-19L0 32l31 6-9-30 22 22z"/></svg>'
 ICON='<svg class="mini-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 25V15m11 10V7m11 18V11M2 28h28"/><path d="m4 10 10-7 9 3 6-4"/></svg>'

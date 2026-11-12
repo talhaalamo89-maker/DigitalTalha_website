@@ -25,16 +25,18 @@
     "image_alt": "Illustration of a sponsored search result, orange target and pointer for Google Ads"
   },
   "/meta-ads/": {
-    "title": "Meta Ads Management | Facebook & Instagram Ads",
-    "description": "Facebook and Instagram ad management for small businesses in India. Get help with audience research, creative testing, lead generation and conversion tracking.",
+    "title": "Meta Ads Management in Siliguri",
+    "description": "Meta Ads management for Siliguri businesses. Get help planning Facebook and Instagram ads, testing creative, tracking enquiries and reviewing lead quality.",
+    "area_served": "Siliguri",
     "label": "Meta Ads",
     "service": "Facebook and Instagram advertising management",
     "image": "meta-ads-service.webp",
     "image_alt": "Illustration of a sponsored social post on a phone with audience, heart and message symbols"
   },
   "/website-creation/": {
-    "title": "Website Design & Development for Small Businesses",
-    "description": "Business websites, landing pages and portfolios for small businesses in India. Get mobile-friendly layouts, clear service pages, contact forms and source handover.",
+    "title": "Website Design & Development in Siliguri",
+    "description": "Website design and development for Siliguri businesses. Get a mobile-friendly business website, service pages, clear enquiry options and an agreed source handover.",
+    "area_served": "Siliguri",
     "label": "Website Creation",
     "service": "Business website design and development",
     "image": "website-creation-service.webp",
@@ -59,7 +61,7 @@
   },
   "/contact/": {
     "title": "Contact Talha Alam | Ads & Website Enquiries",
-    "description": "Discuss Google Ads, Meta Ads, SEO or your website project with Talha Alam. Send an enquiry, email directly or start a WhatsApp conversation about your business.",
+    "description": "Discuss Google Ads, Meta Ads, SEO or your website project with Talha Alam. Use the contact form to share your project and what you would like to achieve.",
     "label": "Contact",
     "type": "ContactPage"
   },
@@ -77,7 +79,8 @@
     "title": "Meta Lead Generation Campaign: Setup to Optimization",
     "description": "Follow a documented Meta lead-generation practice project for a hypothetical fitness studio: research, landing page, tracking, audiences, ads and optimization.",
     "label": "Meta lead campaign",
-    "article": true
+    "article": true,
+    "date_published": "2026-09-18T14:15:16+05:30"
   },
   "/404/": {
     "title": "Page Not Found",
@@ -86,8 +89,9 @@
     "noindex": true
   },
   "/seo/": {
-    "title": "SEO Services for Small Businesses in India",
-    "description": "Improve your website with keyword research, on-page SEO, technical checks and useful service content. Work directly with Talha Alam on clear search priorities.",
+    "title": "SEO Services in Siliguri",
+    "description": "SEO services for Siliguri businesses. Work directly with Talha Alam on local keyword research, on-page SEO, technical fixes and Google Search Console checks.",
+    "area_served": "Siliguri",
     "label": "SEO",
     "service": "Search engine optimisation services",
     "image": "seo-service.webp",

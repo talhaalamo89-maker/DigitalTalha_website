@@ -10,7 +10,6 @@
   const search = document.querySelector('[data-project-search]');
   const result = document.querySelector('[data-search-result]');
   search?.addEventListener('input', () => { const query=search.value.trim().toLowerCase(); let count=0; document.querySelectorAll('[data-project]').forEach(card => { const match=card.textContent.toLowerCase().includes(query); card.hidden=!match; count+=Number(match); }); result.textContent = count ? `${count} project${count===1?'':'s'} found` : 'No projects match your search. Try “hospital” or “Meta”.'; });
-  document.querySelectorAll('[data-copy-email]').forEach(button => button.addEventListener('click', async () => { try { await navigator.clipboard.writeText('talhaalamo89@gmail.com'); button.textContent='Copied!'; } catch { button.textContent='talhaalamo89@gmail.com'; } }));
   document.querySelectorAll('[data-enquiry]').forEach(form => {
     const status=form.querySelector('[role="status"]');
     const submit=form.querySelector('[type="submit"]');
@@ -21,13 +20,13 @@
       try {
         const response=await fetch('/api/enquiry.php', {method:'POST',body:new FormData(form),headers:{Accept:'application/json'}});
         const type=response.headers.get('content-type')||'';
-        if(!type.includes('application/json')) throw new Error('Enquiry delivery is unavailable here. Please use WhatsApp or email below.');
+        if(!type.includes('application/json')) throw new Error('The enquiry form is temporarily unavailable. Please try again later.');
         const data=await response.json();
-        if(!response.ok || !data.ok) throw new Error(data.message||'Your enquiry could not be sent. Please try WhatsApp or email.');
+        if(!response.ok || !data.ok) throw new Error(data.message||'Your enquiry could not be sent. Please try again.');
         status.textContent='Your enquiry was accepted for delivery. I’ll review your details and get back to you.';
         form.reset();
         window.dataLayer=window.dataLayer||[]; window.dataLayer.push({event:'generate_lead',form_id:form.id,service:selectedService});
-      } catch(error) { status.classList.add('error'); status.textContent=error.message || 'Could not send. Please use WhatsApp or email.'; }
+      } catch(error) { status.classList.add('error'); status.textContent=error.message || 'Your enquiry could not be sent. Please try again.'; }
       finally { submit.disabled=false; submit.textContent=submit.dataset.label; }
     });
   });

@@ -4,18 +4,30 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Content-Type-Options: nosniff');
 
+const ENQUIRY_UNAVAILABLE = 'The enquiry form is temporarily unavailable. Please try again later.';
+
 function respond(int $code, bool $ok, string $message): never {
     http_response_code($code);
     echo json_encode(['ok' => $ok, 'message' => $message]);
     exit;
 }
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+$expectedHost = strtolower(explode(':', $_SERVER['HTTP_HOST'] ?? '')[0]);
+$isProduction = $expectedHost === 'digitaltalha.com';
+$recipient = '';
+if ($isProduction) {
+    // Release layout: domain/public_html/.digitaltalha-release-*/api/enquiry.php.
+    $privateFile = dirname(__DIR__, 3) . '/digitaltalha-enquiry-recipient.txt';
+    $recipient = trim((string) @file_get_contents($privateFile, false, null, 0, 512));
+    if (!filter_var($recipient, FILTER_VALIDATE_EMAIL) || !function_exists('mail')) {
+        respond(503, false, ENQUIRY_UNAVAILABLE);
+    }
+}
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     header('Allow: POST');
     respond(405, false, 'Please use the enquiry form.');
 }
 if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 24000) respond(413, false, 'Your enquiry is too long.');
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-$expectedHost = strtolower(explode(':', $_SERVER['HTTP_HOST'] ?? '')[0]);
 $originHost = strtolower((string)parse_url($origin, PHP_URL_HOST));
 if ($origin !== '' && ($originHost === '' || $originHost !== $expectedHost)) respond(403, false, 'Please send your enquiry from this website.');
 if (($_POST['company_url'] ?? '') !== '') respond(400, false, 'Your enquiry could not be sent.');
@@ -40,23 +52,23 @@ if ($phone !== '' && !preg_match('/^[+0-9() .-]{7,25}$/', $phone)) respond(422, 
 if ($website !== '' && (!filter_var($website, FILTER_VALIDATE_URL) || !in_array(strtolower((string)parse_url($website,PHP_URL_SCHEME)),['http','https'],true))) respond(422, false, 'Please enter a valid website address.');
 if (preg_match('/[\r\n]/', $email)) respond(422, false, 'Please check your email address.');
 
+if (!$isProduction) respond(503, false, ENQUIRY_UNAVAILABLE);
+
 // Keep the rate-limit files outside the public document root. No enquiry content is stored.
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 $rateFile = sys_get_temp_dir() . '/digitaltalha-rate-' . hash('sha256', $ip);
 $rateHandle = @fopen($rateFile, 'c+');
-if (!$rateHandle || !flock($rateHandle, LOCK_EX)) respond(503, false, 'Enquiry delivery is temporarily unavailable. Please use WhatsApp or email.');
+if (!$rateHandle || !flock($rateHandle, LOCK_EX)) respond(503, false, ENQUIRY_UNAVAILABLE);
 $last = (int)stream_get_contents($rateHandle);
 if ($last > time() - 60) { flock($rateHandle, LOCK_UN); fclose($rateHandle); respond(429, false, 'Please wait a minute before sending another enquiry.'); }
 
-$recipient = 'talhaalamo89@gmail.com';
 $subject = 'DigitalTalha website enquiry: ' . $service;
 $budgetLabel = in_array($service, ['Website Creation','SEO'], true) ? 'Project budget' : 'Monthly ad budget';
 $body = "New website enquiry\n\nName: $name\nBusiness: $business\nEmail: $email\nPhone: $phone\nWebsite: $website\nService: $service\n$budgetLabel: $budget\n\nMessage:\n$message\n\nConsent to contact: Yes\n";
 $headers = ['From' => 'DigitalTalha Website <website@digitaltalha.com>', 'Reply-To' => $email, 'Content-Type' => 'text/plain; charset=UTF-8', 'MIME-Version' => '1.0'];
-if (!function_exists('mail')) { flock($rateHandle, LOCK_UN); fclose($rateHandle); respond(503, false, 'Please contact me directly by WhatsApp or email.'); }
 $sent = @mail($recipient, $subject, $body, $headers);
 if ($sent) { rewind($rateHandle); ftruncate($rateHandle, 0); fwrite($rateHandle, (string)time()); fflush($rateHandle); }
 flock($rateHandle, LOCK_UN); fclose($rateHandle);
-if (!$sent) respond(503, false, 'Your enquiry could not be sent. Please use WhatsApp or email.');
+if (!$sent) respond(503, false, 'Your enquiry could not be sent. Please try again later.');
 respond(200, true, 'Your enquiry was accepted for delivery.');
 

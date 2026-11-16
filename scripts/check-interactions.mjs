@@ -27,7 +27,10 @@ assert.equal(p.status.textContent,'Delivery failed.');assert.equal(p.submit.disa
 p.menu.events.click();assert.equal(p.menu.getAttribute('aria-expanded'),'true');assert(p.nav.classes.has('is-open'));
 p.document.keydown({key:'Escape'});assert.equal(p.menu.getAttribute('aria-expanded'),'false');assert(p.menu.focused);
 p.search.value='unmatched search';p.search.events.input();assert.equal(p.card.hidden,true);assert.match(p.result.textContent,/No projects/);
-p.search.value='meta';p.search.events.input();assert.equal(p.card.hidden,false);assert.equal(p.result.textContent,'1 project found');
+p.search.value='campaign  META';p.search.events.input();assert.equal(p.card.hidden,false);assert.equal(p.result.textContent,'1 project found');
+p.card.textContent='Glisan AkbariSuper Speciality Hospital.';
+p.search.value='Glisan Akbari Super Speciality Hospital';p.search.events.input();assert.equal(p.card.hidden,false);
+p.search.value='  ';p.search.events.input();assert.equal(p.card.hidden,false);
 p=setup(async()=>({ok:true,headers:{get:()=> 'application/json'},json:async()=>({ok:true})}));
 await p.form.events.submit({preventDefault(){}});
 assert.equal(p.form.resetCalled,true);assert.equal(p.window.dataLayer[0].event,'generate_lead');assert.equal(p.submit.disabled,false);

@@ -6,11 +6,12 @@ from urllib.parse import urlsplit
 import json
 import sys
 import xml.etree.ElementTree as ET
+from build import SEO
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / 'dist'
 DOMAIN = 'https://digitaltalha.com'
-CONFIG = json.loads((ROOT / 'content/seo.json').read_text())
+CONFIG = SEO
 STAGING = '--staging' in sys.argv
 
 
@@ -23,6 +24,8 @@ class Page(HTMLParser):
         self.schema_text = None
         self.title = ''
         self.in_title = False
+        self.h1 = ''
+        self.in_h1 = False
         self.images = []
         self.dates = []
         self.links = []
@@ -41,6 +44,10 @@ class Page(HTMLParser):
             self.schema_text = ''
         if tag == 'title':
             self.in_title = True
+        if tag == 'h1':
+            self.in_h1 = True
+        if tag == 'br' and self.in_h1:
+            self.h1 += ' '
         if tag == 'img':
             self.images.append(attrs)
         if tag == 'time':
@@ -55,6 +62,8 @@ class Page(HTMLParser):
             self.schema_text += data
         if self.in_title:
             self.title += data
+        if self.in_h1:
+            self.h1 += data
         if self.in_crumb:
             self.crumb_labels.append(data)
 
@@ -64,6 +73,8 @@ class Page(HTMLParser):
             self.schema_text = None
         if tag == 'title':
             self.in_title = False
+        if tag == 'h1':
+            self.in_h1 = False
         if tag == 'nav':
             self.in_crumb = False
 
@@ -120,6 +131,7 @@ for route, config in CONFIG.items():
             assert city in source.split('<h1>', 1)[1].split('</h1>', 1)[0], route
     if config.get('article'):
         article = next(node for node in nodes if node.get('@type') == 'BlogPosting')
+        assert ' '.join(page.h1.split()) == article['headline'], (route, 'article headline mismatch')
         assert page.dates == page.meta['article:published_time'] == [article['datePublished']] == [config['date_published']], route
     if route != '/' and not config.get('noindex'):
         crumb = next(node for node in nodes if node.get('@type') == 'BreadcrumbList')

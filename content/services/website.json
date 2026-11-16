@@ -1,0 +1,73 @@
+{
+  "name": "Website Creation",
+  "route": "/website-creation/",
+  "tag": "Give your business a home",
+  "image": "/assets/website-creation-service.webp",
+  "alt": "Illustration of a business website adapting to a desktop screen and mobile phone",
+  "description": "Explain your services clearly with a mobile-friendly website and straightforward contact options.",
+  "chips": [
+    "Mobile layouts",
+    "Clear services",
+    "Easy contact"
+  ],
+  "headline": "Website design",
+  "accent": "for small businesses",
+  "intro": "I design and build websites for small businesses in India. Get a mobile-friendly layout, dedicated service pages and clear ways for customers to call, message or send an enquiry.",
+  "overview": "A useful website answers the questions a potential customer brings: what you offer, who it is for, what is included and how to get started. I plan the structure around those decisions, then build a clean layout that works on phones as well as larger screens.",
+  "fit": "A useful fit if you need your first business website, a focused campaign landing page, a personal portfolio or a clearer replacement for an existing site. Pages and features are agreed around your offer rather than added just to fill a menu.",
+  "includes": [
+    {
+      "heading": "Page & content planning",
+      "description": "Agree your pages, service information and the action visitors should take. Identify missing business details, photos and copy before building."
+    },
+    {
+      "heading": "Responsive design",
+      "description": "Create readable layouts, clear navigation and contact options for mobile and desktop. Keep the presentation consistent with your brand."
+    },
+    {
+      "heading": "Dedicated service pages",
+      "description": "Give important services their own descriptive, static URLs. Organise headings, scope, FAQs and internal links so visitors can understand each offer."
+    },
+    {
+      "heading": "SEO foundations",
+      "description": "Set page-specific titles, descriptions, canonical URLs, image alternatives and a sitemap. Review crawlability and structure as part of the build."
+    },
+    {
+      "heading": "Forms & contact paths",
+      "description": "Add the agreed enquiry form, email and WhatsApp links. Test validation and feedback; production email delivery also needs checking on your host."
+    },
+    {
+      "heading": "Review & handover",
+      "description": "Review the agreed pages and functionality, provide source files and discuss hosting, access and future updates before handover."
+    }
+  ],
+  "receive": [
+    "The agreed pages and responsive design",
+    "Website source files and configured contact paths",
+    "A launch checklist and practical handover notes"
+  ],
+  "prepare": "Bring your business details, logo, services, contact information and any photos or copy you can use. Share your current website if you have one, the main action you want visitors to take, and your budget and preferred timeline.",
+  "note": "AI-assisted development. Personally reviewed. Domain, hosting, paid integrations, ecommerce, booking systems and ongoing maintenance are agreed separately unless explicitly included in the quote.",
+  "faqs": [
+    {
+      "question": "Can we work together remotely?",
+      "answer": "Yes. We can agree the page list and review the design online. Bring your services, the areas you cover and the contact options your customers use, such as phone or WhatsApp."
+    },
+    {
+      "question": "Can you redesign my existing website?",
+      "answer": "Yes. We first review its content, useful pages and existing URLs. The plan should preserve important information and account for redirects if any address needs to change."
+    },
+    {
+      "question": "Will the website be SEO friendly?",
+      "answer": "The build includes technical and on-page foundations such as readable HTML, descriptive pages, metadata and internal links. Rankings still depend on useful content, competition and ongoing work; a build alone cannot guarantee them."
+    },
+    {
+      "question": "Will I receive the source files?",
+      "answer": "Source handover is agreed before the project starts. We also clarify hosting access, third-party licenses and what future edits or maintenance would involve."
+    },
+    {
+      "question": "What decides the price and timeline?",
+      "answer": "The number of pages, content readiness, design requirements and integrations affect the scope. I review those details before providing a quote or committing to a delivery schedule."
+    }
+  ]
+}

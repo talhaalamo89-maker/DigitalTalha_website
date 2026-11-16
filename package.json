@@ -6,6 +6,8 @@
   "scripts": {
     "build": "python3 scripts/build.py && python3 scripts/preview.py",
     "dev": "python3 scripts/serve.py",
-    "check": "python3 scripts/check.py && python3 scripts/check-seo.py && python3 scripts/check-services.py && node scripts/check-interactions.mjs"
+    "check": "python3 scripts/check.py && python3 scripts/check-seo.py && python3 scripts/check-services.py && node scripts/check-interactions.mjs",
+    "build:cloudflare": "python3 cloudflare/build.py",
+    "test:cloudflare": "node --test cloudflare/tests/*.test.mjs && python3 -m unittest discover -s cloudflare/tests -p \"test_*.py\""
   }
 }

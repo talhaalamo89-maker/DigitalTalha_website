@@ -1,0 +1,73 @@
+{
+  "name": "Meta Ads",
+  "route": "/meta-ads/",
+  "tag": "Start the right conversation",
+  "image": "/assets/meta-ads-service.webp",
+  "alt": "Illustration of a sponsored social post on a phone with audience, heart and message symbols",
+  "description": "Bring your offer to Facebook and Instagram with clear creative and structured testing.",
+  "chips": [
+    "Audience research",
+    "Creative testing",
+    "Lead quality"
+  ],
+  "headline": "Meta Ads management",
+  "accent": "for small businesses",
+  "intro": "I help small businesses in India plan and manage Facebook and Instagram ads. We define a useful enquiry, test creative and check which leads your team can follow up.",
+  "overview": "People scrolling through Facebook or Instagram may not be looking for your service yet. The creative needs to make the problem and the offer easy to understand. I connect audience research, useful messaging and a clear enquiry route, then use structured tests to learn what deserves further attention.",
+  "fit": "A useful fit when your business has a clear offer, access to relevant images or video, a test budget and a reliable way to respond to leads. We agree the audience, service area and intended action before building the campaign.",
+  "includes": [
+    {
+      "heading": "Audience & offer research",
+      "description": "Understand customer needs, questions and objections. Review the offer and competing messages before choosing the campaign angle."
+    },
+    {
+      "heading": "Campaign structure",
+      "description": "Plan the objective, ad sets, targeting and enquiry route around your business goal. Decide whether an instant form or website destination fits the situation."
+    },
+    {
+      "heading": "Creative direction & ad copy",
+      "description": "Develop messages, hooks and copy for agreed creative assets. The number of concepts, edits and any new photo or video production are defined in the scope."
+    },
+    {
+      "heading": "Tracking & event checks",
+      "description": "Review the available Meta Pixel, GA4 and website event setup. Where relevant, assess Conversions API requirements and event deduplication before implementation."
+    },
+    {
+      "heading": "Creative & audience tests",
+      "description": "Test useful variables such as messages, visuals and audience choices. Review the available evidence before shifting spend or replacing creative."
+    },
+    {
+      "heading": "Lead-quality review",
+      "description": "Connect campaign reporting with your feedback on enquiries. Review cost per lead, creative response and follow-up so cheap leads do not become the only goal."
+    }
+  ],
+  "receive": [
+    "An audience, offer and campaign plan",
+    "Agreed ad copy and creative-testing direction",
+    "A tracking review and clear reporting priorities"
+  ],
+  "prepare": "Bring your offer, target area, Facebook Page, Instagram account, available creative assets and monthly advertising budget. We will also discuss who responds to enquiries and what makes a lead useful to your business.",
+  "note": "Meta advertising spend and the management fee are separate. New production, website changes and advanced integrations are included only when agreed. Lead volume, quality and sales cannot be guaranteed.",
+  "faqs": [
+    {
+      "question": "Can you advertise on both Facebook and Instagram?",
+      "answer": "Yes. Placement choices depend on the audience, objective and creative available. We review the campaign evidence rather than assuming that one placement will work best for every business."
+    },
+    {
+      "question": "Do I need videos to get started?",
+      "answer": "Video can be useful, but it is not the only option. We can discuss suitable image assets, clear copy and an offer that makes sense to your audience. Any new production is scoped before work starts."
+    },
+    {
+      "question": "Will the cheapest lead be the best result?",
+      "answer": "Not necessarily. A low cost per lead matters only when the people enquiring are relevant and can be followed up. Your feedback on enquiry quality is part of the review."
+    },
+    {
+      "question": "Can my ads reach only the areas I serve?",
+      "answer": "We agree where you can serve customers before choosing campaign locations. We use those areas to guide targeting and review where useful enquiries come from."
+    },
+    {
+      "question": "Is remarketing included?",
+      "answer": "We assess whether suitable audiences, permissions and tracking are available. If remarketing is appropriate, its setup and creative requirements are agreed in the campaign scope."
+    }
+  ]
+}

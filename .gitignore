@@ -7,3 +7,8 @@ work/
 deployment/packages/
 backups/
 access/
+
+.venv/
+.wrangler/
+.dev.vars*
+.env.*

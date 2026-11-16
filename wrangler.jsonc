@@ -1,0 +1,31 @@
+{
+  "name": "digitaltalha-migration",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-11-13",
+  "env": {
+    "preview": {
+      "d1_databases": [
+        {
+          "binding": "ENQUIRY_DB",
+          "database_name": "digitaltalha-enquiry-preview",
+          "database_id": "1af17c7d-bce5-4352-a6f3-f7549b740d51"
+        }
+      ],
+      "vars": {
+        "ENQUIRY_FROM": "onboarding@resend.dev",
+        "ENQUIRY_PREVIEW_HOST": ""
+      }
+    }
+  },
+  "d1_databases": [
+    {
+      "binding": "ENQUIRY_DB",
+      "database_name": "digitaltalha-enquiry-production",
+      "database_id": "9b7b939b-116d-4b26-a8aa-6a5223f28dab"
+    }
+  ],
+  "vars": {
+    "ENQUIRY_FROM": "website@notify.digitaltalha.com",
+    "ENQUIRY_PREVIEW_HOST": ""
+  }
+}

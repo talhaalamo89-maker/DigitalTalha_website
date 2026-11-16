@@ -9,7 +9,17 @@
   document.querySelectorAll('.faq details').forEach(detail => detail.addEventListener('toggle', () => { if(detail.open) document.querySelectorAll('.faq details').forEach(other => { if(other!==detail) other.open=false; }); }));
   const search = document.querySelector('[data-project-search]');
   const result = document.querySelector('[data-search-result]');
-  search?.addEventListener('input', () => { const query=search.value.trim().toLowerCase(); let count=0; document.querySelectorAll('[data-project]').forEach(card => { const match=card.textContent.toLowerCase().includes(query); card.hidden=!match; count+=Number(match); }); result.textContent = count ? `${count} project${count===1?'':'s'} found` : 'No projects match your search. Try “hospital” or “Meta”.'; });
+  search?.addEventListener('input', () => {
+    const terms = search.value.toLowerCase().match(/\S+/g) || [];
+    let count = 0;
+    document.querySelectorAll('[data-project]').forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const match = terms.every(term => text.includes(term));
+      card.hidden = !match;
+      if (match) count++;
+    });
+    result.textContent = count ? `${count} project${count === 1 ? '' : 's'} found` : 'No projects match your search. Try “hospital” or “Meta”.';
+  });
   document.querySelectorAll('[data-enquiry]').forEach(form => {
     const status=form.querySelector('[role="status"]');
     const submit=form.querySelector('[type="submit"]');

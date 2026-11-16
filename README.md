@@ -1,66 +1,28 @@
-# DigitalTalha — classic website
+# DigitalTalha website
 
-Updated 8 November 2026. Live at [digitaltalha.com](https://digitaltalha.com/). A minimal, content-led website for Talha Alam, with the existing orange, warm-white and black palette, Poppins typography and normal scrolling.
-
-## Review
-
-Open `DigitalTalha-preview.html` in a browser. It includes all 13 content pages and shared images in one file. Internal navigation works; enquiries are disabled in this preview. The production website files are in `dist/`.
-
-This repository includes the migration fixes deployed after explicit approval on 8 November 2026, based on commit `92b59181ba898963b5a607823a2003c12d408925`. **Updates pushed to `main` now build, test on the separate test website, and publish to Hostinger automatically after passing checks.** See [automatic updates](deployment/AUTOMATION.md) and [GitHub Actions](https://github.com/talhaalamo89-maker/DigitalTalha_website/actions/workflows/website.yml). Pull requests run checks without publishing. Sensitive backend and deployment-control changes stop for review.
-
-## What changed
-
-- The original logo sits on a dark badge so its white details remain visible in the light header and dark footer.
-- Four services: Google Ads, Meta Ads, Website Creation and SEO. Each has a dedicated static page, an original service illustration, useful scope, fit, deliverables, preparation notes and FAQs.
-- Service images are WebP, approximately 26–37 KB each. The original generated images are retained separately from the website deliverable; the web versions are in `assets/`.
-- About content follows Talha’s supplied public About page: Class 12 curiosity, marketing reading, the UT Digital Media course, BBA studies, hands-on practice and direct working style. The outdated two-service framing was revised without inventing qualifications, results or testimonials.
-- Enquiry forms appear only on `/contact/`. Header, footer and service contact links lead there. SEO is included in the form and accepted by the PHP handler.
-- Existing page addresses remain unchanged. New SEO page: `/seo/`. All pages are emitted as static HTML directories. Page content and service links are available in the initial HTML.
-- Unique metadata, canonical URLs, service-specific social images, linked structured data, image alternatives, breadcrumbs, sitemap and legacy redirects are included.
-
-## Source
-
-| File | Purpose |
-| --- | --- |
-| `content/services.json` | Four service descriptions, scope, FAQs and artwork mapping |
-| `scripts/classic_pages.py` | Current page layouts and About content |
-| `scripts/build.py` | Header, footer, forms, article, legal content and static routes |
-| `content/seo.json` and `scripts/seo.py` | Search metadata and structured data |
-| `assets/site.css` | Current responsive layout and brand styling |
-| `assets/site.js` | Menu, search, FAQ and enquiry behavior |
-| `server/enquiry.php` | Production enquiry validation and mail handling |
-
-Earlier motion sources remain as reference. They are excluded from delivery, and the active layout does not use animation libraries.
+[DigitalTalha](https://digitaltalha.com/) is a static website built with Python and deployed to Cloudflare Pages. Pages CMS provides the content editor using the existing GitHub repository. See [Editing and publishing](CMS.md) for the setup and daily workflow and [Cloudflare Pages](cloudflare/README.md) for hosting and recovery.
 
 ## Build and check
 
-Requires Python 3.10+ and Node.js; no package installation is needed.
+Python 3.13 and Node.js 24 or later are used in CI.
 
 ```sh
-npm run build
-npm run check
-npm run dev
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
+npm run test:cloudflare
+npm run build:cloudflare
 ```
 
-The local preview normally uses `http://127.0.0.1:4173`. Managed preview environments bind to the container interface and support `PORT`. This is preview configuration only.
+Run `SITE_NOINDEX=1 npm run build:cloudflare` for review, then open the generated `DigitalTalha-preview.html` or run `npm run dev` and visit `http://127.0.0.1:4173`. The local form cannot deliver mail. The build recreates `dist/` from source, so drafts, removed pages and older generated files cannot persist across builds.
 
-Checks pass for 21 HTML files and 13 primary pages, including links, fragments, images, headings, form wiring, retained article text, metadata, schema, sitemap, service content and interaction behavior. The production sitemap contains 12 indexable URLs. The standalone preview also passes JavaScript syntax validation.
+| Source | Purpose |
+| --- | --- |
+| `.pages.yml` | Pages CMS fields and media settings |
+| `content/pages/`, `content/services/` | Website copy, headings, illustrations and FAQs |
+| `content/hospital-project.json` | Case study details and screenshots |
+| `content/posts/`, `content/seo/` | Blog posts, titles, descriptions and social cards |
+| `scripts/`, `assets/` | HTML generation, layout, images and site behavior |
+| `cloudflare/` | Redirects, enquiry handler, legacy files and Pages packaging |
 
-Representative desktop/mobile browser review passed on staging; the live homepage, mobile navigation and Contact layout were also checked. Hosted staging passed 42 checks, local versioned routing passed 49 checks, and production passed 68 checks plus five preserved application/media URLs. See `VERIFICATION.md` and the migration audit records. These checks do not establish live rankings, Core Web Vitals, inbox delivery or Analytics receipt.
-
-## Production
-
-**Do not upload an overwriting archive or copy `dist/` over this account's main document root.** Existing subdomain websites are nested inside it. Production uses a complete versioned release under `public_html/` and one root `.htaccess` dispatcher. The initial `.digitaltalha-release-20261108/` snapshot remains for rollback; each automatic update selects a new directory. Packaging adapts the nested 404 error-document path. WordPress files and its database remain in place for rollback.
-
-Normal updates use [the automatic workflow](deployment/AUTOMATION.md). [deployment/README.md](deployment/README.md) retains the manual packaging and recovery procedure. `deployment/root.htaccess` preserves the approved initial dispatcher template; the restricted service selects a new release for each update. `.hostinger/site.json` records the target. The complete private action record and backups remain in the local migration handoff, outside this repository. The temporary migration SSH key was revoked; a separate permanent key now permits only the reviewed deployment commands. General server changes require separately authorized access.
-
-The canonical origin remains `https://digitaltalha.com/`. Public staging can use:
-
-```sh
-SITE_NOINDEX=1 npm run build
-python3 scripts/check-seo.py --staging
-```
-
-Rebuild without `SITE_NOINDEX` before production deployment.
-
-The contact form reads its delivery address from `digitaltalha-enquiry-recipient.txt` beside the production `public_html` directory. Store one email address in that private file. The sender remains `website@digitaltalha.com`. The deployment checks PHP execution and invalid submissions. Inbox delivery requires a separate test. A lead event is pushed to the data layer only after a successful backend response and records the selected service without enquiry personal fields. Existing GTM `GTM-NMMW3MLB` is retained, but its published container has no active GA4 measurement/lead tag; reporting and conversions remain unverified.
+Earlier motion templates and Hostinger scripts remain as historical reference. Cloudflare production uses the existing static design and the Cloudflare enquiry handler.

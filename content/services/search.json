@@ -1,0 +1,69 @@
+{
+  "name": "Google Ads",
+  "route": "/google-ads/",
+  "tag": "Meet existing demand",
+  "image": "/assets/google-ads-service.webp",
+  "alt": "Illustration of a sponsored search result, orange target and pointer for Google Ads",
+  "description": "Reach people actively looking for your service with focused Google search campaigns.",
+  "chips": [
+    "Search intent",
+    "Clear ads",
+    "Conversion tracking"
+  ],
+  "headline": "Google Ads management",
+  "accent": "for small businesses",
+  "intro": "Google Ads management for small businesses in India. Connect relevant searches with a useful offer, a clear landing page and a measurable enquiry.",
+  "overview": "A search campaign starts with the reason behind the search. Someone comparing options needs a different message from someone ready to contact a business. I research those needs, organise the campaign around your services, and connect each ad to a relevant next step.",
+  "fit": "A useful fit for service businesses with an offer people already search for, a test budget and someone ready to follow up on enquiries. We review your service area, competition and website before deciding what to advertise.",
+  "includes": [
+    {
+      "heading": "Keyword & competitor research",
+      "description": "Identify useful searches, understand intent and review competing offers. Group related keywords around the services you actually provide."
+    },
+    {
+      "heading": "Campaign & ad-group setup",
+      "description": "Organise campaigns, locations, schedules and targeting around agreed business goals. Separate services where the message or budget needs to differ."
+    },
+    {
+      "heading": "Ad copy & landing-page review",
+      "description": "Write clear search ads and check that the destination answers the search. Review the offer, mobile layout and route to a call or enquiry."
+    },
+    {
+      "heading": "Conversion tracking",
+      "description": "Plan and check meaningful actions such as completed enquiries and calls using the available website, GA4 and Google Tag Manager setup."
+    },
+    {
+      "heading": "Search-term & budget reviews",
+      "description": "Review actual searches, add relevant negative keywords and examine spend against the actions being measured. Changes follow the evidence available."
+    },
+    {
+      "heading": "Reporting & next steps",
+      "description": "Explain spend, tracked enquiries, cost per enquiry and the changes made. Discuss lead quality with you so reporting goes beyond click counts."
+    }
+  ],
+  "receive": [
+    "An agreed campaign plan and service priorities",
+    "Campaign structure, keyword groups and ad copy",
+    "A tracking checklist and reporting approach"
+  ],
+  "prepare": "Bring your website, target locations, priority services and an idea of your monthly ad budget. Access to your advertising and analytics accounts may be needed. If a landing page needs work, we agree that scope separately.",
+  "note": "Google advertising spend and the management fee are separate. Your offer, competition, landing page and follow-up all affect results; a fixed number of leads or sales is not promised.",
+  "faqs": [
+    {
+      "question": "How much should I spend on Google Ads?",
+      "answer": "The right test budget depends on your services, location, competition and what an enquiry is worth to your business. We review those factors before agreeing a starting plan; there is no universal minimum that works for everyone."
+    },
+    {
+      "question": "Will I own my Google Ads account?",
+      "answer": "Your business should retain ownership of its advertising account. Access, responsibilities and any new account setup are agreed before work begins."
+    },
+    {
+      "question": "Do I need a landing page?",
+      "answer": "The destination needs to match the search and explain your offer clearly. An existing service page may be suitable; if it is confusing or hard to use on mobile, I will recommend improvements or a dedicated landing page."
+    },
+    {
+      "question": "How do we judge the campaign?",
+      "answer": "We review tracked enquiries and cost alongside your feedback on lead quality. Clicks and impressions help explain activity, but they do not prove that a campaign is bringing useful business."
+    }
+  ]
+}

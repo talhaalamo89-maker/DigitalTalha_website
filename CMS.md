@@ -26,7 +26,7 @@ Leave **Draft** on while writing. Drafts stay out of the generated website, sear
 
 1. After saving to **pages-cms** or **content/***, open GitHub **Actions → Website checks and Cloudflare Pages**. The workflow runs checks and supplies a downloadable **offline-website-preview**. With preview credentials configured, the latest successful review appears at [Cloudflare preview](https://pages-cms.digitaltalha-migration.pages.dev/). This address shows the last deployed review branch. Check the run's branch before reviewing.
 2. Read the changed pages on mobile and desktop. Check titles, images, links and the blog listing. The Cloudflare preview is noindex, uses an empty sitemap and does not send enquiries.
-3. Open a pull request into **main** and merge after reviewing the preview. A merge runs checks. To publish the reviewed build, open the workflow's **Run workflow**, choose **main** and select **production**. Check the run and the public pages after it finishes.
+3. Open a pull request into **main** and merge after reviewing the preview. GitHub runs the checks and automatically publishes the successful build to Cloudflare once the production credentials are configured. Saving or pushing directly to **main** also starts this process. Check the run and the public pages after it finishes.
 4. If a release needs to be undone, roll back to the previous verified production deployment in Cloudflare Pages. Revert the source change on GitHub as well if it should be excluded from future builds.
 
 ## First-time GitHub deployment setup

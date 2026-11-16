@@ -2,6 +2,8 @@
 from datetime import datetime
 from pathlib import Path
 from html import escape
+from cms_content import asset_info, attribute, copy_text, copy_value, load_seo
+import posts
 import json, re, shutil, os
 from seo import head as seo_head, breadcrumb as seo_breadcrumb
 
@@ -11,7 +13,12 @@ SOURCE=json.loads((ROOT/'content/original-pages.json').read_text())
 WEBSITE=json.loads((ROOT/'content/website-service.json').read_text())
 DOMAIN='https://digitaltalha.com'
 ARTICLE='how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization'
-SEO=json.loads((ROOT/'content/seo.json').read_text())
+SEO=load_seo()
+POSTS=posts.load_posts()
+SEO.update({route: posts.seo_fields(post) for route, post in POSTS.items()})
+CAMPAIGN = SEO['/'+ARTICLE+'/']
+CAMPAIGN['headline'] = ' '.join(copy_value('campaign-page', field) for field in
+                                ('meta_lead_generation_campaign', 'from_setup_to_optimization'))
 STAGING=os.environ.get('SITE_NOINDEX', '').lower() in ['1', 'true', 'yes']
 
 def tracking():
@@ -44,7 +51,12 @@ def check(items): return '<ul class="check-list">'+''.join(f'<li>{esc(x)}</li>' 
 def platform(name):
     if name=='Website Creation':return '<span class="platform-icon web" aria-hidden="true">&lt;/&gt;</span>'
     return '<span class="platform-icon '+('google' if name=='Google Ads' else 'meta')+'" aria-hidden="true">'+('G' if name=='Google Ads' else '∞')+'</span>'
-def brand(): return '<a class="brand" href="/" aria-label="DigitalTalha home"><span class="brand-mark"><img src="/assets/logo-mark.webp" width="144" height="104" alt=""></span><span>DigitalTalha<span class="brand-dot">.</span></span></a>'
+def brand():
+    logo, width, height, _ = asset_info(copy_value('navigation', 'logo'))
+    return (f'<a class="brand" href="/" aria-label="DigitalTalha home"><span class="brand-mark">'
+            f'<img src="{logo}" width="{width}" height="{height}" alt=""></span>'
+            '<span>DigitalTalha<span class="brand-dot">.</span></span></a>')
+
 
 STAR='<svg viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="m50 0 7 30L79 7l-9 31 30-7-24 20 24 17-31-5 9 30-23-22-6 29-8-30-22 23 9-31L0 69l24-19L0 32l31 6-9-30 22 22z"/></svg>'
 ICON='<svg class="mini-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 25V15m11 10V7m11 18V11M2 28h28"/><path d="m4 10 10-7 9 3 6-4"/></svg>'
@@ -54,12 +66,12 @@ def portrait():
 
 def header(current):
     nav=[('Home','/'),('About','/about/'),('Services','/services/'),('Projects','/blog/'),('Contact','/contact/')]
-    active='/services/' if current in ['/google-ads/','/meta-ads/','/website-creation/','/seo/'] else '/blog/' if current=='/'+ARTICLE+'/' or SEO.get(current,{}).get('project') else current
-    links=''.join(f'<a href="{u}"'+(' aria-current="page"' if active==u else '')+f'>{s}</a>' for s,u in nav)
-    return f'''<a class="skip" href="#content">Skip to content</a><header class="site-header"><div class="wrap header-inner">{brand()}<nav class="primary-nav" id="primary-nav" aria-label="Main navigation">{links}</nav><div class="header-cta">{button("Let’s talk",'/contact/')}</div><button class="menu-toggle" data-menu aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span></button></div></header>'''
+    active='/services/' if current in ['/google-ads/','/meta-ads/','/website-creation/','/seo/'] else '/blog/' if SEO.get(current,{}).get('article') or SEO.get(current,{}).get('project') else current
+    links=''.join(f'<a href="{u}"'+(' aria-current="page"' if active==u else '')+f'>{copy_text("navigation", name.lower())}</a>' for name,u in nav)
+    return f'''<a class="skip" href="#content">Skip to content</a><header class="site-header"><div class="wrap header-inner">{brand()}<nav class="primary-nav" id="primary-nav" aria-label="Main navigation">{links}</nav><div class="header-cta">{button(copy_value('navigation', 'cta'),'/contact/')}</div><button class="menu-toggle" data-menu aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span></button></div></header>'''
 
 def footer():
-    return f'''<footer class="footer"><div class="wrap"><div class="footer-grid"><div>{brand()}<p>Performance marketing that drives more leads, sales, and measurable growth.</p><div class="socials"><a href="https://www.instagram.com/_digitaltalha_/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="https://www.linkedin.com/in/talha-alam-798st0/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.facebook.com/profile.php?id=61572897474852" target="_blank" rel="noopener noreferrer">Facebook ↗</a></div></div><div><h2>Explore</h2><ul><li><a href="/">Home</a></li><li><a href="/about/">About</a></li><li><a href="/blog/">Projects &amp; blog</a></li><li><a href="/contact/">Contact</a></li></ul></div><div><h2>Services</h2><ul><li><a href="/services/">All services</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/meta-ads/">Meta Ads</a></li><li><a href="/website-creation/">Website Creation</a></li><li><a href="/seo/">SEO</a></li><li><a href="/contact/">Free consultation</a></li></ul></div><div><h2>Let’s talk growth</h2><ul><li><a href="/contact/#enquiry">Send an enquiry ↗</a></li><li><a href="/privacy-policy/">Privacy Policy</a></li><li><a href="/terms-conditions/">Terms &amp; Conditions</a></li></ul></div></div><div class="footer-bottom"><span>© 2026 DigitalTalha. All rights reserved.</span><span>Independent. Intentional. Always learning.</span><button data-back-top aria-label="Back to top">Back to top ↑</button></div><div class="footer-word" aria-hidden="true">DIGITALTALHA</div></div></footer>'''
+    return f'''<footer class="footer"><div class="wrap"><div class="footer-grid"><div>{brand()}<p>{copy_text('footer', 'google_ads_meta_ads_seo')}</p><div class="socials"><a href="https://www.instagram.com/_digitaltalha_/" target="_blank" rel="noopener noreferrer">{attribute('footer', 'instagram')}</a><a href="https://www.linkedin.com/in/talha-alam-798st0/" target="_blank" rel="noopener noreferrer">{attribute('footer', 'linkedin')}</a><a href="https://www.facebook.com/profile.php?id=61572897474852" target="_blank" rel="noopener noreferrer">{attribute('footer', 'facebook')}</a></div></div><div><h2>{copy_text('footer', 'explore')}</h2><ul><li><a href="/">{copy_text('footer', 'home')}</a></li><li><a href="/about/">{copy_text('footer', 'about')}</a></li><li><a href="/blog/">{copy_text('footer', 'projects_blog')}</a></li><li><a href="/contact/">{copy_text('footer', 'contact')}</a></li></ul></div><div><h2>{copy_text('footer', 'services')}</h2><ul><li><a href="/services/">{copy_text('footer', 'all_services')}</a></li><li><a href="/google-ads/">{copy_text('footer', 'google_ads')}</a></li><li><a href="/meta-ads/">{copy_text('footer', 'meta_ads')}</a></li><li><a href="/website-creation/">{copy_text('footer', 'website_creation')}</a></li><li><a href="/seo/">{copy_text('footer', 'seo')}</a></li><li><a href="/contact/">{copy_text('footer', 'free_consultation')}</a></li></ul></div><div><h2>{copy_text('footer', 'let_s_talk_growth')}</h2><ul><li><a href="/contact/#enquiry">{attribute('footer', 'send_an_enquiry')}</a></li><li><a href="/privacy-policy/">{copy_text('footer', 'privacy_policy')}</a></li><li><a href="/terms-conditions/">{copy_text('footer', 'terms_conditions')}</a></li></ul></div></div><div class="footer-bottom"><span>{copy_text('footer', '2026_digitaltalha_all_rights_reserved')}</span><span>{copy_text('footer', 'independent_intentional_always_learning')}</span><button data-back-top aria-label="Back to top">{attribute('footer', 'back_to_top')}</button></div><div class="footer-word" aria-hidden="true">DIGITALTALHA</div></div></footer>'''
 
 PAGES={}
 def page(path,title,body,description=None,noindex=False):
@@ -94,16 +106,16 @@ def project_card():
 
 def form(service='general',compact=False):
     service_options=['Google Ads','Meta Ads','Website Creation','SEO','Not sure yet']
-    opts='<option value=""'+(' selected' if service=='general' else '')+' disabled>Choose one</option>'+''.join(f'<option'+(' selected' if service==v else '')+f'>{v}</option>' for v in service_options)
+    opts='<option value=""'+(' selected' if service=='general' else '')+(' disabled>' + copy_text('form', 'choose_one') + '</option>')+''.join(f'<option'+(' selected' if service==v else '')+f'>{v}</option>' for v in service_options)
     name_label='Name' if compact else 'Full Name'
-    extra='' if compact else '<div class="field full"><label for="website">Business Website <span>(optional)</span></label><input id="website" name="website" type="url" maxlength="250" placeholder="https://yourwebsite.com" autocomplete="url"></div>'
-    budget='' if service=='general' else '<div class="field full"><label for="budget">Monthly Ad Budget</label><select id="budget" name="budget"><option>Not decided yet</option><option>Under ₹10,000</option><option>₹10,000 – ₹30,000</option><option>₹30,000 – ₹50,000</option><option>₹50,000+</option></select></div>'
-    if service=='Website Creation':budget='<div class="field full"><label for="budget">Project Budget <span>(optional)</span></label><input id="budget" name="budget" maxlength="150" placeholder="Your planned budget, if you have one"></div>'
+    extra='' if compact else ('<div class="field full"><label for="website">' + copy_text('form', 'business_website') + ' <span>' + copy_text('form', 'optional') + '</span></label><input id="website" name="website" type="url" maxlength="250" placeholder="' + attribute('form', 'https_yourwebsite_com') + '" autocomplete="url"></div>')
+    budget='' if service=='general' else ('<div class="field full"><label for="budget">' + copy_text('form', 'monthly_ad_budget') + '</label><select id="budget" name="budget"><option>Not decided yet</option><option>Under ₹10,000</option><option>₹10,000 – ₹30,000</option><option>₹30,000 – ₹50,000</option><option>₹50,000+</option></select></div>')
+    if service=='Website Creation':budget=('<div class="field full"><label for="budget">' + copy_text('form', 'project_budget') + ' <span>' + copy_text('form', 'optional') + '</span></label><input id="budget" name="budget" maxlength="150" placeholder="' + attribute('form', 'your_planned_budget_if_you') + '"></div>')
     label='Tell Me About Your Business' if compact else 'Send My Enquiry' if service=='general' else 'Discuss My Website' if service=='Website Creation' else 'Get My Free Consultation'
-    service_header='' if service=='general' else '<div class="form-heading"><span class="label">Get started</span><h3>Tell Me About Your Business</h3><p>Fill in a few details and I’ll get back to you personally to schedule your free consultation.</p><p>No spam, no sales pressure — just an honest conversation about your goals.</p></div>'
-    if service=='Website Creation':service_header='<div class="form-heading"><span class="label">Start a website project</span><h3>What does your website need to do?</h3><p>Share the kind of business, pages and features you have in mind. I’ll review your brief and discuss the scope and next steps with you.</p></div>'
+    service_header='' if service=='general' else ('<div class="form-heading"><span class="label">' + copy_text('form', 'get_started') + '</span><h3>' + copy_text('form', 'tell_me_about_your_business') + '</h3><p>' + copy_text('form', 'fill_in_a_few_details') + '</p><p>' + copy_text('form', 'no_spam_no_sales_pressure') + '</p></div>')
+    if service=='Website Creation':service_header=('<div class="form-heading"><span class="label">' + copy_text('form', 'start_a_website_project') + '</span><h3>' + copy_text('form', 'what_does_your_website_need') + '</h3><p>' + copy_text('form', 'share_the_kind_of_business') + '</p></div>')
     service_end='' if service=='general' else f'<p class="form-note">Still deciding? There’s no pressure — reach out and let’s talk about whether {service} makes sense for your business right now.</p>'
-    return f'''<form class="enquiry-form" id="enquiry" data-enquiry data-service="{esc(service)}" method="post" action="/api/enquiry.php">{service_header}<div class="form-grid"><div class="field"><label for="name">{name_label} *</label><input id="name" name="name" required maxlength="100" placeholder="Your full name" autocomplete="name"></div><div class="field"><label for="business">Business Name *</label><input id="business" name="business" required maxlength="150" placeholder="Your business name" autocomplete="organization"></div><div class="field"><label for="email">Email Address *</label><input id="email" name="email" type="email" required maxlength="200" placeholder="you@business.com" autocomplete="email"></div><div class="field"><label for="phone">Phone / WhatsApp <span>(optional)</span></label><input id="phone" name="phone" type="tel" maxlength="25" pattern="[+0-9() .-]{{7,25}}" placeholder="Your number" autocomplete="tel"></div>{extra}<div class="field full"><label for="service">What do you need help with? *</label><select id="service" name="service" required>{opts}</select></div>{budget}<div class="field full"><label for="message">{'Message' if compact else 'What are you trying to achieve?'} *</label><textarea id="message" name="message" required minlength="10" maxlength="5000" rows="4" placeholder="Tell me a bit about your business and what you’re trying to achieve."></textarea></div></div><label class="form-consent"><input type="checkbox" name="consent" value="yes" required><span>I agree to the <a href="/privacy-policy/">Privacy Policy</a> and consent to being contacted.</span></label><div class="honeypot" aria-hidden="true"><label for="company-url">Leave this field blank</label><input id="company-url" name="company_url" tabindex="-1" autocomplete="off"></div><button class="btn btn-primary" type="submit" data-label="{label}">{label} <span aria-hidden="true">↗</span></button><p class="form-note">I’ll use these details to review your enquiry and contact you about your requirements.</p>{service_end}<p class="form-status" role="status" aria-live="polite" aria-atomic="true"></p><noscript><p class="form-note">You can submit this form on the live website.</p></noscript></form>'''
+    return f'''<form class="enquiry-form" id="enquiry" data-enquiry data-service="{esc(service)}" method="post" action="/api/enquiry.php">{service_header}<div class="form-grid"><div class="field"><label for="name">{name_label} *</label><input id="name" name="name" required maxlength="100" placeholder="{attribute('form', 'your_full_name')}" autocomplete="name"></div><div class="field"><label for="business">{copy_text('form', 'business_name')}</label><input id="business" name="business" required maxlength="150" placeholder="{attribute('form', 'your_business_name')}" autocomplete="organization"></div><div class="field"><label for="email">{copy_text('form', 'email_address')}</label><input id="email" name="email" type="email" required maxlength="200" placeholder="{attribute('form', 'you_business_com')}" autocomplete="email"></div><div class="field"><label for="phone">{copy_text('form', 'phone_whatsapp')} <span>{copy_text('form', 'optional')}</span></label><input id="phone" name="phone" type="tel" maxlength="25" pattern="[+0-9() .-]{{7,25}}" placeholder="{attribute('form', 'your_number')}" autocomplete="tel"></div>{extra}<div class="field full"><label for="service">{copy_text('form', 'what_do_you_need_help')}</label><select id="service" name="service" required>{opts}</select></div>{budget}<div class="field full"><label for="message">{'Message' if compact else 'What are you trying to achieve?'} *</label><textarea id="message" name="message" required minlength="10" maxlength="5000" rows="4" placeholder="{attribute('form', 'tell_me_a_bit_about')}"></textarea></div></div><label class="form-consent"><input type="checkbox" name="consent" value="yes" required><span>{copy_text('form', 'i_agree_to_the')} <a href="/privacy-policy/">{copy_text('form', 'privacy_policy')}</a> {copy_text('form', 'and_consent_to_being_contacted')}</span></label><div class="honeypot" aria-hidden="true"><label for="company-url">{copy_text('form', 'leave_this_field_blank')}</label><input id="company-url" name="company_url" tabindex="-1" autocomplete="off"></div><button class="btn btn-primary" type="submit" data-label="{label}">{label} <span aria-hidden="true">↗</span></button><p class="form-note">{copy_text('form', 'i_ll_use_these_details')}</p>{service_end}<p class="form-status" role="status" aria-live="polite" aria-atomic="true"></p><noscript><p class="form-note">{copy_text('form', 'you_can_submit_this_form')}</p></noscript></form>'''
 
 def contact_block(service='general'):
     is_home=service=='general'
@@ -223,11 +235,10 @@ def projects():
 
 def slugify(s): return re.sub(r'[^a-z0-9]+','-',s.lower()).strip('-')
 
-def article_content(path,start,end):
+def article_content(lines, *, legal=False):
     """Convert readable source content without changing its wording."""
     output=[];in_list=None;seen_ids={};heading_levels=[]
-    for n,raw in SOURCE[DOMAIN+path]['lines']:
-        if not start<=n<=end: continue
+    for raw in lines:
         t=raw.strip()
         if not t: continue
         is_bullet=t.startswith('* ');is_number=bool(re.match(r'^\d+\. ',t))
@@ -246,7 +257,7 @@ def article_content(path,start,end):
             while heading_levels and heading_levels[-1]>=source_level:heading_levels.pop()
             level=min(2+len(heading_levels),6)
             heading_levels.append(source_level)
-            if path in ['/privacy-policy/','/terms-conditions/']:level=2
+            if legal:level=2
             base_id=slugify(match[2]);seen_ids[base_id]=seen_ids.get(base_id,0)+1
             heading_id=base_id if seen_ids[base_id]==1 else base_id+'-'+str(seen_ids[base_id])
             output.append(f'<h{level} id="{heading_id}">{esc(match[2])}</h{level}>')
@@ -258,28 +269,38 @@ def article_content(path,start,end):
     if in_list:output.append('</'+in_list+'>')
     return ''.join(output)
 
-def toc(path,start,end,article=False):
+def toc(lines, article=False):
     heads=[]
-    for n,t in SOURCE[DOMAIN+path]['lines']:
-        if start<=n<=end and (t.startswith('# ') if article else t.startswith('## ')):
+    for t in lines:
+        if t.startswith('# ' if article else '## '):
             h=t.lstrip('# ').strip();heads.append((slugify(h),h))
     return '<aside class="article-toc" aria-label="Table of contents"><h2>On this page</h2><ol>'+''.join(f'<li><a href="#{u}">{esc(t)}</a></li>' for u,t in heads)+'</ol></aside>'
 
 def article():
     path='/'+ARTICLE+'/'
+    lines = copy_value('campaign-article', 'body').splitlines()
     published = SEO[path]['date_published']
     published_label = datetime.fromisoformat(published).strftime('%d %B %Y').lstrip('0')
-    hero='<section class="page-hero"><div class="wrap article-hero">'+breadcrumb('Projects / Meta lead campaign')+eyebrow('Practice project · Meta Ads')+'<h1>Meta Lead Campaign —<br><span class="accent">From Start to Finish</span></h1><div class="article-meta"><span>By Talha Alam</span><time datetime="'+esc(published)+'">Published '+esc(published_label)+'</time><span>A practical beginner-friendly project</span><span>Campaign setup → Optimization</span></div></div></section>'
-    article_intro='<p class="article-intro">A Practical Beginner-Friendly Project</p><p>By <a href="/about/">Talha Alam</a> · Explore <a href="/meta-ads/">Meta Ads management</a> or <a href="/website-creation/">landing page creation</a> for your business.</p><div class="article-note">'+esc(line(path,36))+'</div>'
-    return hero+'<section class="section wrap article-layout">'+toc(path,42,869,True)+'<article class="prose article-body">'+article_intro+article_content(path,38,869)+'<div class="button-row">'+link('Back to all projects','/blog/')+'</div></article></section>'
+    hero='<section class="page-hero"><div class="wrap article-hero">'+breadcrumb('Projects / Meta lead campaign')+eyebrow(copy_value('campaign-page', 'practice_project_meta_ads'))+('<h1>' + copy_text('campaign-page', 'meta_lead_generation_campaign') + '<br> <span class="accent">' + copy_text('campaign-page', 'from_setup_to_optimization') + '</span></h1><div class="article-meta"><span>' + copy_text('campaign-page', 'by_talha_alam') + '</span><time datetime="')+esc(published)+'">Published '+esc(published_label)+('</time><span>' + copy_text('campaign-page', 'a_practical_beginner_friendly_project') + '</span><span>' + copy_text('campaign-page', 'campaign_setup_optimization') + '</span></div></div></section>')
+    article_intro=('<p class="article-intro">' + copy_text('campaign-page', 'a_practical_beginner_friendly_project_3') + '</p><p>' + copy_text('campaign-page', 'by') + ' <a href="/about/">' + copy_text('campaign-page', 'talha_alam') + '</a> ' + copy_text('campaign-page', 'explore') + ' <a href="/meta-ads/">' + copy_text('campaign-page', 'meta_ads_management') + '</a> ' + copy_text('campaign-page', 'or') + ' <a href="/website-creation/">' + copy_text('campaign-page', 'landing_page_creation') + '</a> ' + copy_text('campaign-page', 'for_your_business') + '</p><div class="article-note">')+attribute('campaign-article', 'disclosure')+'</div>'
+    return hero+'<section class="section wrap article-layout">'+toc(lines, article=True)+'<article class="prose article-body">'+article_intro+article_content(lines)+'<div class="button-row">'+link(copy_value('campaign-page', 'back_to_all_projects'),'/blog/')+'</div></article></section>'
 
-def legal(path,title,end):
-    hero='<section class="page-hero"><div class="wrap">'+breadcrumb(title)+eyebrow('The details')+'<h1>'+esc(title)+'</h1><p>Last Updated: September 2026</p></div></section>'
-    return hero+'<section class="section wrap legal-layout">'+toc(path,37,end)+'<article class="prose">'+article_content(path,37,end)+'</article></section>'
+def legal(path):
+    key = path.strip('/')
+    title = copy_value(key, 'heading')
+    lines = copy_value(key, 'body').splitlines()
+    hero = ('<section class="page-hero"><div class="wrap">' + breadcrumb(title)
+            + eyebrow(copy_value('legal-layout', 'the_details'))
+            + f'<h1>{esc(title)}</h1><p>{copy_text(key, "last_updated")}</p></div></section>')
+    return (hero + '<section class="section wrap legal-layout">' + toc(lines)
+            + '<article class="prose">' + article_content(lines, legal=True) + '</article></section>')
+
 
 def build():
     PAGES.clear()
-    OUT.mkdir(exist_ok=True)
+    if OUT.exists():
+        shutil.rmtree(OUT)
+    OUT.mkdir()
     shutil.copytree(ROOT/'assets',OUT/'assets',dirs_exist_ok=True,ignore=shutil.ignore_patterns('motion.css','motion.js'))
     for name in ['motion.css','motion.js']:
         (OUT/'assets'/name).unlink(missing_ok=True)
@@ -295,13 +316,18 @@ def build():
     page('/blog/','Projects and Practical Works',projects())
     page(HOSPITAL_PROJECT['route'],'Glisan Akbari Hospital Website Project',hospital_project())
     page('/contact/','Let’s talk about your marketing goals',contact())
-    page('/privacy-policy/','Privacy Policy',legal('/privacy-policy/','Privacy Policy',63))
-    page('/terms-conditions/','Terms and Conditions',legal('/terms-conditions/','Terms and Conditions',74))
+    page('/privacy-policy/','Privacy Policy',legal('/privacy-policy/'))
+    page('/terms-conditions/','Terms and Conditions',legal('/terms-conditions/'))
     page('/'+ARTICLE+'/','Meta Lead Campaign — From Start to Finish',article(),description='A complete practical Meta lead-generation project: goal, landing page, tracking, campaign setup, audiences, creative, remarketing, and optimization.')
+    for route, post in POSTS.items():
+        page(route, post['title'], posts.render(route, post, lambda path: seo_breadcrumb(path, SEO), link))
     for alias,target in {'/about-us/':'/about/','/contact-us/':'/contact/','/service/':'/services/','/projects/':'/blog/','/resources/':'/blog/','/category/meta-ads/':'/blog/','/category/uncategorized/':'/blog/'}.items():
         folder=OUT/alias.strip('/');folder.mkdir(parents=True,exist_ok=True)
         (folder/'index.html').write_text(f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url={target}"><meta name="robots" content="noindex"><link rel="canonical" href="{DOMAIN+target}"><title>Continue to DigitalTalha</title></head><body><p>This page has moved. <a href="{target}">Continue to DigitalTalha</a>.</p></body></html>')
-    body='<div class="wrap not-found"><p class="big404" aria-hidden="true">404</p><h1>This page took a wrong turn.</h1><p>The page you’re looking for isn’t here. Let’s get you back to the work, the services, or a conversation.</p><div class="button-row">'+button('Back to home','/','btn-primary')+button('Get in touch','/contact/','btn-outline')+'</div></div>'
+    body = ('<div class="wrap not-found"><p class="big404" aria-hidden="true">404</p>'
+            f'<h1>{copy_text("not-found", "heading")}</h1><p>{copy_text("not-found", "description")}</p>'
+            '<div class="button-row">' + button(copy_value('not-found', 'home_link'), '/', 'btn-primary')
+            + button(copy_value('not-found', 'contact_link'), '/contact/', 'btn-outline') + '</div></div>')
     page('/404/','Page not found',body,noindex=True)
     (OUT/'404.html').write_text(PAGES['/404/'])
     (OUT/'robots.txt').write_text('User-agent: *\nAllow: /\nDisallow: /api/\n' + ('' if STAGING else 'Sitemap: https://digitaltalha.com/sitemap.xml\n'))

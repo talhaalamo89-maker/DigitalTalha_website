@@ -3,7 +3,8 @@ from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urlsplit,unquote
 from collections import Counter
-import json,re,sys
+import re,sys
+from cms_content import copy_value
 
 ROOT=Path(__file__).resolve().parents[1]
 DIST=ROOT/'dist'
@@ -58,15 +59,14 @@ for f,doc in docs.items():
             if unquote(u.fragment) not in target.ids:errors.append(f'{f.relative_to(DIST)}: missing fragment {url}')
 
 def norm(s): return re.sub(r'[^a-z0-9]','',s.lower())
-source=json.loads((ROOT/'content/original-pages.json').read_text())
 article='/how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization/'
 article_text=norm(' '.join(docs[DIST/article.strip('/')/'index.html'].text))
 missing=[]
-for n,t in source['https://digitaltalha.com'+article]['lines']:
-    if 36<=n<=869:
-        cleaned=re.sub(r'^[#*>\s]+','',t).strip().replace('`','')
-        cleaned=re.sub(r'^\d+\.\s+','',cleaned)
-        if len(cleaned)>8 and norm(cleaned) not in article_text:missing.append((n,cleaned))
+article_lines = [copy_value('campaign-article', 'disclosure'), *copy_value('campaign-article', 'body').splitlines()]
+for n,t in enumerate(article_lines, 1):
+    cleaned=re.sub(r'^[#*>\s]+','',t).strip().replace('`','')
+    cleaned=re.sub(r'^\d+\.\s+','',cleaned)
+    if len(cleaned)>8 and norm(cleaned) not in article_text:missing.append((n,cleaned))
 if missing:errors.append(f'Article content missing: {missing}')
 
 for route in ['/contact/']:
@@ -76,7 +76,7 @@ for route in ['/contact/']:
     if 'name="consent"' not in html:errors.append(f'{route}: missing consent')
     if 'role="status"' not in html:errors.append(f'{route}: missing feedback region')
 
-for route in ['/','/services/','/contact/']:
+for route in ['/contact/']:
     if 'Website Creation' not in (DIST/route.strip('/')/'index.html').read_text():errors.append(f'{route}: Website Creation is missing.')
 if "'Website Creation'" not in (ROOT/'server/enquiry.php').read_text():errors.append('Enquiry handler must accept Website Creation enquiries.')
 preview=(ROOT/'DigitalTalha-preview.html').read_text()

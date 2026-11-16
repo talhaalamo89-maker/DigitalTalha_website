@@ -1,0 +1,69 @@
+{
+  "name": "SEO",
+  "route": "/seo/",
+  "tag": "Make your website easier to find",
+  "image": "/assets/seo-service.webp",
+  "alt": "Illustration of an orange magnifying glass checking organic search results and a linked webpage",
+  "description": "Improve your website’s content, structure and search foundations around what customers need.",
+  "chips": [
+    "Keyword research",
+    "On-page SEO",
+    "Technical checks"
+  ],
+  "headline": "SEO services",
+  "accent": "for small businesses",
+  "intro": "I help small businesses in India improve the pages customers find in Google Search. We start with keyword research, a review of your service pages and checks in Google Search Console when access is available.",
+  "overview": "SEO starts with the questions your customers are trying to answer. I review the website, research relevant searches and connect the right topics to the right pages. The aim is a useful, accessible website with a clear search focus, rather than repeating keywords without helping the visitor.",
+  "fit": "A useful fit for a business with a website, clear services and a willingness to improve its content over time. It can also support a new website build. The starting plan depends on your market, service area, competition and the condition of the existing site.",
+  "includes": [
+    {
+      "heading": "Website & search review",
+      "description": "Review the current pages, important services and available Search Console data. Identify missing information, overlap and technical issues that need attention."
+    },
+    {
+      "heading": "Keyword research & page mapping",
+      "description": "Explore how customers describe the service and what they need from a result. Map related searches to useful pages instead of creating many near-identical pages."
+    },
+    {
+      "heading": "On-page optimisation",
+      "description": "Improve titles, descriptions, headings, introductions and service details. Write naturally, make the offer clear and answer relevant customer questions."
+    },
+    {
+      "heading": "Technical SEO checks",
+      "description": "Check indexability, canonical URLs, sitemap coverage, redirects and broken links. Review image loading and obvious mobile or performance issues that affect use."
+    },
+    {
+      "heading": "Internal links & content planning",
+      "description": "Connect related services and useful guides with descriptive links. Recommend content that adds real information and supports the questions customers bring."
+    },
+    {
+      "heading": "Local relevance & progress review",
+      "description": "Where location matters, review genuine service-area information and relevant local search needs. With the required access, review impressions, clicks and enquiries to decide the next priorities."
+    }
+  ],
+  "receive": [
+    "A prioritised website and search review",
+    "An agreed keyword-to-page plan",
+    "Scoped page updates and a progress-review approach"
+  ],
+  "prepare": "Bring your website address, main services, real service locations and business goals. Existing Google Search Console and GA4 access help establish a starting point. We agree whether the work is an initial review, implementation project or ongoing support.",
+  "note": "No first-place ranking, traffic number or fixed result date is promised. Scope and fees are agreed after reviewing the website. SEO and paid advertising serve different needs and can be planned together when appropriate.",
+  "faqs": [
+    {
+      "question": "How is SEO different from Google Ads?",
+      "answer": "Google Ads pays for advertising placements and requires an advertising budget. SEO improves the website and its organic search foundations. The right mix depends on your goals, competition and how quickly you need to test demand."
+    },
+    {
+      "question": "How long does SEO take?",
+      "answer": "Changes need time to be discovered and assessed, and outcomes vary with the site and market. We agree review points and measure the available evidence instead of promising a fixed ranking date."
+    },
+    {
+      "question": "What does local SEO include?",
+      "answer": "We check how customers search for your services, which pages should answer those searches and how clearly the site explains where you work. If you have an eligible Google Business Profile, we can also review how it presents your services and contact details."
+    },
+    {
+      "question": "Do I need to rebuild my website for SEO?",
+      "answer": "Often the starting work is improving existing content, headings, links and technical issues. A rebuild is considered only when the current website creates limits that smaller changes cannot reasonably resolve."
+    }
+  ]
+}

@@ -1,17 +1,18 @@
-name: Website checks and deployment
+name: Website checks and Cloudflare Pages
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+  push:
+    branches: [main, pages-cms, 'content/**']
   workflow_dispatch:
     inputs:
-      action:
-        description: Publish the latest website or restore its previous version
+      target:
+        description: Where to deploy the validated website
+        required: true
         type: choice
-        options: [publish, rollback]
-        default: publish
+        default: preview
+        options: [preview, production]
 
 permissions:
   contents: read
@@ -24,56 +25,89 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Build and test production
-        if: inputs.action != 'rollback'
-        run: |
-          python3 --version
-          node --version
-          npm run build
-          npm run check
-          php -l server/enquiry.php
-          python3 -m unittest discover -s deployment -p 'test_*.py' -v
-          python3 deployment/release.py --mode production --commit "$GITHUB_SHA" --run "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --output bundles/production.zip
-      - name: Build and check isolated test copy
-        if: inputs.action != 'rollback'
-        run: |
-          SITE_NOINDEX=1 npm run build
-          python3 scripts/check-seo.py --staging
-          python3 deployment/release.py --mode staging --commit "$GITHUB_SHA" --run "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --output bundles/staging.zip
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        if: inputs.action != 'rollback'
+      - uses: actions/setup-python@v6
         with:
-          name: website-bundles
-          path: bundles/*.zip
+          python-version-file: .python-version
+          cache: pip
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: python -m pip install -r requirements.txt
+      - run: npm run test:cloudflare
+      - run: npm run build:cloudflare
+      - run: SITE_NOINDEX=1 npm run build:cloudflare
+      - uses: actions/upload-artifact@v7
+        with:
+          name: offline-website-preview
+          path: DigitalTalha-preview.html
           if-no-files-found: error
-          retention-days: 7
 
-  publish:
+  preview:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.target == 'preview') ||
+      (github.event_name == 'push' &&
+      (github.ref == 'refs/heads/pages-cms' || startsWith(github.ref, 'refs/heads/content/')))
     needs: check
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && (vars.DIGITALTALHA_AUTODEPLOY == 'enabled' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
-    environment: digitaltalha-production
+    timeout-minutes: 15
+    environment:
+      name: cloudflare-preview
+      url: https://pages-cms.digitaltalha-migration.pages.dev/
     concurrency:
-      group: digitaltalha-production
+      group: cloudflare-preview
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        if: inputs.action != 'rollback'
+      - uses: actions/setup-python@v6
         with:
-          name: website-bundles
-          path: bundles
-          digest-mismatch: error
-      - name: Test on staging, then publish and verify; restore previous release on failure
+          python-version-file: .python-version
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: python -m pip install -r requirements.txt
+      - run: SITE_NOINDEX=1 npm run build:cloudflare
+      - name: Upload isolated preview and verify routing
         env:
-          GH_TOKEN: ${{ github.token }}
-          DIGITALTALHA_DEPLOY_KEY: ${{ secrets.DIGITALTALHA_DEPLOY_KEY }}
-          DIGITALTALHA_KNOWN_HOSTS: ${{ secrets.DIGITALTALHA_KNOWN_HOSTS }}
-          DIGITALTALHA_SSH_HOST: ${{ secrets.DIGITALTALHA_SSH_HOST }}
-          DIGITALTALHA_SSH_PORT: ${{ secrets.DIGITALTALHA_SSH_PORT }}
-          DIGITALTALHA_SSH_USER: ${{ secrets.DIGITALTALHA_SSH_USER }}
-          DEPLOY_ACTION: ${{ inputs.action || 'publish' }}
-        run: python3 deployment/publish.py --action "$DEPLOY_ACTION"
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::notice::Cloudflare preview credentials are missing. Download the offline preview from the check job."
+            exit 0
+          fi
+          npm exec --yes --package wrangler@4.162.0 -- wrangler pages deploy dist --project-name digitaltalha-migration --branch pages-cms --commit-hash "$GITHUB_SHA" --commit-dirty=true
+          python3 cloudflare/check_runtime.py https://pages-cms.digitaltalha-migration.pages.dev/
+
+  production:
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'production' && github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: cloudflare-production
+      url: https://digitaltalha.com/
+    concurrency:
+      group: cloudflare-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: .python-version
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: python -m pip install -r requirements.txt
+      - run: npm run build:cloudflare
+      - name: Publish checked build
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          : "${CLOUDFLARE_API_TOKEN:?Set the Cloudflare Pages token in the cloudflare-production environment}"
+          : "${CLOUDFLARE_ACCOUNT_ID:?Set the Cloudflare account ID in the cloudflare-production environment}"
+          npm exec --yes --package wrangler@4.162.0 -- wrangler pages deploy dist --project-name digitaltalha-migration --branch cloudflare-production --commit-hash "$GITHUB_SHA" --commit-dirty=true

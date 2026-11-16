@@ -29,6 +29,8 @@ for path in DIST.rglob('index.html'):
     raw=raw.replace('<link rel="stylesheet" href="/assets/site.css">','<style>'+CSS+'</style>')
     raw=raw.replace('<link rel="stylesheet" href="/assets/motion.css">','')
     raw=re.sub(r'<script defer src="/assets/(?:site|motion).js"></script>','',raw)
+    # Standalone previews use the embedded fallback image on every viewport.
+    raw=re.sub(r' (?:srcset|sizes)="[^"]*"', '', raw)
     raw=re.sub(r'(src=")(/assets/[^\"]+)(")',embed_asset,raw)
     raw=re.sub(r'<link rel="(?:icon|apple-touch-icon)"[^>]+>','',raw)
     bridge="""document.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;let href=a.getAttribute('href');if(!href)return;if(href.startsWith('/')){e.preventDefault();parent.postMessage({digitalTalhaPreview:true,path:href},'*');}else if(!href.startsWith('#')){a.target='_blank';a.rel='noopener noreferrer';}});"""

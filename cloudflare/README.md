@@ -7,7 +7,8 @@ The CMS review branch deploys to https://pages-cms.digitaltalha-migration.pages.
 ## Build, verify and publish
 
 See [Editing and publishing](../CMS.md) for the GitHub workflow. The production
-job requires a manual run from `main`. The preview job builds with noindex, omits
+job runs after a successful push build on `main`, or by manual dispatch on
+`main` with the production target. The preview job builds with noindex, omits
 tracking, uses the separate preview D1 binding and disables enquiry delivery under
 the normal preview configuration.
 

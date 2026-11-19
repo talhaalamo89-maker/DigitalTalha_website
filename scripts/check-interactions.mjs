@@ -38,3 +38,7 @@ assert.deepEqual(JSON.parse(JSON.stringify(p.window.dataLayer[0])),{event:'gener
 p=setup(async()=>({ok:true,headers:{get:()=> 'text/html'}}));
 await p.form.events.submit({preventDefault(){}});assert.equal(p.window.dataLayer,undefined);assert.match(p.status.textContent,/unavailable/);
 console.log('PASS: enquiry success/failure paths, no false lead events, submission recovery, navigation Escape handling, and project search.');
+
+if (process.env.GITHUB_ACTIONS === 'true' && process.env.GITHUB_JOB === 'check' && process.env.SITE_NOINDEX === '1') {
+  await import('./check-release-layout.mjs');
+}

@@ -14,8 +14,8 @@ PORTRAIT_SRCSET = ', '.join(
     + [f'{PORTRAIT_SRC} 900w']
 ) if PORTRAIT_SRC == '/assets/talha-portrait.webp' else ''
 PORTRAIT_SIZES = {
-    '/': '(max-width: 600px) 110px, 370px',
-    '/about/': '(max-width: 380px) calc(100vw - 40px), 340px',
+    '/': '(max-width: 720px) 104px, 248px',
+    '/about/': '248px',
 }
 SERVICE_IMAGES = {service['route']: asset_path(service['image']) for service in load_services().values()}
 POPPINS = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display='
@@ -27,8 +27,10 @@ def trail(path, metadata):
         return crumbs
     if metadata[path].get('service'):
         crumbs.append(('Services', '/services/'))
-    if metadata[path].get('article') or metadata[path].get('project'):
-        crumbs.append(('Projects', '/blog/'))
+    if metadata[path].get('blog_post'):
+        crumbs.append((metadata['/blog/']['label'], '/blog/'))
+    elif metadata[path].get('article') or metadata[path].get('project'):
+        crumbs.append((metadata['/projects/']['label'], '/projects/'))
     return crumbs + [(metadata[path]['label'], path)]
 
 
@@ -108,7 +110,9 @@ def structured_data(path, metadata):
             'headline': config['headline'],
             'description': config['description'], 'author': {'@id': person_id},
             'publisher': {'@id': person_id}, 'mainEntityOfPage': {'@id': page_id},
-            'image': DOMAIN + asset_path(config.get('image') or ('service-characters.webp' if config.get('blog_post') else 'meta-campaign.webp')), 'inLanguage': 'en-IN',
+            'inLanguage': 'en-IN',
+            **({'image': DOMAIN + asset_path(config.get('image') or 'meta-campaign.webp')}
+               if config.get('image') or not config.get('blog_post') else {}),
             'articleSection': 'Digital marketing' if config.get('blog_post') else 'Digital marketing practice projects',
             'datePublished': config['date_published']
         })
@@ -123,13 +127,18 @@ def structured_data(path, metadata):
             'isBasedOn': {'@type': 'WebSite', 'url': config['project_url']}
         })
         webpage['mainEntity'] = {'@id': url + '#project'}
+    entries = []
     if path == '/blog/':
-        projects = [(p, c) for p, c in metadata.items() if c.get('project')]
-        projects += [(p, c) for p, c in metadata.items() if c.get('article')]
+        entries = [(route, values) for route, values in metadata.items() if values.get('blog_post')]
+    elif path == '/projects/':
+        entries = [(route, values) for route, values in metadata.items() if values.get('project')]
+        entries += [(route, values) for route, values in metadata.items()
+                    if values.get('article') and not values.get('blog_post')]
+    if entries:
         webpage['mainEntity'] = {
             '@type': 'ItemList', 'itemListElement': [
                 {'@type': 'ListItem', 'position': i+1, 'url': DOMAIN + route,
-                 'name': values['title']} for i, (route, values) in enumerate(projects)
+                 'name': values.get('headline', values['label'])} for i, (route, values) in enumerate(entries)
             ]
         }
     return json.dumps({'@context': 'https://schema.org', '@graph': graph},
@@ -167,7 +176,7 @@ def head(path, metadata, noindex=False, staging=False):
         fonts = f'''<link rel="stylesheet" href="{POPPINS}swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="{POPPINS}swap"></noscript>'''
     return f'''<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f8f7f3"><title>{e(title)}</title>
+<meta name="theme-color" content="#fcf8f2"><title>{e(title)}</title>
 <meta name="description" content="{e(description)}"><meta name="robots" content="{robots}">
 <link rel="canonical" href="{e(url)}"><meta name="author" content="Talha Alam">
 <meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:site_name" content="DigitalTalha">

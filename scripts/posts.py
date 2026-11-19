@@ -3,7 +3,7 @@ from datetime import date
 from html import escape
 import re
 
-from cms_content import ROOT, asset_info, read_json
+from cms_content import ROOT, asset_info, copy_text, read_json
 
 BLOG_PATH = '/blog/'
 POST_DIRECTORY = ROOT / 'content/posts'
@@ -79,26 +79,42 @@ def cover(post, eager=False):
     return f'<img src="{path}" width="{width}" height="{height}" alt="{alt}" {priority} decoding="async">'
 
 
-def cards(posts):
-    return ''.join(
-        f'<article class="project-feature" data-project>'
-        + (f'<a class="project-art" href="{route}">{cover(post)}</a>' if post.get('image') else '')
-        + f'<div class="project-info"><span class="label">Blog post</span>'
-          f'<h2><a href="{route}">{escape(post["title"])}</a></h2>'
-          f'<p>{escape(post["summary"])}</p></div></article>'
-        for route, post in posts.items()
+def published_time(post):
+    published = post['date']
+    label = date.fromisoformat(published).strftime('%d %B %Y').lstrip('0')
+    return f'<time datetime="{published}">{label}</time>'
+
+
+def listing(posts, breadcrumb):
+    hero = (
+        f'<section class="page-hero blog-hero"><div class="wrap">{breadcrumb}'
+        f'<h1>{copy_text("blog", "heading")}</h1><p>{copy_text("blog", "intro")}</p></div></section>'
     )
+    if not posts:
+        return f'{hero}<div class="wrap blog-list"><p class="blog-empty">{copy_text("blog", "empty")}</p></div>'
+
+    cards = []
+    for route, post in posts.items():
+        artwork = cover(post)
+        title_id = f'blog-card-{route[len(BLOG_PATH):-1]}'
+        cards.append(
+            f'<article class="blog-card"><a class="blog-card-link" href="{route}" aria-labelledby="{title_id}">'
+            f'<div class="blog-card-image">{artwork}</div>'
+            f'<div class="blog-card-copy">{published_time(post)}'
+            '<span class="blog-card-arrow" aria-hidden="true">↗</span>'
+            f'<h2 id="{title_id}">{escape(post["title"])}</h2></div></a></article>'
+        )
+    return f'{hero}<section class="wrap blog-list blog-grid" aria-label="Blog posts">{"".join(cards)}</section>'
 
 
 def render(route, post, breadcrumb, link):
-    label = date.fromisoformat(post['date']).strftime('%d %B %Y').lstrip('0')
     title = escape(post['title'])
     summary = escape(post['summary'])
     return (
-        f'<section class="page-hero"><div class="wrap article-hero">{breadcrumb(route)}'
-        f'<h1>{title}</h1><p>{summary}</p><div class="article-meta"><span>By Talha Alam</span>'
-        f'<time datetime="{post["date"]}">Published {label}</time></div></div></section>'
-        f'<section class="section wrap"><article class="prose article-body">{cover(post, eager=True)}'
-        f'{markdown(post["body"])}<div class="button-row">{link("Back to projects and blog", BLOG_PATH)}'
-        '</div></article></section>'
+        '<article>'
+        f'<header class="page-hero blog-hero"><div class="wrap blog-reading">{breadcrumb(route)}'
+        f'<h1>{title}</h1><p>{summary}</p><div class="article-meta"><a href="/about/">Talha Alam</a>'
+        f'{published_time(post)}</div></div></header>'
+        f'<div class="wrap blog-reading prose blog-body">{cover(post, eager=True)}{markdown(post["body"])}'
+        f'<div class="blog-back">{link("Back to the blog", BLOG_PATH)}</div></div></article>'
     )

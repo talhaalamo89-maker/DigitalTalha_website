@@ -6,7 +6,8 @@ from urllib.parse import urlsplit
 import json
 import sys
 import xml.etree.ElementTree as ET
-from build import SEO
+from build import POSTS, SEO
+from posts import POST_DIRECTORY
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / 'dist'
@@ -133,6 +134,19 @@ for route, config in CONFIG.items():
         article = next(node for node in nodes if node.get('@type') == 'BlogPosting')
         assert ' '.join(page.h1.split()) == article['headline'], (route, 'article headline mismatch')
         assert page.dates == page.meta['article:published_time'] == [article['datePublished']] == [config['date_published']], route
+    if route in ('/blog/', '/projects/'):
+        expected_entries = list(POSTS) if route == '/blog/' else [
+            p for p, c in CONFIG.items() if c.get('project') or (c.get('article') and not c.get('blog_post'))
+        ]
+        assert page_node['@type'] == 'CollectionPage', route
+        entries = page_node.get('mainEntity', {}).get('itemListElement', [])
+        assert [entry['url'] for entry in entries] == [DOMAIN + p for p in expected_entries], route
+        assert all(p in page.links for p in expected_entries), route
+        if route == '/projects/':
+            assert not any(p in page.links for p in POSTS), 'blog posts in portfolio listing'
+        else:
+            assert not any(p in page.links for p, c in CONFIG.items()
+                           if c.get('project') or (c.get('article') and not c.get('blog_post'))), 'portfolio work in blog listing'
     if route != '/' and not config.get('noindex'):
         crumb = next(node for node in nodes if node.get('@type') == 'BreadcrumbList')
         visible = ' '.join(page.crumb_labels)
@@ -141,6 +155,12 @@ for route, config in CONFIG.items():
             assert entry['name'] in visible, (route, 'breadcrumb mismatch')
     social = urlsplit(page.meta['og:image'][0])
     assert social.netloc == 'digitaltalha.com' and (DIST / social.path.lstrip('/')).is_file(), route
+
+for entry in POST_DIRECTORY.glob('*.json'):
+    route = f'/blog/{entry.stem}/'
+    if route not in POSTS:
+        assert route not in pages['/blog/'].links, ('draft in listing', route)
+        assert not (DIST / route.strip('/') / 'index.html').exists(), ('rendered draft', route)
 
 for field in ['title', 'description']:
     values = [config[field] for config in CONFIG.values()]
@@ -158,7 +178,8 @@ for url in urls:
 robots = (DIST / 'robots.txt').read_text()
 assert 'Disallow: /\n' not in robots and 'Disallow: /api/' in robots, 'robots'
 assert ('Sitemap: '+DOMAIN+'/sitemap.xml' in robots) != STAGING, 'staging sitemap'
-for alias, target in {'about-us':'about', 'contact-us':'contact', 'service':'services', 'projects':'blog'}.items():
+for alias, target in {'about-us':'about', 'contact-us':'contact', 'service':'services', 'resources':'blog',
+                      'category/meta-ads':'projects', 'category/uncategorized':'projects'}.items():
     document = Page((DIST/alias/'index.html').read_text())
     assert document.canonicals == [DOMAIN+'/'+target+'/'], alias
     assert 'noindex' in document.meta['robots'][0], alias

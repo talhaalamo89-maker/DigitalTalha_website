@@ -27,11 +27,9 @@ content:
           - {name: talha_alam_india, label: Hero eyebrow, type: string, required: true}
           - {name: freelance_digital_marketer, label: Hero heading · first line, type: string, required: true}
           - {name: for_small_businesses, label: Hero heading · highlighted line, type: string, required: true}
-          - {name: help_more_customers_find_you, label: Hero tagline, type: string, required: true}
           - {name: i_m_talha_alam_i, label: Hero introduction, type: text, required: true}
-          - {name: let_s_talk, label: Let’s talk, type: string, required: true}
+          - {name: let_s_talk, label: Consultation button, type: string, required: true}
           - {name: explore_my_services, label: Explore my services, type: string, required: true}
-          - {name: work_directly_with_me_from, label: Hero note, type: string, required: true}
           - name: questions
             label: Home FAQs
             type: object
@@ -40,26 +38,16 @@ content:
               - {name: question, label: Question, type: string, required: true}
               - {name: answer, label: Answer, type: text, required: true}
             list: true
-          - {name: selected_work, label: Selected work, type: string, required: true}
-          - {name: digital_marketing_and_website_projects, label: Digital marketing and website projects., type: string, required: true}
-          - {name: google_ads, label: Google Ads, type: string, required: true}
-          - {name: meta_ads, label: Meta Ads, type: string, required: true}
-          - {name: website_creation, label: Website Creation, type: string, required: true}
-          - {name: seo, label: SEO, type: string, required: true}
+          - {name: selected_work, label: Selected work heading, type: string, required: true}
           - {name: get_to_know_me, label: Get to know me, type: string, required: true}
-          - {name: digital_marketing, label: Digital marketing &, type: string, required: true}
-          - {name: website_services, label: website services., type: string, required: true}
-          - {name: reach_the_right_people_explain, label: Reach the right people. Explain your offer. Make the next step…, type: string, required: true}
-          - {name: a_curious_mind, label: A curious mind., type: string, required: true}
-          - {name: a_practical_approach, label: A practical approach., type: string, required: true}
+          - {name: digital_marketing, label: Services heading · first part, type: string, required: true}
+          - {name: website_services, label: Services heading · second part, type: string, required: true}
+          - {name: reach_the_right_people_explain, label: Services introduction, type: string, required: true}
+          - {name: a_curious_mind, label: About heading · first line, type: string, required: true}
+          - {name: a_practical_approach, label: About heading · highlighted line, type: string, required: true}
           - {name: you_work_directly_with_me, label: 'You work directly with me on your ads, website and the thinking…', type: string, required: true}
           - {name: i_m_a_bba_student, label: I’m a BBA student at Amity University with structured digital…, type: text, required: true}
-          - {name: research_first, label: Research first, type: string, required: true}
-          - {name: clear_communication, label: Clear communication, type: string, required: true}
-          - {name: thoughtful_testing, label: Thoughtful testing, type: string, required: true}
-          - {name: four_connected_services, label: Four connected services, type: string, required: true}
-          - {name: the_person_behind_the_work, label: The person behind the work, type: string, required: true}
-          - {name: faq_heading, label: Faq heading, type: string, required: true}
+          - {name: faq_heading, label: FAQ heading, type: string, required: true}
       - name: about
         label: About
         type: file
@@ -120,7 +108,7 @@ content:
           - {name: start_with_the_business_need, label: Start with the business need, type: string, required: true}
           - {name: which_service_fits_your_next, label: 'Which service fits your next step?', type: string, required: true}
       - name: projects
-        label: Projects & blog
+        label: Projects
         type: file
         path: content/pages/projects.json
         format: json
@@ -131,6 +119,16 @@ content:
           - {name: see_how_the_purnea_hospital, label: See how the Purnea hospital website connects its urology…, type: text, required: true}
           - {name: websites_campaigns_research, label: Websites · Campaigns · Research, type: string, required: true}
           - {name: search_projects_or_topics, label: Field placeholder · Search projects or topics…, type: string, required: true}
+      - name: blog
+        label: Blog listing
+        type: file
+        path: content/pages/blog.json
+        format: json
+        operations: {rename: false, delete: false}
+        fields:
+          - {name: heading, label: Blog heading, type: string, required: true}
+          - {name: intro, label: Introduction, type: text, required: true}
+          - {name: empty, label: Message when no posts are published, type: string, required: true}
       - name: contact
         label: Contact
         type: file
@@ -193,8 +191,9 @@ content:
           - {name: about, label: About, type: string, required: true}
           - {name: services, label: Services, type: string, required: true}
           - {name: projects, label: Projects, type: string, required: true}
+          - {name: blog, label: Blog, type: string, required: true}
           - {name: contact, label: Contact, type: string, required: true}
-          - {name: cta, label: Cta, type: string, required: true}
+          - {name: cta, label: Consultation button, type: string, required: true}
       - name: footer
         label: Footer
         type: file
@@ -209,7 +208,8 @@ content:
           - {name: explore, label: Explore, type: string, required: true}
           - {name: home, label: Home, type: string, required: true}
           - {name: about, label: About, type: string, required: true}
-          - {name: projects_blog, label: Projects & blog, type: string, required: true}
+          - {name: projects, label: Projects, type: string, required: true}
+          - {name: blog, label: Blog, type: string, required: true}
           - {name: contact, label: Contact, type: string, required: true}
           - {name: services, label: Services, type: string, required: true}
           - {name: all_services, label: All services, type: string, required: true}
@@ -223,7 +223,6 @@ content:
           - {name: privacy_policy, label: Privacy Policy, type: string, required: true}
           - {name: terms_conditions, label: Terms & Conditions, type: string, required: true}
           - {name: 2026_digitaltalha_all_rights_reserved, label: © 2026 DigitalTalha. All rights reserved., type: string, required: true}
-          - {name: independent_intentional_always_learning, label: Independent. Intentional. Always learning., type: string, required: true}
           - {name: back_to_top, label: Back to top ↑, type: string, required: true}
       - name: profile
         label: Profile portrait
@@ -287,9 +286,8 @@ content:
               - {name: heading, label: Heading, type: string, required: true}
               - {name: description, label: Description, type: text, required: true}
             list: true
-          - {name: how_it_comes_together, label: How it comes together, type: string, required: true}
-          - {name: clear_steps, label: Clear steps., type: string, required: true}
-          - {name: a_little_curiosity, label: A little curiosity., type: string, required: true}
+          - {name: clear_steps, label: Heading · first part, type: string, required: true}
+          - {name: a_little_curiosity, label: Heading · second part, type: string, required: true}
       - name: legal-layout
         label: Shared policy label
         type: file
@@ -310,7 +308,6 @@ content:
         operations: {rename: false, delete: false}
         fields:
           - {name: name, label: Service name, type: string, required: true}
-          - {name: tag, label: Service card eyebrow, type: string, required: true}
           - {name: alt, label: Image alt text, type: string, required: true}
           - {name: description, label: Service card description, type: text, required: true}
           - {name: chips, label: Service tags, type: string, required: true, list: true}
@@ -347,7 +344,6 @@ content:
         operations: {rename: false, delete: false}
         fields:
           - {name: name, label: Service name, type: string, required: true}
-          - {name: tag, label: Service card eyebrow, type: string, required: true}
           - {name: alt, label: Image alt text, type: string, required: true}
           - {name: description, label: Service card description, type: text, required: true}
           - {name: chips, label: Service tags, type: string, required: true, list: true}
@@ -384,7 +380,6 @@ content:
         operations: {rename: false, delete: false}
         fields:
           - {name: name, label: Service name, type: string, required: true}
-          - {name: tag, label: Service card eyebrow, type: string, required: true}
           - {name: alt, label: Image alt text, type: string, required: true}
           - {name: description, label: Service card description, type: text, required: true}
           - {name: chips, label: Service tags, type: string, required: true, list: true}
@@ -421,7 +416,6 @@ content:
         operations: {rename: false, delete: false}
         fields:
           - {name: name, label: Service name, type: string, required: true}
-          - {name: tag, label: Service card eyebrow, type: string, required: true}
           - {name: alt, label: Image alt text, type: string, required: true}
           - {name: description, label: Service card description, type: text, required: true}
           - {name: chips, label: Service tags, type: string, required: true, list: true}
@@ -561,10 +555,6 @@ content:
           - {name: planning_and_review_by_talha, label: Planning and review by Talha Alam., type: string, required: true}
           - {name: built_with_chatgpt_and_codex, label: Built with ChatGPT and Codex., type: string, required: true}
           - {name: view_project, label: View project, type: string, required: true}
-          - {name: website_planning, label: Website planning, type: string, required: true}
-          - {name: ai_assisted_build, label: AI-assisted build, type: string, required: true}
-          - {name: seo_direction, label: SEO direction, type: string, required: true}
-          - {name: healthcare_website_project, label: Healthcare · Website project, type: string, required: true}
           - {name: a_real_website, label: A real website., type: string, required: true}
           - {name: a_closer_look, label: A closer look., type: string, required: true}
           - {name: explore_the_live_work_and, label: Explore the live work and the thinking behind it., type: string, required: true}
@@ -655,7 +645,7 @@ content:
           - {name: body, label: Body, type: text, required: true, description: 'Edit the text directly. Keep heading marks (#), list markers, and line breaks
               to retain formatting.'}
   - name: posts
-    label: New blog posts
+    label: Blog posts
     type: collection
     path: content/posts
     format: json
@@ -817,9 +807,27 @@ content:
           - {name: image, label: Social sharing image, type: image}
           - {name: image_alt, label: Social image alt text, type: string}
       - name: seo-blog
-        label: Projects & blog
+        label: Blog
         type: file
         path: content/seo/blog.json
+        format: json
+        operations: {rename: false, delete: false}
+        fields:
+          - {name: title, label: SEO title, type: string, required: true, description: The site adds “| DigitalTalha” automatically.}
+          - name: description
+            label: Meta description
+            type: text
+            required: true
+            options:
+              minlength: 80
+              maxlength: 180
+          - {name: label, label: Breadcrumb label, type: string, required: true}
+          - {name: image, label: Social sharing image, type: image}
+          - {name: image_alt, label: Social image alt text, type: string}
+      - name: seo-projects
+        label: Projects
+        type: file
+        path: content/seo/projects.json
         format: json
         operations: {rename: false, delete: false}
         fields:

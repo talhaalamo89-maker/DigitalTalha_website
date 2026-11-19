@@ -13,7 +13,9 @@ opener = urllib.request.build_opener(NoRedirect)
 opener.addheaders = [('User-Agent', 'DigitalTalha-Migration-Check/1.0 (+https://digitaltalha.com/)')]
 results = []
 paths = [('/', 200), ('/about/', 200), ('/about', 301),
-         ('/about/index.html', 301), ('/projects/', 301),
+         ('/about/index.html', 301), ('/projects/', 200), ('/blog/', 200),
+         ('/projects?utm_source=test', 301), ('/resources/', 301),
+         ('/category/meta-ads/', 301), ('/blog/does-not-exist/', 404),
          ('/projects/glisan-akbari-hospital/', 200),
          ('/?p=454&utm_source=test', 301), ('/wp-sitemap.xml', 301),
          ('/does-not-exist/', 404), ('/api/enquiry.php', 405),
@@ -35,6 +37,12 @@ for path, wanted in paths:
         assert '<loc>' not in body
     if path == '/projects/glisan-akbari-hospital/':
         assert 'Glisan' in body
-    if path.startswith('/?p='):
-        assert row['location'] == base + '/about/?utm_source=test', row
+    redirects = {
+        '/?p=454&utm_source=test': '/about/?utm_source=test',
+        '/projects?utm_source=test': '/projects/?utm_source=test',
+        '/resources/': '/blog/',
+        '/category/meta-ads/': '/projects/',
+    }
+    if path in redirects:
+        assert row['location'] == base + redirects[path], row
 print(json.dumps(results, indent=2))

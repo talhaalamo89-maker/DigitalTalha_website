@@ -10,15 +10,15 @@ const SECURITY = {
 };
 const ALIASES = {
   '/about-us/': '/about/', '/contact-us/': '/contact/', '/service/': '/services/',
-  '/projects/': '/blog/', '/resources/': '/blog/',
-  '/category/meta-ads/': '/blog/', '/category/uncategorized/': '/blog/',
+  '/resources/': '/blog/',
+  '/category/meta-ads/': '/projects/', '/category/uncategorized/': '/projects/',
   '/about-me/': '/about/', '/contact-me/': '/contact/',
   '/wordpress/': '/seo/', '/site-map/': '/sitemap.xml',
   '/google-ads-services/': '/google-ads/', '/terms-and-conditions/': '/terms-conditions/',
 };
 const SHORTLINKS = {
   454: '/about/', 456: '/contact/', 458: '/terms-conditions/', 460: '/privacy-policy/',
-  484: '/services/', 504: '/blog/', 605: '/google-ads/', 607: '/meta-ads/',
+  484: '/services/', 504: '/projects/', 605: '/google-ads/', 607: '/meta-ads/',
   782: '/how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization/',
 };
 const SERVICES = ['Google Ads', 'Meta Ads', 'Website Creation', 'SEO', 'Not sure yet'];

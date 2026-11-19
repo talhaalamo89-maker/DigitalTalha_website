@@ -37,7 +37,9 @@ private form attachments and plugin/server files are deliberately excluded.
 The Worker preserves 13 exact aliases, five old sitemap filenames, nine WordPress
 IDs through both p/page_id query parameters, unrelated campaign parameters,
 HTTPS/non-www canonicalisation, index.html/slash redirects and the actual hospital
-project page. Unknown public routes remain 404. All non-custom-domain hosts get
+project page. `/projects/` now serves the portfolio. Legacy category routes and
+WordPress shortlink 504 lead there. `/resources/` redirects to the dedicated
+blog at `/blog/`. Unknown public routes remain 404. All non-custom-domain hosts get
 noindex and an empty sitemap. The 13 production canonical pages remain indexable.
 Cloudflare may append its analytics beacon; original page content and GTM markup
 were checked against the source. Analytics reporting itself was not verified.

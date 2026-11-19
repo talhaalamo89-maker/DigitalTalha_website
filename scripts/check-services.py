@@ -4,6 +4,7 @@ from html import escape
 from html.parser import HTMLParser
 from urllib.parse import urlsplit
 from cms_content import asset_path, load_services
+import re
 ROOT=Path(__file__).resolve().parents[1]
 DIST=ROOT/'dist'
 SERVICES=load_services()
@@ -47,6 +48,6 @@ for s in SERVICES.values():assert asset_path(s['image']) in home
 for page in ['index.html','about/index.html','contact/index.html']:
  assert 'class="brand-mark"' in (DIST/page).read_text()
 css=(ROOT/'assets/site.css').read_text()
-assert '.brand-mark{' in css and 'background:var(--ink)' in css
+assert re.search(r'\.brand-mark\s*\{[^}]*background:\s*var\(--ink\)', css), 'logo backing'
 assert (DIST/'assets/site.js').stat().st_size<10000
 print('PASS: four illustrated services, useful scope and FAQs, logo backing, static URLs and one Contact form.')

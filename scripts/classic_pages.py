@@ -1,7 +1,6 @@
 """Minimal, content-led marketing pages; all information is rendered as HTML."""
 from html import escape
 from cms_content import asset_info, attribute, copy_text, copy_value, load_services
-import posts
 
 from seo import PORTRAIT_SIZES, PORTRAIT_SRC, PORTRAIT_SRCSET
 
@@ -17,10 +16,13 @@ def install(site):
     def portrait(path):
         _, width, height, _ = asset_info(PORTRAIT_SRC)
         responsive = f' srcset="{PORTRAIT_SRCSET}" sizes="{PORTRAIT_SIZES[path]}"' if PORTRAIT_SRCSET else ''
-        return (f'<figure class="profile"><img src="{PORTRAIT_SRC}"{responsive} '
-                f'width="{width}" height="{height}" alt="{attribute("profile", "alt")}" fetchpriority="high">'
-                f'<figcaption><strong>{copy_text("profile", "name")}</strong>'
-                f'<span>{copy_text("profile", "caption")}</span></figcaption></figure>')
+        return (
+            '<figure class="profile"><div class="profile-image">'
+            f'<img src="{PORTRAIT_SRC}"{responsive} width="{width}" height="{height}" '
+            f'alt="{attribute("profile", "alt")}" fetchpriority="high" decoding="async"></div>'
+            f'<figcaption><strong>{copy_text("profile", "name")}</strong>'
+            f'<span>{copy_text("profile", "caption")}</span></figcaption></figure>'
+        )
 
     def image(key, eager=False):
         s = services[key]
@@ -28,10 +30,21 @@ def install(site):
         return f'<img src="{path}" width="{width}" height="{height}" alt="{e(s["alt"])}" '+('fetchpriority="high"' if eager else 'loading="lazy"')+' decoding="async">'
 
     def service_cards(level=3, prioritize_first=False):
-        return '<div class="services-grid">'+''.join(f'<article class="service-card"><a class="service-art" href="{s["route"]}" aria-label="Explore {e(s["name"])}">{image(key, eager=prioritize_first and i == 0)}</a><div class="service-card-copy"><p class="label">0{i+1} / {e(s["tag"])}</p><h{level}><a href="{s["route"]}">{e(s["name"])}</a></h{level}><p>{e(s["description"])}</p><ul class="service-points">'+''.join('<li>'+e(c)+'</li>' for c in s['chips'])+'</ul>'+link('Explore '+s['name'],s['route'])+'</div></article>' for i,(key,s) in enumerate(services.items()))+'</div>'
+        cards = []
+        for i, (key, service) in enumerate(services.items()):
+            title_id = f'service-card-{key}'
+            chips = ''.join(f'<li>{e(chip)}</li>' for chip in service['chips'])
+            cards.append(
+                f'<article class="service-card"><a class="service-card-link" href="{service["route"]}" '
+                f'aria-labelledby="{title_id}"><div class="service-art">{image(key, eager=prioritize_first and i == 0)}</div>'
+                f'<div class="service-card-copy"><h{level} id="{title_id}">{e(service["name"])}</h{level}>'
+                f'<p>{e(service["description"])}</p><ul class="service-points">{chips}</ul>'
+                '<span class="card-arrow" aria-hidden="true">↗</span></div></a></article>'
+            )
+        return f'<div class="services-grid">{"".join(cards)}</div>'
 
     def section(label,title,body,style=''):
-        return f'<section class="section {style}"><div class="wrap"><div class="section-heading"><div>{eyebrow(label)}<h2>{title}</h2></div></div>{body}</div></section>'
+        return f'<section class="section {style}"><div class="wrap"><div class="section-heading"><div>{eyebrow(label) if label else ""}<h2>{title}</h2></div></div>{body}</div></section>'
 
     def faq(questions, title=None):
         title = title or copy_value('service-layout', 'faq_heading')
@@ -39,7 +52,7 @@ def install(site):
 
     def journey():
         items=[(row['heading'], row['description']) for row in copy_value('process', 'items')]
-        return section(copy_value('process', 'how_it_comes_together'),copy_text('process', 'clear_steps') + '<br>' + copy_text('process', 'a_little_curiosity'),'<div class="process-grid">'+''.join(f'<article><span class="num">0{i+1}</span><h3>{e(a)}</h3><p>{e(b)}</p></article>' for i,(a,b) in enumerate(items))+'</div>','soft')
+        return section('', copy_text('process', 'clear_steps') + ' ' + copy_text('process', 'a_little_curiosity'),'<div class="process-grid">'+''.join(f'<article><span class="num">0{i+1}</span><h3>{e(a)}</h3><p>{e(b)}</p></article>' for i,(a,b) in enumerate(items))+'</div>','soft')
 
     def project_card(level=3):
         route='/'+site['ARTICLE']+'/'
@@ -47,12 +60,43 @@ def install(site):
         return f'<article class="project-feature" data-project><a class="project-art" href="{route}" aria-label="Read the Meta lead-generation practice project"><img src="{image}" width="{width}" height="{height}" loading="lazy" alt="{attribute('campaign-card', 'urbanfit_practice_campaign_structure_in')}"></a><div class="project-info"><span class="label">{copy_text('campaign-card', 'practice_project_meta_ads')}</span><h{level}><a href="{route}">{copy_text('campaign-card', 'meta_lead_generation_campaign_guide')}</a></h{level}><p>{copy_text('campaign-card', 'explore_the_research_landing_page')}</p><div class="project-tags"><span>{copy_text('campaign-card', 'research')}</span><span>{copy_text('campaign-card', 'landing_page')}</span><span>{copy_text('campaign-card', 'tracking')}</span></div>'+link(copy_value('campaign-card', 'read_the_project'),route)+('<p class="project-note">' + copy_text('campaign-card', 'a_hypothetical_fitness_studio_a') + '</p></div></article>')
 
     def home():
-        hero='<section class="wrap hero"><div>'+eyebrow(copy_value('home', 'talha_alam_india'))+('<h1>' + copy_text('home', 'freelance_digital_marketer') + '<br> <span class="accent">' + copy_text('home', 'for_small_businesses') + '</span></h1><p class="hero-tagline">' + copy_text('home', 'help_more_customers_find_you') + '</p><p class="hero-copy">' + copy_text('home', 'i_m_talha_alam_i') + '</p><div class="button-row">')+button(copy_value('home', 'let_s_talk'),'/contact/','btn-primary')+link(copy_value('home', 'explore_my_services'),'#services')+('</div><p class="hero-foot">' + copy_text('home', 'work_directly_with_me_from') + '</p></div>')+portrait('/')+('</section><div class="wrap focus-strip"><span>' + copy_text('home', 'google_ads') + '</span><span>' + copy_text('home', 'meta_ads') + '</span><span>' + copy_text('home', 'website_creation') + '</span><span>' + copy_text('home', 'seo') + '</span></div>')
-        cards='<section class="section wrap" id="services"><div class="section-heading"><div>'+eyebrow(copy_value('home', 'four_connected_services'))+('<h2>' + copy_text('home', 'digital_marketing') + '<br>' + copy_text('home', 'website_services') + '</h2></div><p>' + copy_text('home', 'reach_the_right_people_explain') + '</p></div>')+service_cards()+'</section>'
-        about='<section class="section wrap about-intro"><div>'+eyebrow(copy_value('home', 'the_person_behind_the_work'))+('<h2>' + copy_text('home', 'a_curious_mind') + '<br> <span class="accent">' + copy_text('home', 'a_practical_approach') + '</span></h2></div><div><p class="large-copy">' + copy_text('home', 'you_work_directly_with_me') + '</p><p>' + copy_text('home', 'i_m_a_bba_student') + '</p><div class="value-pills"><span>' + copy_text('home', 'research_first') + '</span><span>' + copy_text('home', 'clear_communication') + '</span><span>' + copy_text('home', 'thoughtful_testing') + '</span></div>')+link(copy_value('home', 'get_to_know_me'),'/about/')+'</div></section>'
-        work=section(copy_value('home', 'selected_work'),copy_text('home', 'digital_marketing_and_website_projects'),'<div class="project-list">'+site['hospital_card']()+project_card()+'</div>','soft')
-        questions=[(row['question'], row['answer']) for row in copy_value('home', 'questions')]
-        return hero+cards+about+work+journey()+faq(questions,copy_value('home', 'faq_heading'))
+        hero = (
+            '<section class="wrap hero"><div class="hero-content">'
+            f'{eyebrow(copy_value("home", "talha_alam_india"))}'
+            f'<h1>{copy_text("home", "freelance_digital_marketer")} '
+            f'<span class="accent">{copy_text("home", "for_small_businesses")}</span></h1>'
+            f'<p class="hero-copy">{copy_text("home", "i_m_talha_alam_i")}</p>'
+            '<div class="button-row">'
+            f'{button(copy_value("home", "let_s_talk"), "/contact/", "btn-primary")}'
+            f'{link(copy_value("home", "explore_my_services"), "#services")}</div></div>'
+            f'{portrait("/")}</section>'
+        )
+        work = (
+            '<section class="section wrap home-work" id="selected-work"><div class="section-heading">'
+            f'<h2>{copy_text("home", "selected_work")}</h2>'
+            f'{link(copy_value("hospital-copy", "all_projects"), "/projects/")}</div>'
+            f'{site["hospital_card"]()}'
+            '<div class="work-more">'
+            f'<span class="label">{copy_text("campaign-card", "practice_project_meta_ads")}</span>'
+            f'{link(copy_value("campaign-card", "meta_lead_generation_campaign_guide"), "/" + site["ARTICLE"] + "/")}'
+            '</div></section>'
+        )
+        cards = (
+            '<section class="section soft" id="services"><div class="wrap"><div class="section-heading">'
+            f'<h2>{copy_text("home", "digital_marketing")} {copy_text("home", "website_services")}</h2>'
+            f'<p>{copy_text("home", "reach_the_right_people_explain")}</p></div>'
+            f'{service_cards()}</div></section>'
+        )
+        about = (
+            '<section class="section wrap"><div class="about-intro"><div>'
+            f'<h2>{copy_text("home", "a_curious_mind")} '
+            f'<span class="accent">{copy_text("home", "a_practical_approach")}</span></h2></div>'
+            f'<div><p class="large-copy">{copy_text("home", "you_work_directly_with_me")}</p>'
+            f'<p>{copy_text("home", "i_m_a_bba_student")}</p>'
+            f'{link(copy_value("home", "get_to_know_me"), "/about/")}</div></div></section>'
+        )
+        questions = [(row['question'], row['answer']) for row in copy_value('home', 'questions')]
+        return hero + work + cards + about + journey() + faq(questions, copy_value('home', 'faq_heading'))
 
     def services_page():
         hero='<section class="page-hero"><div class="wrap">'+breadcrumb('Services')+('<h1>' + copy_text('services-overview', 'digital_marketing') + '<br> <span class="accent">' + copy_text('services-overview', 'website_design_services') + '</span></h1><p>' + copy_text('services-overview', 'compare_google_ads_meta_ads') + '</p></div></section>')
@@ -61,7 +105,14 @@ def install(site):
 
     def service_page(key):
         s=services[key]
-        hero='<section class="page-hero"><div class="wrap">'+breadcrumb(s['name'])+'<div class="service-hero"><div>'+eyebrow(s['name'])+'<h1>'+e(s['headline'])+'<br> <span class="accent">'+e(s['accent'])+'</span></h1><p>'+e(s['intro'])+'</p><div class="button-row">'+button('Discuss my '+('website' if key=='website' else 'SEO' if key=='seo' else 'campaign'),'/contact/','btn-primary')+'</div><div class="value-pills">'+''.join('<span>'+e(c)+'</span>' for c in s['chips'])+'</div></div><figure class="service-visual">'+image(key,True)+'<figcaption>Illustration of '+e(s['name'])+' services</figcaption></figure></div></div></section>'
+        hero = (
+            f'<section class="page-hero"><div class="wrap">{breadcrumb(s["name"])}'
+            '<div class="service-hero"><div>'
+            f'<h1>{e(s["headline"])} <span class="accent">{e(s["accent"])}</span></h1>'
+            f'<p>{e(s["intro"])}</p><div class="button-row">'
+            f'{button(copy_value("navigation", "cta"), "/contact/", "btn-primary")}</div></div>'
+            f'<figure class="service-visual">{image(key, True)}</figure></div></div></section>'
+        )
         intro='<section class="section wrap"><div class="narrative"><div>'+eyebrow(copy_value('service-layout', 'the_starting_point'))+'<h2>'+copy_text('service-layout', 'seo_intro_heading' if key=='seo' else 'intro_heading')+'</h2></div><div class="prose"><p>'+e(s['overview'])+('</p><h3>' + copy_text('service-layout', 'who_is_this_for') + '</h3><p>')+e(s['fit'])+'</p></div></div></section>'
         scope=section(copy_value('service-layout', 'what_the_work_covers'),copy_text('service-layout', 'what_s_included'),'<div class="scope-grid">'+''.join('<article><h3>'+e(a)+'</h3><p>'+e(b)+'</p></article>' for a,b in ((row["heading"], row["description"]) for row in s["includes"]))+'</div>','soft')
         receive='<section class="section wrap"><div class="scope-layout"><div>'+eyebrow(copy_value('service-layout', 'clear_expectations'))+('<h2>' + copy_text('service-layout', 'what_you_receive') + '</h2><ul class="check-list">')+''.join('<li>'+e(t)+'</li>' for t in s['receive'])+('</ul></div><div><h3>' + copy_text('service-layout', 'before_we_begin') + '</h3><p>')+e(s['prepare'])+'</p><p class="scope-note">'+e(s['note'])+'</p></div></div></section>'
@@ -80,10 +131,10 @@ def install(site):
             proof = section(copy_value('service-layout', 'from_the_portfolio'), copy_text('service-layout', 'how_a_hospital_organised_its'),
                             ('<p class="section-intro">' + copy_text('service-layout', 'the_glisan_akbari_project_shows') + '</p>')
                             +link(copy_value('service-layout', 'see_the_hospital_website_and'),site['HOSPITAL_PROJECT']['route']))
-        return hero+intro+proof+scope+receive+journey()+faq([(row['question'], row['answer']) for row in s['faqs']])+related
+        return hero+intro+scope+proof+receive+journey()+faq([(row['question'], row['answer']) for row in s['faqs']])+related
 
     def about():
-        hero='<section class="page-hero"><div class="wrap">'+breadcrumb('About')+'<div class="page-hero-grid"><div>'+eyebrow(copy_value('about', 'talha_alam_digitaltalha'))+('<h1>' + copy_text('about', 'about_talha_alam') + '<br> <span class="accent">' + copy_text('about', 'your_digital_marketer') + '</span></h1><p>' + copy_text('about', 'i_m_talha_a_freelance') + '</p><p>' + copy_text('about', 'paid_advertising_is_my_main') + '</p><div class="button-row">')+button(copy_value('about', 'explore_my_work'),'/blog/','btn-primary')+'</div></div>'+portrait('/about/')+'</div></div></section>'
+        hero='<section class="page-hero"><div class="wrap">'+breadcrumb('About')+'<div class="page-hero-grid"><div>'+eyebrow(copy_value('about', 'talha_alam_digitaltalha'))+('<h1>' + copy_text('about', 'about_talha_alam') + '<br> <span class="accent">' + copy_text('about', 'your_digital_marketer') + '</span></h1><p>' + copy_text('about', 'i_m_talha_a_freelance') + '</p><p>' + copy_text('about', 'paid_advertising_is_my_main') + '</p><div class="button-row">')+button(copy_value('about', 'explore_my_work'),'/projects/','btn-primary')+'</div></div>'+portrait('/about/')+'</div></div></section>'
         story=[(row['heading'], row['description']) for row in copy_value('about', 'story')]
         background=section(copy_value('about', 'my_journey'),copy_text('about', 'from_curiosity_to_practical_work'),'<div class="timeline">'+''.join(f'<article><span class="num">0{i+1}</span><div><h3>{e(a)}</h3><p>{e(b)}</p></div></article>' for i,(a,b) in enumerate(story))+'</div>')
         thinking=section(copy_value('about', 'how_i_think_about_the'),copy_text('about', 'understand_the_problem') + '<br>' + copy_text('about', 'then_choose_the_approach'),('<div class="narrative"><p class="large-copy">' + copy_text('about', 'advertising_should_make_a_useful') + '</p><div class="prose"><p>' + copy_text('about', 'before_writing_an_ad_or') + '</p><p>' + copy_text('about', 'a_campaign_a_website_and') + '</p></div></div>'),'soft')
@@ -100,7 +151,7 @@ def install(site):
 
     def projects():
         hero='<section class="page-hero"><div class="wrap">'+breadcrumb('Projects')+('<h1>' + copy_text('projects', 'digital_marketing') + '<br> <span class="accent">' + copy_text('projects', 'website_projects') + '</span></h1><p>' + copy_text('projects', 'see_how_the_purnea_hospital') + '</p></div></section>')
-        listing=('<section class="section wrap"><div class="project-tools"><label class="search-box"><span aria-hidden="true">⌕</span><input type="search" placeholder="' + attribute('projects', 'search_projects_or_topics') + '" aria-label="Search projects" data-project-search></label><span class="label">' + copy_text('projects', 'websites_campaigns_research') + '</span></div><p class="search-result" data-search-result role="status">' + f'{2 + len(site["POSTS"])} projects found' + '</p><div class="project-list">')+site['hospital_card'](2)+project_card(2)+posts.cards(site['POSTS'])+'</div></section>'
+        listing=('<section class="section wrap"><div class="project-tools"><label class="search-box"><span aria-hidden="true">⌕</span><input type="search" placeholder="' + attribute('projects', 'search_projects_or_topics') + '" aria-label="Search projects" data-project-search></label><span class="label">' + copy_text('projects', 'websites_campaigns_research') + '</span></div><p class="search-result" data-search-result role="status">2 projects found</p><div class="project-list">')+site['hospital_card'](2)+project_card(2)+'</div></section>'
         return hero+listing
 
     site.update(home=home,services=services_page,service=lambda path,name:service_page('search' if name=='Google Ads' else 'social'),website_creation=lambda:service_page('website'),seo_service=lambda:service_page('seo'),about=about,contact=contact,projects=projects,service_cards=service_cards,project_card=project_card)

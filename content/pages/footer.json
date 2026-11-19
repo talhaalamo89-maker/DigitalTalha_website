@@ -6,7 +6,6 @@
   "explore": "Explore",
   "home": "Home",
   "about": "About",
-  "projects_blog": "Projects & blog",
   "contact": "Contact",
   "services": "Services",
   "all_services": "All services",
@@ -15,11 +14,13 @@
   "website_creation": "Website Creation",
   "seo": "SEO",
   "free_consultation": "Free consultation",
-  "let_s_talk_growth": "Let’s talk growth",
+  "let_s_talk_growth": "Contact and policies",
   "send_an_enquiry": "Send an enquiry ↗",
   "privacy_policy": "Privacy Policy",
   "terms_conditions": "Terms & Conditions",
   "2026_digitaltalha_all_rights_reserved": "© 2026 DigitalTalha. All rights reserved.",
   "independent_intentional_always_learning": "Independent. Intentional. Always learning.",
-  "back_to_top": "Back to top ↑"
+  "back_to_top": "Back to top ↑",
+  "projects": "Projects",
+  "blog": "Blog"
 }

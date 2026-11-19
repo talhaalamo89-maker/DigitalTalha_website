@@ -1,4 +1,4 @@
-"""Build all pages from retained original text. Python standard library only."""
+"""Build the static website from editable content."""
 from datetime import datetime
 from pathlib import Path
 from html import escape
@@ -65,13 +65,41 @@ def portrait():
     return f'''<div class="portrait-scene"><div class="portrait-star">{STAR}</div><div class="portrait"><img src="/assets/talha-portrait.webp" alt="Talha Alam, independent digital marketer" width="900" height="1125" fetchpriority="high"><div class="portrait-caption"><strong>Talha Alam</strong><span>Independent digital marketer</span></div></div><div class="portrait-label"><strong>Google Ads + Meta Ads</strong><span>Research. Test. Improve.</span></div><div class="portrait-bottom"><span>BASED IN INDIA</span><span>Personal attention. Practical thinking.</span></div></div>'''
 
 def header(current):
-    nav=[('Home','/'),('About','/about/'),('Services','/services/'),('Projects','/blog/'),('Contact','/contact/')]
-    active='/services/' if current in ['/google-ads/','/meta-ads/','/website-creation/','/seo/'] else '/blog/' if SEO.get(current,{}).get('article') or SEO.get(current,{}).get('project') else current
+    nav=[('Home','/'),('Services','/services/'),('Projects','/projects/'),('About','/about/'),('Blog','/blog/'),('Contact','/contact/')]
+    config = SEO[current]
+    active = current
+    if config.get('service'):
+        active = '/services/'
+    elif config.get('blog_post'):
+        active = posts.BLOG_PATH
+    elif config.get('article') or config.get('project'):
+        active = '/projects/'
     links=''.join(f'<a href="{u}"'+(' aria-current="page"' if active==u else '')+f'>{copy_text("navigation", name.lower())}</a>' for name,u in nav)
     return f'''<a class="skip" href="#content">Skip to content</a><header class="site-header"><div class="wrap header-inner">{brand()}<nav class="primary-nav" id="primary-nav" aria-label="Main navigation">{links}</nav><div class="header-cta">{button(copy_value('navigation', 'cta'),'/contact/')}</div><button class="menu-toggle" data-menu aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span></button></div></header>'''
 
 def footer():
-    return f'''<footer class="footer"><div class="wrap"><div class="footer-grid"><div>{brand()}<p>{copy_text('footer', 'google_ads_meta_ads_seo')}</p><div class="socials"><a href="https://www.instagram.com/_digitaltalha_/" target="_blank" rel="noopener noreferrer">{attribute('footer', 'instagram')}</a><a href="https://www.linkedin.com/in/talha-alam-798st0/" target="_blank" rel="noopener noreferrer">{attribute('footer', 'linkedin')}</a><a href="https://www.facebook.com/profile.php?id=61572897474852" target="_blank" rel="noopener noreferrer">{attribute('footer', 'facebook')}</a></div></div><div><h2>{copy_text('footer', 'explore')}</h2><ul><li><a href="/">{copy_text('footer', 'home')}</a></li><li><a href="/about/">{copy_text('footer', 'about')}</a></li><li><a href="/blog/">{copy_text('footer', 'projects_blog')}</a></li><li><a href="/contact/">{copy_text('footer', 'contact')}</a></li></ul></div><div><h2>{copy_text('footer', 'services')}</h2><ul><li><a href="/services/">{copy_text('footer', 'all_services')}</a></li><li><a href="/google-ads/">{copy_text('footer', 'google_ads')}</a></li><li><a href="/meta-ads/">{copy_text('footer', 'meta_ads')}</a></li><li><a href="/website-creation/">{copy_text('footer', 'website_creation')}</a></li><li><a href="/seo/">{copy_text('footer', 'seo')}</a></li><li><a href="/contact/">{copy_text('footer', 'free_consultation')}</a></li></ul></div><div><h2>{copy_text('footer', 'let_s_talk_growth')}</h2><ul><li><a href="/contact/#enquiry">{attribute('footer', 'send_an_enquiry')}</a></li><li><a href="/privacy-policy/">{copy_text('footer', 'privacy_policy')}</a></li><li><a href="/terms-conditions/">{copy_text('footer', 'terms_conditions')}</a></li></ul></div></div><div class="footer-bottom"><span>{copy_text('footer', '2026_digitaltalha_all_rights_reserved')}</span><span>{copy_text('footer', 'independent_intentional_always_learning')}</span><button data-back-top aria-label="Back to top">{attribute('footer', 'back_to_top')}</button></div><div class="footer-word" aria-hidden="true">DIGITALTALHA</div></div></footer>'''
+    groups = (
+        ('explore', (('home', '/'), ('about', '/about/'), ('projects', '/projects/'),
+                     ('blog', '/blog/'), ('contact', '/contact/'))),
+        ('services', (('all_services', '/services/'), ('google_ads', '/google-ads/'),
+                      ('meta_ads', '/meta-ads/'), ('website_creation', '/website-creation/'), ('seo', '/seo/'))),
+        ('let_s_talk_growth', (('free_consultation', '/contact/'), ('send_an_enquiry', '/contact/#enquiry'),
+                               ('privacy_policy', '/privacy-policy/'), ('terms_conditions', '/terms-conditions/'))),
+    )
+    columns = []
+    for heading, links in groups:
+        items = ''.join(f'<li><a href="{url}">{copy_text("footer", key)}</a></li>' for key, url in links)
+        columns.append(f'<div><h2>{copy_text("footer", heading)}</h2><ul>{items}</ul></div>')
+    return f'''<footer class="footer"><div class="wrap">
+        <div class="footer-grid"><div>{brand()}<p>{copy_text('footer', 'google_ads_meta_ads_seo')}</p>
+        <div class="socials">
+            <a href="https://www.instagram.com/_digitaltalha_/" target="_blank" rel="noopener noreferrer">{copy_text('footer', 'instagram')}</a>
+            <a href="https://www.linkedin.com/in/talha-alam-798st0/" target="_blank" rel="noopener noreferrer">{copy_text('footer', 'linkedin')}</a>
+            <a href="https://www.facebook.com/profile.php?id=61572897474852" target="_blank" rel="noopener noreferrer">{copy_text('footer', 'facebook')}</a>
+        </div></div>{''.join(columns)}</div>
+        <div class="footer-bottom"><span>{copy_text('footer', '2026_digitaltalha_all_rights_reserved')}</span>
+        <button data-back-top aria-label="Back to top">{copy_text('footer', 'back_to_top')}</button></div>
+    </div></footer>'''
 
 PAGES={}
 def page(path,title,body,description=None,noindex=False):
@@ -111,7 +139,7 @@ def form(service='general',compact=False):
     extra='' if compact else ('<div class="field full"><label for="website">' + copy_text('form', 'business_website') + ' <span>' + copy_text('form', 'optional') + '</span></label><input id="website" name="website" type="url" maxlength="250" placeholder="' + attribute('form', 'https_yourwebsite_com') + '" autocomplete="url"></div>')
     budget='' if service=='general' else ('<div class="field full"><label for="budget">' + copy_text('form', 'monthly_ad_budget') + '</label><select id="budget" name="budget"><option>Not decided yet</option><option>Under ₹10,000</option><option>₹10,000 – ₹30,000</option><option>₹30,000 – ₹50,000</option><option>₹50,000+</option></select></div>')
     if service=='Website Creation':budget=('<div class="field full"><label for="budget">' + copy_text('form', 'project_budget') + ' <span>' + copy_text('form', 'optional') + '</span></label><input id="budget" name="budget" maxlength="150" placeholder="' + attribute('form', 'your_planned_budget_if_you') + '"></div>')
-    label='Tell Me About Your Business' if compact else 'Send My Enquiry' if service=='general' else 'Discuss My Website' if service=='Website Creation' else 'Get My Free Consultation'
+    label='Send enquiry' if compact else 'Send My Enquiry' if service=='general' else 'Discuss My Website' if service=='Website Creation' else 'Get My Free Consultation'
     service_header='' if service=='general' else ('<div class="form-heading"><span class="label">' + copy_text('form', 'get_started') + '</span><h3>' + copy_text('form', 'tell_me_about_your_business') + '</h3><p>' + copy_text('form', 'fill_in_a_few_details') + '</p><p>' + copy_text('form', 'no_spam_no_sales_pressure') + '</p></div>')
     if service=='Website Creation':service_header=('<div class="form-heading"><span class="label">' + copy_text('form', 'start_a_website_project') + '</span><h3>' + copy_text('form', 'what_does_your_website_need') + '</h3><p>' + copy_text('form', 'share_the_kind_of_business') + '</p></div>')
     service_end='' if service=='general' else f'<p class="form-note">Still deciding? There’s no pressure — reach out and let’s talk about whether {service} makes sense for your business right now.</p>'
@@ -134,14 +162,16 @@ def home():
     values='<section class="section wrap"><div class="statement"><div>'+eyebrow(line('/',113))+'<h2>'+esc(line('/',114))+'</h2></div>'+home_values()+'</div></section>'
     skill='<section class="section-sm wrap line-top">'+section_heading(line('/',135),line('/',137),line('/',139))+'<div class="skills-grid">'+''.join(f'<div class="skill"><h3>{esc(line("/",n))}</h3><p>{esc(line("/",n+2))}</p></div>' for n in [141,144,148,152,156,159])+'</div></section>'
     about=f'''<section class="section wrap about-preview"><div class="about-photo"><img src="/assets/talha-portrait.webp" width="900" height="1125" alt="Talha, independent digital marketer" loading="lazy"></div><div>{eyebrow(line('/',165))}<h2>{esc(line('/',166))}</h2>{paras('/',[168,170])}{check([line('/',n) for n in [171,173,175]])}<div class="signature">Talha<span>Digital Marketer, Google Ads &amp; Meta Ads</span></div><div class="button-row">{link('More about me','/about/')}</div></div></section>'''
-    project='<section class="section soft"><div class="wrap">'+section_heading(line('/',179),line('/',180),'A closer look at the research, setup, and thinking behind the work.')+project_card()+'<div class="button-row">'+link('View All Articles','/blog/')+'</div></div></section>'
+    project='<section class="section soft"><div class="wrap">'+section_heading(line('/',179),line('/',180),'A closer look at the research, setup, and thinking behind the work.')+project_card()+'<div class="button-row">'+link('View all projects','/projects/')+'</div></div></section>'
     return hero+services+proc+values+skill+about+project+contact_block()
 
 def breadcrumb(label):
-    route = next((path for path, config in SEO.items() if config['label'] == label), None)
-    route = route or {'About': '/about/', 'Website Creation': '/website-creation/',
+    route = {'Projects': '/projects/', 'About': '/about/', 'Website Creation': '/website-creation/',
                       'Terms and Conditions': '/terms-conditions/',
                       'Projects / Meta lead campaign': '/'+ARTICLE+'/'}.get(label)
+    if route is None:
+        route = next((path for path, config in SEO.items()
+                      if not config.get('blog_post') and config['label'] == label), None)
     if route is None:
         raise ValueError(f'Unknown breadcrumb: {label}')
     return seo_breadcrumb(route, SEO)
@@ -283,7 +313,7 @@ def article():
     published_label = datetime.fromisoformat(published).strftime('%d %B %Y').lstrip('0')
     hero='<section class="page-hero"><div class="wrap article-hero">'+breadcrumb('Projects / Meta lead campaign')+eyebrow(copy_value('campaign-page', 'practice_project_meta_ads'))+('<h1>' + copy_text('campaign-page', 'meta_lead_generation_campaign') + '<br> <span class="accent">' + copy_text('campaign-page', 'from_setup_to_optimization') + '</span></h1><div class="article-meta"><span>' + copy_text('campaign-page', 'by_talha_alam') + '</span><time datetime="')+esc(published)+'">Published '+esc(published_label)+('</time><span>' + copy_text('campaign-page', 'a_practical_beginner_friendly_project') + '</span><span>' + copy_text('campaign-page', 'campaign_setup_optimization') + '</span></div></div></section>')
     article_intro=('<p class="article-intro">' + copy_text('campaign-page', 'a_practical_beginner_friendly_project_3') + '</p><p>' + copy_text('campaign-page', 'by') + ' <a href="/about/">' + copy_text('campaign-page', 'talha_alam') + '</a> ' + copy_text('campaign-page', 'explore') + ' <a href="/meta-ads/">' + copy_text('campaign-page', 'meta_ads_management') + '</a> ' + copy_text('campaign-page', 'or') + ' <a href="/website-creation/">' + copy_text('campaign-page', 'landing_page_creation') + '</a> ' + copy_text('campaign-page', 'for_your_business') + '</p><div class="article-note">')+attribute('campaign-article', 'disclosure')+'</div>'
-    return hero+'<section class="section wrap article-layout">'+toc(lines, article=True)+'<article class="prose article-body">'+article_intro+article_content(lines)+'<div class="button-row">'+link(copy_value('campaign-page', 'back_to_all_projects'),'/blog/')+'</div></article></section>'
+    return hero+'<section class="section wrap article-layout">'+toc(lines, article=True)+'<article class="prose article-body">'+article_intro+article_content(lines)+'<div class="button-row">'+link(copy_value('campaign-page', 'back_to_all_projects'),'/projects/')+'</div></article></section>'
 
 def legal(path):
     key = path.strip('/')
@@ -313,7 +343,8 @@ def build():
     page('/google-ads/','Google Ads Management for Small Businesses',service('/google-ads/','Google Ads'))
     page('/meta-ads/','Meta Ads Services',service('/meta-ads/','Meta Ads'))
     page('/seo/','SEO Services for Small Businesses',seo_service())
-    page('/blog/','Projects and Practical Works',projects())
+    page('/projects/', 'Projects and Practical Works', projects())
+    page(posts.BLOG_PATH, 'Blog', posts.listing(POSTS, seo_breadcrumb(posts.BLOG_PATH, SEO)))
     page(HOSPITAL_PROJECT['route'],'Glisan Akbari Hospital Website Project',hospital_project())
     page('/contact/','Let’s talk about your marketing goals',contact())
     page('/privacy-policy/','Privacy Policy',legal('/privacy-policy/'))
@@ -321,7 +352,7 @@ def build():
     page('/'+ARTICLE+'/','Meta Lead Campaign — From Start to Finish',article(),description='A complete practical Meta lead-generation project: goal, landing page, tracking, campaign setup, audiences, creative, remarketing, and optimization.')
     for route, post in POSTS.items():
         page(route, post['title'], posts.render(route, post, lambda path: seo_breadcrumb(path, SEO), link))
-    for alias,target in {'/about-us/':'/about/','/contact-us/':'/contact/','/service/':'/services/','/projects/':'/blog/','/resources/':'/blog/','/category/meta-ads/':'/blog/','/category/uncategorized/':'/blog/'}.items():
+    for alias,target in {'/about-us/':'/about/','/contact-us/':'/contact/','/service/':'/services/','/resources/':'/blog/','/category/meta-ads/':'/projects/','/category/uncategorized/':'/projects/'}.items():
         folder=OUT/alias.strip('/');folder.mkdir(parents=True,exist_ok=True)
         (folder/'index.html').write_text(f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url={target}"><meta name="robots" content="noindex"><link rel="canonical" href="{DOMAIN+target}"><title>Continue to DigitalTalha</title></head><body><p>This page has moved. <a href="{target}">Continue to DigitalTalha</a>.</p></body></html>')
     body = ('<div class="wrap not-found"><p class="big404" aria-hidden="true">404</p>'
@@ -345,9 +376,8 @@ RewriteRule ^ - [F,L]
 RewriteRule ^about-us(?:/index\.html)?/?$ /about/ [R=301,L]
 RewriteRule ^contact-us(?:/index\.html)?/?$ /contact/ [R=301,L]
 RewriteRule ^service(?:/index\.html)?/?$ /services/ [R=301,L]
-RewriteRule ^projects(?:/index\.html)?/?$ /blog/ [R=301,L]
 RewriteRule ^resources(?:/index\.html)?/?$ /blog/ [R=301,L]
-RewriteRule ^category/(?:meta-ads|uncategorized)(?:/index\.html)?/?$ /blog/ [R=301,L]
+RewriteRule ^category/(?:meta-ads|uncategorized)(?:/index\.html)?/?$ /projects/ [R=301,L]
 # Preserve sitemap addresses previously advertised by WordPress and Rank Math.
 RewriteRule ^(?:sitemap_index|wp-sitemap|post-sitemap|page-sitemap|category-sitemap)\.xml$ /sitemap.xml [R=301,L]
 # Redirect explicit index.html URLs, never internal DirectoryIndex lookups.
@@ -390,7 +420,7 @@ ExpiresByType application/javascript "access plus 1 day"
     if STAGING:
         with (OUT/'.htaccess').open('a') as settings:
             settings.write('\n<IfModule mod_headers.c>\nHeader always set X-Robots-Tag "noindex, follow"\n</IfModule>\n')
-    print(f'Built {len(PAGES)} complete pages, 7 legacy routes, assets, sitemap and Hostinger settings → {OUT}')
+    print(f'Built {len(PAGES)} complete pages, 6 legacy routes, assets, sitemap and Hostinger settings → {OUT}')
 
 from classic_pages import install
 install(globals())

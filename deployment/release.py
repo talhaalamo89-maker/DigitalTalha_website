@@ -16,7 +16,7 @@ MAX_ARCHIVE = 20 * 1024 * 1024
 MAX_CONTENT = 50 * 1024 * 1024
 RELEASE = re.compile(r'\.digitaltalha-release-[a-f0-9]{12}-[0-9]{1,14}-[0-9]{1,4}')
 VERSIONED_ASSET = re.compile(r'.*\.[a-f0-9]{16}\.[A-Za-z0-9]+$')
-SHORTLINKS = {'454':'/about/', '456':'/contact/', '458':'/terms-conditions/', '460':'/privacy-policy/', '484':'/services/', '504':'/blog/', '605':'/google-ads/', '607':'/meta-ads/', '782':'/how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization/'}
+SHORTLINKS = {'454':'/about/', '456':'/contact/', '458':'/terms-conditions/', '460':'/privacy-policy/', '484':'/services/', '504':'/projects/', '605':'/google-ads/', '607':'/meta-ads/', '782':'/how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization/'}
 
 
 def digest(data):
@@ -213,7 +213,7 @@ def verify_site(target, manifest):
                 same = True
                 checks[-1]['provider_temporary_domain_robots'] = True
             require(status == 200 and same, 'Asset check failed: ' + name)
-    aliases = {'/resources/':'/blog/', '/category/meta-ads/':'/blog/', '/about-us/':'/about/', '/contact-us/':'/contact/', '/service/':'/services/', '/projects/':'/blog/', '/sitemap_index.xml':'/sitemap.xml', '/wp-sitemap.xml':'/sitemap.xml'}
+    aliases = {'/resources/':'/blog/', '/category/meta-ads/':'/projects/', '/about-us/':'/about/', '/contact-us/':'/contact/', '/service/':'/services/', '/sitemap_index.xml':'/sitemap.xml', '/wp-sitemap.xml':'/sitemap.xml'}
     for path, destination in aliases.items():
         status, headers, body = request(path + '?utm_source=deployment', cache=False)
         require(status == 301 and headers.get('location') == origin + destination + '?utm_source=deployment', 'Legacy redirect check failed: ' + path)

@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { DatabaseSync } from 'node:sqlite';
 
 const source = await readFile(new URL('../worker.mjs', import.meta.url), 'utf8');
-const routes = ['/', '/about/', '/contact/', '/services/', '/blog/', '/google-ads/', '/meta-ads/', '/seo/', '/website-creation/', '/projects/glisan-akbari-hospital/', '/terms-conditions/', '/404/'];
+const routes = ['/', '/about/', '/contact/', '/services/', '/blog/', '/blog/post-slug/', '/projects/', '/google-ads/', '/meta-ads/', '/seo/', '/website-creation/', '/projects/glisan-akbari-hospital/', '/terms-conditions/', '/404/'];
 async function load(preview = false) {
   const code = source.replace('/* BUILD_CONFIG */', `const BUILD_PREVIEW=${preview};const PAGE_ROUTES=new Set(${JSON.stringify(routes)});`);
   return import('data:text/javascript;base64,' + Buffer.from(code).toString('base64'));
@@ -24,7 +24,7 @@ function environment() {
 const accepted = async () => Response.json({ id: 'synthetic-receipt' });
 
 test('all WordPress shortlinks retain campaign parameters', () => {
-  const ids = { 454: '/about/', 456: '/contact/', 458: '/terms-conditions/', 460: '/privacy-policy/', 484: '/services/', 504: '/blog/', 605: '/google-ads/', 607: '/meta-ads/', 782: '/how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization/' };
+  const ids = { 454: '/about/', 456: '/contact/', 458: '/terms-conditions/', 460: '/privacy-policy/', 484: '/services/', 504: '/projects/', 605: '/google-ads/', 607: '/meta-ads/', 782: '/how-to-build-a-meta-lead-generation-campaign-from-setup-to-optimization/' };
   for (const [id, path] of Object.entries(ids)) for (const key of ['p', 'page_id']) {
     const target = new URL(redirectTarget(`https://digitaltalha.com/?utm_source=a&${key}=${id}&utm_term=x%20y`));
     assert.equal(target.pathname, path);
@@ -35,17 +35,22 @@ test('all WordPress shortlinks retain campaign parameters', () => {
   assert.equal(redirectTarget('https://digitaltalha.com/?p=999'), null);
   assert.equal(redirectTarget('https://www.digitaltalha.com/index.html?p=605&utm_source=legacy'), 'https://digitaltalha.com/google-ads/?utm_source=legacy');
 });
-test('aliases, sitemap, index and slash redirects avoid the real project page', () => {
+test('aliases, sitemap, index and slash redirects preserve the blog and portfolio', () => {
   for (const [alias, target] of Object.entries({ 'about-me': '/about/', 'contact-me': '/contact/', wordpress: '/seo/', 'site-map': '/sitemap.xml' })) {
     assert.equal(redirectTarget(`https://digitaltalha.com/${alias}/?utm_source=legacy`), `https://digitaltalha.com${target}?utm_source=legacy`);
   }
-  for (const [alias, target] of Object.entries({ 'about-us': '/about/', 'contact-us': '/contact/', service: '/services/', projects: '/blog/', resources: '/blog/', 'category/meta-ads': '/blog/', 'category/uncategorized': '/blog/', 'google-ads-services': '/google-ads/', 'terms-and-conditions': '/terms-conditions/' })) {
+  for (const [alias, target] of Object.entries({ 'about-us': '/about/', 'contact-us': '/contact/', service: '/services/', resources: '/blog/', 'category/meta-ads': '/projects/', 'category/uncategorized': '/projects/', 'google-ads-services': '/google-ads/', 'terms-and-conditions': '/terms-conditions/' })) {
     for (const suffix of ['', '/', '/index.html']) {
       assert.equal(redirectTarget(`https://digitaltalha.com/${alias}${suffix}?utm_source=test`), `https://digitaltalha.com${target}?utm_source=test`);
     }
   }
   for (const name of ['sitemap_index', 'wp-sitemap', 'post-sitemap', 'page-sitemap', 'category-sitemap']) assert.equal(redirectTarget(`https://digitaltalha.com/${name}.xml`), 'https://digitaltalha.com/sitemap.xml');
-  assert.equal(redirectTarget('https://digitaltalha.com/projects/glisan-akbari-hospital/'), null);
+  for (const path of ['/blog/', '/blog/post-slug/', '/projects/', '/projects/glisan-akbari-hospital/']) {
+    assert.equal(redirectTarget('https://digitaltalha.com' + path), null);
+    assert.equal(redirectTarget('https://digitaltalha.com' + path.slice(0, -1) + '?ref=test'), 'https://digitaltalha.com' + path + '?ref=test');
+    assert.equal(redirectTarget('https://digitaltalha.com' + path + 'index.html?ref=test'), 'https://digitaltalha.com' + path + '?ref=test');
+  }
+  assert.equal(redirectTarget('https://digitaltalha.com/blog/unknown'), null);
   assert.equal(redirectTarget('https://digitaltalha.com/unknown'), null);
   assert.equal(redirectTarget('https://digitaltalha.com/unknown/index.html'), null);
   assert.equal(redirectTarget('https://digitaltalha.com/about'), 'https://digitaltalha.com/about/');

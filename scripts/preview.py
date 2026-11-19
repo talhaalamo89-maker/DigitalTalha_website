@@ -9,6 +9,28 @@ JS=(ROOT/'assets/site.js').read_text()
 FAVICON='data:image/png;base64,'+base64.b64encode((ROOT/'assets/favicon-32.png').read_bytes()).decode()
 PAGES={};ASSETS={};TOKENS={}
 
+BRIDGE = """
+document.addEventListener('click', event => {
+    const link = event.target.closest('a');
+    const href = link?.getAttribute('href');
+    if (!href) return;
+    if (href.startsWith('/')) {
+        event.preventDefault();
+        parent.postMessage({digitalTalhaPreview: true, path: href}, '*');
+    } else if (href.startsWith('#')) {
+        const target = document.getElementById(href.slice(1));
+        if (!target) return;
+        event.preventDefault();
+        if (target.tabIndex < 0) target.tabIndex = -1;
+        target.focus({preventScroll: true});
+        target.scrollIntoView();
+    } else {
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+    }
+});
+"""
+
 def embed_asset(match):
     path=match[2]
     if path not in TOKENS:
@@ -33,12 +55,41 @@ for path in DIST.rglob('index.html'):
     raw=re.sub(r' (?:srcset|sizes)="[^"]*"', '', raw)
     raw=re.sub(r'(src=")(/assets/[^\"]+)(")',embed_asset,raw)
     raw=re.sub(r'<link rel="(?:icon|apple-touch-icon)"[^>]+>','',raw)
-    bridge="""document.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;let href=a.getAttribute('href');if(!href)return;if(href.startsWith('/')){e.preventDefault();parent.postMessage({digitalTalhaPreview:true,path:href},'*');}else if(!href.startsWith('#')){a.target='_blank';a.rel='noopener noreferrer';}});"""
-    raw=raw.replace('</body>','<script>window.fetch=async()=>({ok:false,headers:{get:()=>"application/json"},json:async()=>({ok:false,message:"Enquiries can be sent on the live website."})});'+JS+bridge+'</script></body>')
+    raw=raw.replace('</body>','<script>window.fetch=async()=>({ok:false,headers:{get:()=>"application/json"},json:async()=>({ok:false,message:"Enquiries can be sent on the live website."})});'+JS+BRIDGE+'</script></body>')
     PAGES[route]=raw
 
 safe_json=lambda value:json.dumps(value,ensure_ascii=False).replace('</script','<\\/script')
-shell="""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DigitalTalha — Full website preview</title><meta name="robots" content="noindex, follow"><link rel="icon" type="image/png" sizes="32x32" href="FAVICON_DATA"><style>html,body{margin:0;width:100%;height:100%;background:#f8f7f3}iframe{border:0;width:100%;height:100%;display:block}</style></head><body><iframe id="site" title="DigitalTalha website preview"></iframe><script>const pages=PAGES_JSON;const assets=ASSETS_JSON;const frame=document.getElementById('site');function render(){const route=decodeURIComponent(location.hash.slice(1)||'/');let html=pages[route]||pages['/404/'];for(const [key,value]of Object.entries(assets))html=html.split(key).join(value);frame.srcdoc=html;document.title=(route==='/'?'Home':route.split('/').filter(Boolean).join(' / '))+' | DigitalTalha preview';}window.addEventListener('message',event=>{if(event.source!==frame.contentWindow||!event.data?.digitalTalhaPreview)return;const route=event.data.path;if(!route.startsWith('/'))return;if(location.hash.slice(1)===route)render();else location.hash=route;});window.addEventListener('hashchange',render);render();</script></body></html>"""
+shell="""<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DigitalTalha — Full website preview</title><meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/png" sizes="32x32" href="FAVICON_DATA">
+<style>html,body{margin:0;width:100%;height:100%;background:#fcf8f2}iframe{border:0;width:100%;height:100%;display:block}</style>
+</head><body><iframe id="site" title="DigitalTalha website preview"></iframe><script>
+const pages = PAGES_JSON;
+const assets = ASSETS_JSON;
+const frame = document.getElementById('site');
+function render() {
+    const address = new URL(location.hash.slice(1) || '/', 'https://digitaltalha.com');
+    const route = address.pathname;
+    const fragment = address.hash.slice(1);
+    let html = Object.hasOwn(pages, route) ? pages[route] : pages['/404/'];
+    for (const [key, value] of Object.entries(assets)) html = html.replaceAll(key, value);
+    frame.onload = fragment ? () => {
+        frame.contentDocument.getElementById(fragment)?.scrollIntoView();
+    } : null;
+    frame.srcdoc = html;
+    const title = route === '/' ? 'Home' : route.split('/').filter(Boolean).join(' / ');
+    document.title = title + ' | DigitalTalha preview';
+}
+window.addEventListener('message', event => {
+    if (event.source !== frame.contentWindow || !event.data?.digitalTalhaPreview) return;
+    const path = event.data.path;
+    if (location.hash.slice(1) === path) render();
+    else location.hash = path;
+});
+window.addEventListener('hashchange', render);
+render();
+</script></body></html>"""
 shell=shell.replace('PAGES_JSON',safe_json(PAGES)).replace('ASSETS_JSON',safe_json(ASSETS)).replace('FAVICON_DATA',FAVICON)
 (ROOT/'DigitalTalha-preview.html').write_text(shell)
 print(f'Created self-contained preview: {len(PAGES)} pages, {len(ASSETS)} shared assets, {len(shell):,} characters.')

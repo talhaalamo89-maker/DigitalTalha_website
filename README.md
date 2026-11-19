@@ -25,4 +25,6 @@ Run `SITE_NOINDEX=1 npm run build:cloudflare` for review, then open the generate
 | `scripts/`, `assets/` | HTML generation, layout, images and site behavior |
 | `cloudflare/` | Redirects, enquiry handler, legacy files and Pages packaging |
 
+The blog lives at `/blog/` and the portfolio at `/projects/`. The existing hospital case study and Meta Ads practice article retain their original URLs.
+
 Earlier motion templates and Hostinger scripts remain as historical reference. Cloudflare production uses the existing static design and the Cloudflare enquiry handler.
